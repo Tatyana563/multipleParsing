@@ -1,6 +1,7 @@
 package ua.tpetrenko.esp.app.configuration;
 
 import java.util.Set;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationRunner;
@@ -17,13 +18,13 @@ import ua.tpetrenko.esp.api.ShopParser;
 public class Context {
     private final Set<ShopParser> parsers;
 
-
-//    @Bean
-//    public ApplicationRunner applicationRunner() {
-//        return args -> {
-//            for (ShopParser parser : parsers) {
-//                log.info("Parser for {}", parser.getShopInfo().getName());
-//            }
-//        };
-//    }
+    @Bean
+    public ApplicationRunner applicationRunner() {
+        return args -> {
+            for (ShopParser parser : parsers) {
+                log.info("Parser for {}", parser.getShopInfo().getName());
+                parser.parseData();
+            }
+        };
+    }
 }

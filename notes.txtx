@@ -1,0 +1,1 @@
+ ~/.jdks/openjdk-15/bin/java -jar -Dspring.profiles.active=my ./esp-app/target/esp-app.jar
