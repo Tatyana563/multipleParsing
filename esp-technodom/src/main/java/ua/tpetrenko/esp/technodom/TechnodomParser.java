@@ -8,6 +8,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ua.tpetrenko.esp.api.ShopParser;
 import ua.tpetrenko.esp.api.dto.ShopInfo;
@@ -21,7 +22,8 @@ public class TechnodomParser implements ShopParser {
 
     private static final ShopInfo INFO = new ShopInfo("Technodom", "https://technodom.kz/");
     private static final String CATEGORIES_PAGE = INFO.getUrl() + "all";
-
+    @Value("${parser.chrome.path}")
+    private String path;
     @Override
     public ShopInfo getShopInfo() {
         return INFO;
@@ -31,7 +33,7 @@ public class TechnodomParser implements ShopParser {
     public void parseData() {
         WebDriverManager.chromedriver().setup();
         ChromeOptions options = new ChromeOptions();
-        options.setBinary("C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe");
+        options.setBinary(path);
         options.addArguments("--headless");
         options.addArguments("window-size=1920x1080");
 
