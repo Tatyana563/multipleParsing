@@ -32,6 +32,11 @@
             <artifactId>esp-shopkz</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>ua.tpetrenko</groupId>
+            <artifactId>esp-technodom</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
