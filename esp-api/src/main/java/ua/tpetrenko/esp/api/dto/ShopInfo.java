@@ -1,6 +1,5 @@
 package ua.tpetrenko.esp.api.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -11,5 +10,5 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public class ShopInfo {
     private final String name;
-    private final String url;
+    private final  String url;
 }

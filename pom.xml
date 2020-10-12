@@ -38,6 +38,7 @@
         <module>esp-core</module>
         <module>esp-app</module>
         <module>esp-shopkz</module>
+        <module>esp-technodom</module>
         <module>esp-fora</module>
     </modules>
 
