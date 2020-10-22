@@ -3,15 +3,15 @@ package ua.tpetrenko.esp.fora;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ua.tpetrenko.esp.api.ShopParser;
-import ua.tpetrenko.esp.api.dto.ShopInfo;
+import ua.tpetrenko.esp.api.dto.MarketInfo;
 
 @Component
 @Slf4j
-public class Test implements ShopParser {
+public class ShopKZParser implements ShopParser {
 
     @Override
-    public ShopInfo getShopInfo() {
-        return new ShopInfo("New Test Shop", "no url");
+    public MarketInfo getMarketInfo() {
+        return new MarketInfo("ShopKZ", "https://shop.kz/");
     }
 
     @Override

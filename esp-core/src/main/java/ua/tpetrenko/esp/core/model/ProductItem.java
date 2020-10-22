@@ -8,7 +8,6 @@ import javax.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import ua.tpetrenko.esp.core.model.catalog.ItemCategory;
 
 /**
  * @author Roman Zdoronok
@@ -17,17 +16,14 @@ import ua.tpetrenko.esp.core.model.catalog.ItemCategory;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @Entity
-@Table(name = "item")
-public class Item extends AbstractEndpoint {
-
-    @Column(name = "price")
-    private Double price;
+@Table(name = "product_item")
+public class ProductItem extends AbstractEndpoint {
 
     @Column(name = "code", columnDefinition = "text")
     private String code;
 
-    @Column(name = "available")
-    private boolean available;
+    @Column(name = "external_id", columnDefinition = "text", nullable = false, unique = true)
+    private String externalId;
 
     @Column(name = "image_url", columnDefinition = "text")
     private String imageUrl;
@@ -36,10 +32,7 @@ public class Item extends AbstractEndpoint {
     private String description;
 
     @ManyToOne
-    @JoinColumn(name = "fk_item_category", nullable = false)
-    private ItemCategory itemCategory;
+    @JoinColumn(name = "fk_menu_item", nullable = false)
+    private MenuItem menuItem;
 
-    public Item(String code) {
-        this.code = code;
-    }
 }

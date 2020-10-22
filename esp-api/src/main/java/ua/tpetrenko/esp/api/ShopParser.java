@@ -1,11 +1,11 @@
 package ua.tpetrenko.esp.api;
 
-import ua.tpetrenko.esp.api.dto.ShopInfo;
+import ua.tpetrenko.esp.api.dto.MarketInfo;
 
 /**
  * @author Roman Zdoronok
  */
 public interface ShopParser {
-    ShopInfo getShopInfo();
+    MarketInfo getMarketInfo();
     void parseData();
 }

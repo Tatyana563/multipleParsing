@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
  */
 @RequiredArgsConstructor
 @Getter
-public class ShopInfo {
+public class MarketInfo {
     private final String name;
-    private final  String url;
+    private final String url;
 }

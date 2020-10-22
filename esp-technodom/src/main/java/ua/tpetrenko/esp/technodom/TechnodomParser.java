@@ -11,7 +11,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ua.tpetrenko.esp.api.ShopParser;
-import ua.tpetrenko.esp.api.dto.ShopInfo;
+import ua.tpetrenko.esp.api.dto.MarketInfo;
 
 /**
  * @author Roman Zdoronok
@@ -20,12 +20,12 @@ import ua.tpetrenko.esp.api.dto.ShopInfo;
 @Component
 public class TechnodomParser implements ShopParser {
 
-    private static final ShopInfo INFO = new ShopInfo("Technodom", "https://technodom.kz/");
+    private static final MarketInfo INFO = new MarketInfo("Technodom", "https://technodom.kz/");
     private static final String CATEGORIES_PAGE = INFO.getUrl() + "all";
     @Value("${parser.chrome.path}")
     private String path;
     @Override
-    public ShopInfo getShopInfo() {
+    public MarketInfo getMarketInfo() {
         return INFO;
     }
 

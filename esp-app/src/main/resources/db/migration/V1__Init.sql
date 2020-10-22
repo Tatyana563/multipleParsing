@@ -1,61 +1,78 @@
 create schema esp;
 
-create table esp.e_shop
+create table esp.market
 (
     id   bigserial primary key not null,
-    name text,
-    url  text
+    name text                  not null unique,
+    url  text                  not null unique
 );
 
-create table esp.catalog_section
+create table esp.city
+(
+    id   bigserial primary key not null,
+    name text                  not null unique
+);
+
+create table esp.market_city
 (
     id        bigserial primary key not null,
-    name      text,
-    url       text,
-    fk_e_shop bigint                not null,
-    constraint catalog_section__eshop_fkey foreign key (fk_e_shop)
-        references esp.e_shop (id) match simple
+    fk_market bigint                not null,
+    fk_city   bigint                not null,
+    constraint market_city__market_fkey foreign key (fk_market)
+        references esp.market (id) match simple
+        on update no action
+        on delete no action,
+    constraint market_city__city_fkey foreign key (fk_city)
+        references esp.city (id) match simple
         on update no action
         on delete no action
 );
 
-create table esp.section_group
+create table esp.menu_item
 (
-    id                 bigserial primary key not null,
-    name               text,
-    url                text,
-    fk_catalog_section bigint                not null,
-    constraint section_group__catalog_section_fkey foreign key (fk_catalog_section)
-        references esp.catalog_section (id) match simple
+    id             bigserial primary key not null,
+    name           text                  not null,
+    url            text                  not null,
+    fk_market      bigint                not null,
+    fk_parent_item bigint,
+    constraint menu_item__market_fkey foreign key (fk_market)
+        references esp.market (id) match simple
+        on update no action
+        on delete no action,
+    constraint menu_item__parent_item_fkey foreign key (fk_parent_item)
+        references esp.menu_item (id) match simple
         on update no action
         on delete no action
 );
 
-create table esp.item_category
+create table esp.product_item
 (
-    id               bigserial primary key not null,
-    name             text,
-    url              text,
-    fk_section_group bigint                not null,
-    constraint item_category__section_group_fkey foreign key (fk_section_group)
-        references esp.section_group (id) match simple
+    id           bigserial primary key not null,
+    name         text                  not null,
+    url          text                  not null,
+    code         text,
+    external_id  text                  not null,
+    description  text,
+    image_url    text,
+    fk_menu_item bigint                not null,
+    constraint product_item__menu_item_fkey foreign key (fk_menu_item)
+        references esp.menu_item (id) match simple
         on update no action
         on delete no action
 );
 
-create table esp.item
+create table esp.product_price
 (
-    id               bigserial primary key not null,
-    name             text,
-    url              text,
-    available        boolean               not null,
-    code             text,
-    description      text,
-    image_url        text,
-    price            double precision,
-    fk_item_category bigint                not null,
-    constraint item__item_category_fkey foreign key (fk_item_category)
-        references esp.item_category (id) match simple
+    id              bigserial primary key not null,
+    price           double precision      not null,
+    fk_market_city  bigint                not null,
+    fk_product_item bigint                not null,
+    constraint product_price__market_city_fkey foreign key (fk_market_city)
+        references esp.market_city (id) match simple
+        on update no action
+        on delete no action,
+    constraint product_price__product_item_fkey foreign key (fk_product_item)
+        references esp.product_item (id) match simple
         on update no action
         on delete no action
 );

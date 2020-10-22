@@ -22,7 +22,7 @@ public class Context {
     public ApplicationRunner applicationRunner() {
         return args -> {
             for (ShopParser parser : parsers) {
-                log.info("Parser for {}", parser.getShopInfo().getName());
+                log.info("Parser for {}", parser.getMarketInfo().getName());
                 parser.parseData();
             }
         };

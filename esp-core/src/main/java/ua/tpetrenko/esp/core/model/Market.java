@@ -13,10 +13,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @Entity
-@Table(name = "e_shop")
-public class EShop extends AbstractEndpoint {
+@Table(name = "market")
+public class Market extends AbstractEndpoint {
 
-    public EShop(String name, String url) {
-        super(name, url);
-    }
 }

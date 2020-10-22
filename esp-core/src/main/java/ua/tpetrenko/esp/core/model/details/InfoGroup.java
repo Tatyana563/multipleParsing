@@ -7,7 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import lombok.Data;
-import ua.tpetrenko.esp.core.model.catalog.ItemCategory;
+import ua.tpetrenko.esp.core.model.MenuItem;
 
 /**
  * @author Roman Zdoronok
@@ -25,6 +25,6 @@ public class InfoGroup {
     private String name;
 
     @ManyToOne
-    @JoinColumn(name = "fk_item_category", nullable = false)
-    private ItemCategory itemCategory;
+    @JoinColumn(name = "fk_menu_item", nullable = false)
+    private MenuItem menuItem;
 }

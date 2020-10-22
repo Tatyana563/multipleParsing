@@ -10,7 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import lombok.Data;
-import ua.tpetrenko.esp.core.model.Item;
+import ua.tpetrenko.esp.core.model.ProductItem;
 
 /**
  * @author Roman Zdoronok
@@ -32,5 +32,5 @@ public class InfoMetricValue {
     private InfoMetric infoMetric;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    private Set<Item> items;
+    private Set<ProductItem> productItems;
 }
