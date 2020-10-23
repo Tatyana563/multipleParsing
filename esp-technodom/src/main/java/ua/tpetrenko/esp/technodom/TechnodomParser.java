@@ -10,15 +10,18 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import ua.tpetrenko.esp.api.ShopParser;
+import ua.tpetrenko.esp.api.MarketParser;
 import ua.tpetrenko.esp.api.dto.MarketInfo;
+import ua.tpetrenko.esp.api.handlers.CityHandler;
+import ua.tpetrenko.esp.api.handlers.MenuItemHandler;
+import ua.tpetrenko.esp.api.handlers.ProductItemHandler;
 
 /**
  * @author Roman Zdoronok
  */
 @Slf4j
 @Component
-public class TechnodomParser implements ShopParser {
+public class TechnodomParser implements MarketParser {
 
     private static final MarketInfo INFO = new MarketInfo("Technodom", "https://technodom.kz/");
     private static final String CATEGORIES_PAGE = INFO.getUrl() + "all";
@@ -30,6 +33,30 @@ public class TechnodomParser implements ShopParser {
     }
 
     @Override
+    public void prepareParser() {
+       log.info("Подготовка " + getMarketInfo());
+    }
+
+    @Override
+    public void parseMainMenu(MenuItemHandler menuItemHandler) {
+        // Nothing to do.
+    }
+
+    @Override
+    public void parseCities(CityHandler cityHandler) {
+        // Nothing to do.
+    }
+
+    @Override
+    public void parseItems(ProductItemHandler productItemHandler) {
+        // Nothing to do.
+    }
+
+    @Override
+    public void destroyParser() {
+        // Nothing to do.
+    }
+
     public void parseData() {
         WebDriverManager.chromedriver().setup();
         ChromeOptions options = new ChromeOptions();

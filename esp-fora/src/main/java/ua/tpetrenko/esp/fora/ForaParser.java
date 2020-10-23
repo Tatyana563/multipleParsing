@@ -1,4 +1,4 @@
-package ua.tpetrenko.esp.shopkz;
+package ua.tpetrenko.esp.fora;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -8,18 +8,13 @@ import ua.tpetrenko.esp.api.handlers.CityHandler;
 import ua.tpetrenko.esp.api.handlers.MenuItemHandler;
 import ua.tpetrenko.esp.api.handlers.ProductItemHandler;
 
-/**
- * @author Roman Zdoronok
- */
 @Slf4j
 @Component
-public class ShopkzParser implements MarketParser {
-
-    private static final MarketInfo SHOPKZ = new MarketInfo("Shopkz", "https://shop.kz/");
+public class ForaParser implements MarketParser {
 
     @Override
     public MarketInfo getMarketInfo() {
-        return SHOPKZ;
+        return new MarketInfo("Fora", "https://fora.kz/");
     }
 
     @Override
@@ -46,5 +41,4 @@ public class ShopkzParser implements MarketParser {
     public void destroyParser() {
         // Nothing to do.
     }
-
 }

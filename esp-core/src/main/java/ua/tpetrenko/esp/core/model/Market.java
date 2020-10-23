@@ -16,4 +16,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "market")
 public class Market extends AbstractEndpoint {
 
+    public Market(String name, String url) {
+        super(name, url);
+    }
 }
