@@ -2,7 +2,7 @@ package ua.tpetrenko.esp.shopkz;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ua.tpetrenko.esp.api.MarketParser;
+import ua.tpetrenko.esp.api.parser.MarketParser;
 import ua.tpetrenko.esp.api.dto.MarketInfo;
 import ua.tpetrenko.esp.api.handlers.CityHandler;
 import ua.tpetrenko.esp.api.handlers.MenuItemHandler;
@@ -20,6 +20,11 @@ public class ShopkzParser implements MarketParser {
     @Override
     public MarketInfo getMarketInfo() {
         return SHOPKZ;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return false;
     }
 
     @Override

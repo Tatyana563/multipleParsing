@@ -5,6 +5,6 @@ import ua.tpetrenko.esp.api.dto.CityDto;
 /**
  * @author Roman Zdoronok
  */
-public interface CityHandler extends EntityHandler<CityDto> {
+public interface CityHandler extends ItemHandler<CityDto> {
 
 }

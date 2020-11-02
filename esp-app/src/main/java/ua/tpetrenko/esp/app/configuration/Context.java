@@ -10,9 +10,10 @@ import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import ua.tpetrenko.esp.api.MarketParser;
+import ua.tpetrenko.esp.api.parser.MarketParser;
 import ua.tpetrenko.esp.api.dto.MarketInfo;
 import ua.tpetrenko.esp.api.parser.ParserContext;
+import ua.tpetrenko.esp.core.factories.ParserContextFactory;
 import ua.tpetrenko.esp.core.repository.MarketRepository;
 import ua.tpetrenko.esp.core.tasks.SingleMarketParseTask;
 
@@ -23,8 +24,9 @@ import ua.tpetrenko.esp.core.tasks.SingleMarketParseTask;
 @RequiredArgsConstructor
 @Slf4j
 public abstract class Context {
+
     private final Set<MarketParser> parsers;
-    private final MarketRepository marketRepository;
+    private final ParserContextFactory parserContextFactory;
 
     @Bean
     public ApplicationRunner applicationRunner() {
@@ -34,9 +36,11 @@ public abstract class Context {
             for (MarketParser parser : parsers) {
 
                 MarketInfo marketInfo = parser.getMarketInfo();
-                log.info("Parser for {}", marketInfo.getName());
-
-                executorService.submit(new SingleMarketParseTask(parser, getParserContext(marketRepository, marketInfo)));
+                log.info("Parser for {} [{}]", marketInfo.getName(), parser.isEnabled() ? "enabled" : "disabled");
+                if (parser.isEnabled()) {
+                    executorService
+                        .submit(new SingleMarketParseTask(parser, parserContextFactory.getParserContext(marketInfo)));
+                }
             }
         };
     }

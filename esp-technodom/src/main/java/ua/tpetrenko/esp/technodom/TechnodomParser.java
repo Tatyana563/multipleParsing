@@ -10,7 +10,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import ua.tpetrenko.esp.api.MarketParser;
+import ua.tpetrenko.esp.api.parser.MarketParser;
 import ua.tpetrenko.esp.api.dto.MarketInfo;
 import ua.tpetrenko.esp.api.handlers.CityHandler;
 import ua.tpetrenko.esp.api.handlers.MenuItemHandler;
@@ -30,6 +30,11 @@ public class TechnodomParser implements MarketParser {
     @Override
     public MarketInfo getMarketInfo() {
         return INFO;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return false;
     }
 
     @Override

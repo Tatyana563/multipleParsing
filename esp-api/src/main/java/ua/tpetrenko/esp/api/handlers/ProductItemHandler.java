@@ -5,6 +5,6 @@ import ua.tpetrenko.esp.api.dto.ProductItemDto;
 /**
  * @author Roman Zdoronok
  */
-public interface ProductItemHandler extends EntityHandler<ProductItemDto> {
+public interface ProductItemHandler extends ItemHandler<ProductItemDto> {
 
 }
