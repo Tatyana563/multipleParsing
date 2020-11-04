@@ -19,6 +19,8 @@
         <module>esp-shopkz</module>
         <module>esp-technodom</module>
         <module>esp-fora</module>
+        <module>esp-mechta</module>
+        <module>esp-sulpak</module>
     </modules>
 
     <dependencies>

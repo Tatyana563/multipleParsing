@@ -1,4 +1,4 @@
-package ua.tpetrenko.esp.technodom;
+package ua.tpetrenko.esp.impl.technodom;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import java.util.List;
@@ -11,7 +11,6 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ua.tpetrenko.esp.api.parser.DifferentItemsPerCityMarketParser;
-import ua.tpetrenko.esp.api.parser.MarketParser;
 import ua.tpetrenko.esp.api.dto.MarketInfo;
 import ua.tpetrenko.esp.api.handlers.CityHandler;
 import ua.tpetrenko.esp.api.handlers.MenuItemHandler;
@@ -26,8 +25,10 @@ public class TechnodomParser implements DifferentItemsPerCityMarketParser {
 
     private static final MarketInfo INFO = new MarketInfo("Technodom", "https://technodom.kz/");
     private static final String CATEGORIES_PAGE = INFO.getUrl() + "all";
+
     @Value("${parser.chrome.path}")
     private String path;
+
     @Override
     public MarketInfo getMarketInfo() {
         return INFO;

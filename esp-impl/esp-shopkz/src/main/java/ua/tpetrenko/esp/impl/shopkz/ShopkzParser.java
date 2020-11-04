@@ -1,9 +1,8 @@
-package ua.tpetrenko.esp.shopkz;
+package ua.tpetrenko.esp.impl.shopkz;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ua.tpetrenko.esp.api.parser.DifferentItemsPerCityMarketParser;
-import ua.tpetrenko.esp.api.parser.MarketParser;
 import ua.tpetrenko.esp.api.dto.MarketInfo;
 import ua.tpetrenko.esp.api.handlers.CityHandler;
 import ua.tpetrenko.esp.api.handlers.MenuItemHandler;
@@ -16,11 +15,11 @@ import ua.tpetrenko.esp.api.handlers.ProductItemHandler;
 @Component
 public class ShopkzParser implements DifferentItemsPerCityMarketParser {
 
-    private static final MarketInfo SHOPKZ = new MarketInfo("Shopkz", "https://shop.kz/");
+    private static final MarketInfo INFO = new MarketInfo("Shop.kz", "https://shop.kz/");
 
     @Override
     public MarketInfo getMarketInfo() {
-        return SHOPKZ;
+        return INFO;
     }
 
     @Override

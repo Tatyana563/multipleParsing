@@ -1,4 +1,4 @@
-package ua.tpetrenko.esp.fora;
+package ua.tpetrenko.esp.impl.fora;
 
 public interface URLUtil {
 

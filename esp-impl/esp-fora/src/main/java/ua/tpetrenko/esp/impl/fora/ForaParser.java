@@ -1,4 +1,4 @@
-package ua.tpetrenko.esp.fora;
+package ua.tpetrenko.esp.impl.fora;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 import ua.tpetrenko.esp.api.dto.CityDto;
 import ua.tpetrenko.esp.api.dto.MenuItemDto;
 import ua.tpetrenko.esp.api.parser.DifferentItemsPerCityMarketParser;
-import ua.tpetrenko.esp.api.parser.MarketParser;
 import ua.tpetrenko.esp.api.dto.MarketInfo;
 import ua.tpetrenko.esp.api.handlers.CityHandler;
 import ua.tpetrenko.esp.api.handlers.MenuItemHandler;
@@ -21,7 +20,7 @@ import ua.tpetrenko.esp.api.handlers.ProductItemHandler;
 @Component
 public class ForaParser implements DifferentItemsPerCityMarketParser {
 
-    private static final MarketInfo INFO = new MarketInfo("Fora", "https://fora.kz/");
+    private static final MarketInfo INFO = new MarketInfo("Fora.kz", "https://fora.kz/");
 
     private Document rootPage;
 
