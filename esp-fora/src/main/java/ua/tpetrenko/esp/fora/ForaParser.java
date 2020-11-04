@@ -8,7 +8,9 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Component;
+import ua.tpetrenko.esp.api.dto.CityDto;
 import ua.tpetrenko.esp.api.dto.MenuItemDto;
+import ua.tpetrenko.esp.api.parser.DifferentItemsPerCityMarketParser;
 import ua.tpetrenko.esp.api.parser.MarketParser;
 import ua.tpetrenko.esp.api.dto.MarketInfo;
 import ua.tpetrenko.esp.api.handlers.CityHandler;
@@ -17,9 +19,11 @@ import ua.tpetrenko.esp.api.handlers.ProductItemHandler;
 
 @Slf4j
 @Component
-public class ForaParser implements MarketParser {
+public class ForaParser implements DifferentItemsPerCityMarketParser {
 
     private static final MarketInfo INFO = new MarketInfo("Fora", "https://fora.kz/");
+
+    private Document rootPage;
 
     @Override
     public MarketInfo getMarketInfo() {
@@ -32,15 +36,20 @@ public class ForaParser implements MarketParser {
     }
 
     @Override
-    public void prepareParser() {
-        // Nothing to do.
+    public void prepareParser() throws Exception {
+        log.info("Получаем главную страницу...");
+        rootPage = Jsoup.connect(INFO.getUrl()).get();
+        log.info("Готово.");
     }
 
     @Override
-    public void parseMainMenu(MenuItemHandler sectionHandler) throws Exception {
-        Document newsPage = Jsoup.connect(INFO.getUrl()).get();
-        log.info("Получили главную страницу, ищем секции...");
-        Elements sectionElements = newsPage.select("#js-categories-menu>li");
+    public void parseMainMenu(MenuItemHandler sectionHandler) {
+
+        if(rootPage == null) {
+            throw new IllegalStateException("Не была получена главная страница");
+        }
+
+        Elements sectionElements = rootPage.select("#js-categories-menu>li");
         log.info("Найдено {} секций.", sectionElements.size());
         for (Element sectionElement : sectionElements) {
             Element sectionElementLink = sectionElement.selectFirst(">a");
@@ -73,7 +82,21 @@ public class ForaParser implements MarketParser {
 
     @Override
     public void parseCities(CityHandler cityHandler) {
-        // Nothing to do.
+
+        if(rootPage == null) {
+            throw new IllegalStateException("Не была получена главная страница");
+        }
+
+        Elements cityElements = rootPage.select(".js-city-select-radio");
+        log.info("Найдено {} городов", cityElements.size());
+        for (Element cityElement : cityElements) {
+            String citySuffix = cityElement.attr("data-href").replace("/", "");
+            String cityName = cityElement.parent().selectFirst("label > a").text();
+
+            log.info("-{}", cityName);
+
+            cityHandler.handle(new CityDto(cityName, citySuffix));
+        }
     }
 
     @Override

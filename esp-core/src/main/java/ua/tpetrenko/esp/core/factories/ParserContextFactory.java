@@ -29,9 +29,9 @@ public class ParserContextFactory {
                                       });
 
         return new MarketParserContextImpl(market,
-                                           menuItemHandlerFactory.getMenuItemHandler(market),
-                                           cityHandlerFactory.getCityHandler(),
-                                           productItemHandlerFactory.getProductItemHandler());
+                                           menuItemHandlerFactory,
+                                           cityHandlerFactory,
+                                           productItemHandlerFactory);
     }
 
 

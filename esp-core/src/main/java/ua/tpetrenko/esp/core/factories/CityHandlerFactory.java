@@ -4,6 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ua.tpetrenko.esp.api.handlers.CityHandler;
 import ua.tpetrenko.esp.core.components.CityHandlerImpl;
+import ua.tpetrenko.esp.core.model.Market;
+import ua.tpetrenko.esp.core.repository.CityRepository;
+import ua.tpetrenko.esp.core.repository.MarketCityRepository;
 
 /**
  * @author Roman Zdoronok
@@ -11,9 +14,11 @@ import ua.tpetrenko.esp.core.components.CityHandlerImpl;
 @Component
 @RequiredArgsConstructor
 public class CityHandlerFactory {
+    private final CityRepository cityRepository;
+    private final MarketCityRepository marketCityRepository;
 
-    public CityHandler getCityHandler() {
-        return new CityHandlerImpl();
+    public CityHandler getCityHandler(Market market) {
+        return new CityHandlerImpl(market, cityRepository, marketCityRepository);
     }
 
 }

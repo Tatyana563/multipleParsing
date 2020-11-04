@@ -18,6 +18,9 @@ public class MarketCity {
     @Column(name = "id", columnDefinition = "bigserial")
     private Long id;
 
+    @Column(name = "url", columnDefinition = "text", nullable = false)
+    private String url;
+
     @ManyToOne
     @JoinColumn(name = "fk_market", nullable = false)
     private Market market;
@@ -25,4 +28,10 @@ public class MarketCity {
     @ManyToOne
     @JoinColumn(name = "fk_city", nullable = false)
     private City city;
+
+    public MarketCity(String url, Market market, City city) {
+        this.url = url;
+        this.market = market;
+        this.city = city;
+    }
 }

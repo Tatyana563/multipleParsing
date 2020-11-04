@@ -10,6 +10,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import ua.tpetrenko.esp.api.parser.DifferentItemsPerCityMarketParser;
 import ua.tpetrenko.esp.api.parser.MarketParser;
 import ua.tpetrenko.esp.api.dto.MarketInfo;
 import ua.tpetrenko.esp.api.handlers.CityHandler;
@@ -21,7 +22,7 @@ import ua.tpetrenko.esp.api.handlers.ProductItemHandler;
  */
 @Slf4j
 @Component
-public class TechnodomParser implements MarketParser {
+public class TechnodomParser implements DifferentItemsPerCityMarketParser {
 
     private static final MarketInfo INFO = new MarketInfo("Technodom", "https://technodom.kz/");
     private static final String CATEGORIES_PAGE = INFO.getUrl() + "all";

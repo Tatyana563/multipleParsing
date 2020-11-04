@@ -1,5 +1,6 @@
 package ua.tpetrenko.esp.core.tasks;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ua.tpetrenko.esp.api.dto.MarketInfo;
@@ -9,26 +10,27 @@ import ua.tpetrenko.esp.api.parser.ParserContext;
 /**
  * @author Roman Zdoronok
  */
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Slf4j
-@RequiredArgsConstructor
-public class SingleMarketParseTask implements Runnable {
+public abstract class AbstractMarketParserTask<P extends MarketParser> implements Runnable {
+    protected final P marketParser;
+    protected final ParserContext context;
 
-    private final MarketParser marketParser;
-    private final ParserContext context;
+    protected abstract void parseItems() throws Exception;
 
     @Override
-    public void run() {
+    public final void run() {
         MarketInfo marketInfo = marketParser.getMarketInfo();
         try {
-            log.info("Подготовка " + marketInfo);
+            log.info("Подготовка парсера для {}", marketInfo.getName());
             marketParser.prepareParser();
             marketParser.parseMainMenu(context.getMenuItemHandler());
-            marketParser.parseCities(context.getCityHandler());
-            marketParser.parseItems(context.getProductItemHandler());
+            parseItems();
         } catch (Exception e) {
-            log.error("Возникла проблема при парсинге магазина " + marketInfo, e);
+            log.error("Возникла проблема при парсинге магазина " + marketInfo.getName(), e);
         } finally {
             marketParser.destroyParser();
         }
     }
+
 }

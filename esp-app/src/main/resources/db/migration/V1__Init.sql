@@ -16,6 +16,7 @@ create table esp.city
 create table esp.market_city
 (
     id        bigserial primary key not null,
+    url       text                  not null,
     fk_market bigint                not null,
     fk_city   bigint                not null,
     constraint market_city__market_fkey foreign key (fk_market)
