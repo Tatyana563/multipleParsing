@@ -4,13 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <name>[ESP] API module</name>
-    <artifactId>esp-api</artifactId>
+    <name>[ESP] Implementation: Fora</name>
+    <artifactId>esp-fora</artifactId>
     <packaging>jar</packaging>
 
     <parent>
         <groupId>ua.tpetrenko</groupId>
-        <artifactId>esp-base</artifactId>
+        <artifactId>esp-impl</artifactId>
         <version>1.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>

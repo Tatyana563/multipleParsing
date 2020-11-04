@@ -4,34 +4,27 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <name>[ESP] Fora implementation</name>
-
-    <artifactId>esp-fora</artifactId>
+    <name>[ESP] Implementation: Technodom</name>
+    <artifactId>esp-technodom</artifactId>
     <packaging>jar</packaging>
 
     <parent>
         <groupId>ua.tpetrenko</groupId>
-        <artifactId>esp-base</artifactId>
+        <artifactId>esp-impl</artifactId>
         <version>1.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <dependencies>
         <dependency>
-            <groupId>ua.tpetrenko</groupId>
-            <artifactId>esp-api</artifactId>
-            <version>${project.version}</version>
+            <groupId>io.github.bonigarcia</groupId>
+            <artifactId>webdrivermanager</artifactId>
+            <version>4.2.2</version>
         </dependency>
 
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jsoup</groupId>
-            <artifactId>jsoup</artifactId>
-            <version>1.13.1</version>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-chrome-driver</artifactId>
         </dependency>
     </dependencies>
 

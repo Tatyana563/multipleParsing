@@ -4,10 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <name>[ESP] Technodom implementation</name>
-
-    <artifactId>esp-technodom</artifactId>
-    <packaging>jar</packaging>
+    <name>[ESP] Parsers Implementations Package</name>
+    <artifactId>esp-impl</artifactId>
+    <packaging>pom</packaging>
 
     <parent>
         <groupId>ua.tpetrenko</groupId>
@@ -15,6 +14,12 @@
         <version>1.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
+
+    <modules>
+        <module>esp-shopkz</module>
+        <module>esp-technodom</module>
+        <module>esp-fora</module>
+    </modules>
 
     <dependencies>
         <dependency>
@@ -29,14 +34,9 @@
         </dependency>
 
         <dependency>
-            <groupId>io.github.bonigarcia</groupId>
-            <artifactId>webdrivermanager</artifactId>
-            <version>4.2.2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-chrome-driver</artifactId>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.13.1</version>
         </dependency>
     </dependencies>
 
