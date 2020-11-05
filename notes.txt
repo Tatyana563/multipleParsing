@@ -1,0 +1,23 @@
+1) https://easyjava.ru/data/jpa/nasledovanie-v-jpa/
+join - how we get id?
+2) https://thorben-janssen.com/complete-guide-inheritance-strategies-jpa-hibernate/
+author @ManyToMany
+3) https://docs.jboss.org/hibernate/orm/5.2/userguide/html_single/Hibernate_User_Guide.html#entity-inheritance-joined-table
+
+Among all other inheritance alternatives, the single table strategy performs the best since it requires access to one table only. Because all subclass columns are stored in a single table, it’s not possible to use NOT NULL constraints anymore, so integrity checks must be moved either into the data access layer or enforced through CHECK or TRIGGER constraints.
+
+https://vladmihalcea.com/the-best-way-to-map-the-discriminatorcolumn-with-jpa-and-hibernate/
+
+@DiscriminatorFormula
+********************
+1) MenuItem
+    @ManyToOne
+    @JoinColumn(name = "fk_parent_item")
+    private MenuItem parentItem;
+
+2) .gitkeep
+
+3) where is section?
+
+
+
