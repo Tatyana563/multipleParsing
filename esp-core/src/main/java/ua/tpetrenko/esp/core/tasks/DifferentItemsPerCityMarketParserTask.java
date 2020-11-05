@@ -2,7 +2,7 @@ package ua.tpetrenko.esp.core.tasks;
 
 import lombok.extern.slf4j.Slf4j;
 import ua.tpetrenko.esp.api.parser.DifferentItemsPerCityMarketParser;
-import ua.tpetrenko.esp.api.parser.ParserContext;
+import ua.tpetrenko.esp.core.api.ParserContext;
 
 /**
  * @author Roman Zdoronok

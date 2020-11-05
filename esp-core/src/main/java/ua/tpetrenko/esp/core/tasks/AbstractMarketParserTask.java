@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ua.tpetrenko.esp.api.dto.MarketInfo;
 import ua.tpetrenko.esp.api.parser.MarketParser;
-import ua.tpetrenko.esp.api.parser.ParserContext;
+import ua.tpetrenko.esp.core.api.ParserContext;
 
 /**
  * @author Roman Zdoronok

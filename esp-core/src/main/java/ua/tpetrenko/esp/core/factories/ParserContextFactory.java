@@ -3,7 +3,7 @@ package ua.tpetrenko.esp.core.factories;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ua.tpetrenko.esp.api.dto.MarketInfo;
-import ua.tpetrenko.esp.api.parser.ParserContext;
+import ua.tpetrenko.esp.core.api.ParserContext;
 import ua.tpetrenko.esp.core.components.MarketParserContextImpl;
 import ua.tpetrenko.esp.core.model.Market;
 import ua.tpetrenko.esp.core.repository.MarketRepository;

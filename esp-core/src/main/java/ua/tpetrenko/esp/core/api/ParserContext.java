@@ -1,4 +1,4 @@
-package ua.tpetrenko.esp.api.parser;
+package ua.tpetrenko.esp.core.api;
 
 import ua.tpetrenko.esp.api.handlers.CityHandler;
 import ua.tpetrenko.esp.api.handlers.MenuItemHandler;

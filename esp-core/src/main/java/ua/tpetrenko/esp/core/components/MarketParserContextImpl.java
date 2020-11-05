@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import ua.tpetrenko.esp.api.handlers.CityHandler;
 import ua.tpetrenko.esp.api.handlers.MenuItemHandler;
 import ua.tpetrenko.esp.api.handlers.ProductItemHandler;
-import ua.tpetrenko.esp.api.parser.ParserContext;
+import ua.tpetrenko.esp.core.api.ParserContext;
 import ua.tpetrenko.esp.core.factories.CityHandlerFactory;
 import ua.tpetrenko.esp.core.factories.MenuItemHandlerFactory;
 import ua.tpetrenko.esp.core.factories.ProductItemHandlerFactory;
