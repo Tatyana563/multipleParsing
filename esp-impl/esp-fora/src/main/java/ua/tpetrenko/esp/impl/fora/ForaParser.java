@@ -120,10 +120,10 @@ public class ForaParser implements DifferentItemsPerCityMarketParser {
         String groupUrlWithoutCity = URLUtil.removeCityFromUrl(groupUrl);
         log.info("\t- {}", groupText);
         MenuItemDto group = new MenuItemDto(groupText, groupUrlWithoutCity);
-        MenuItemHandler categoryHandler = groupHandler.handleSubMenu(group);
         if (categories.isEmpty()) {
-            categoryHandler.handle(group);
+            groupHandler.handle(group);
         } else {
+            MenuItemHandler categoryHandler = groupHandler.handleSubMenu(group);
             for (Element categoryElement : categories) {
                 Element categoryLink = categoryElement.selectFirst(">a");
                 String categoryUrl = categoryLink.absUrl("href");

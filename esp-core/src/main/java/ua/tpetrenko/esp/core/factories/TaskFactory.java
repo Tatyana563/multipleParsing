@@ -3,7 +3,7 @@ package ua.tpetrenko.esp.core.factories;
 import org.springframework.stereotype.Component;
 import ua.tpetrenko.esp.api.parser.DifferentItemsPerCityMarketParser;
 import ua.tpetrenko.esp.api.parser.MarketParser;
-import ua.tpetrenko.esp.api.parser.ParserContext;
+import ua.tpetrenko.esp.core.api.ParserContext;
 import ua.tpetrenko.esp.api.parser.SimpleMarketParser;
 import ua.tpetrenko.esp.core.tasks.DifferentItemsPerCityMarketParserTask;
 import ua.tpetrenko.esp.core.tasks.SimpleMarketParserTask;

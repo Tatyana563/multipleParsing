@@ -1,6 +1,5 @@
 package ua.tpetrenko.esp.api.parser;
 
-import ua.tpetrenko.esp.api.handlers.CityHandler;
 import ua.tpetrenko.esp.api.handlers.ProductItemHandler;
 
 /**

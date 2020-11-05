@@ -1,6 +1,6 @@
 package ua.tpetrenko.esp.core.tasks;
 
-import ua.tpetrenko.esp.api.parser.ParserContext;
+import ua.tpetrenko.esp.core.api.ParserContext;
 import ua.tpetrenko.esp.api.parser.SimpleMarketParser;
 
 /**
