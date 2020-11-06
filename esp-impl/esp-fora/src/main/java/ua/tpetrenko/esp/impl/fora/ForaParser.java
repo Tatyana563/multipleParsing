@@ -15,12 +15,13 @@ import ua.tpetrenko.esp.api.dto.MarketInfo;
 import ua.tpetrenko.esp.api.handlers.CityHandler;
 import ua.tpetrenko.esp.api.handlers.MenuItemHandler;
 import ua.tpetrenko.esp.api.handlers.ProductItemHandler;
+import ua.tpetrenko.esp.app.configuration.ConfigProperties;
 
 @Slf4j
 @Component
 public class ForaParser implements DifferentItemsPerCityMarketParser {
 
-    private static final MarketInfo INFO = new MarketInfo("Fora.kz", "https://fora.kz/");
+    private static final MarketInfo INFO = new MarketInfo("Fora.kz", new ConfigProperties().getFora());
 
     private Document rootPage;
 

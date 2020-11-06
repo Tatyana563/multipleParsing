@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "parser.chrome.path",
+      "type": "java.lang.String",
+      "description": "Description for parser.chrome.path."
+  }
+] }
