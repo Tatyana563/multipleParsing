@@ -10,7 +10,7 @@
     <dependencies>
         <dependency>
             <groupId>ua.tpetrenko</groupId>
-            <artifactId>esp-app</artifactId>
+            <artifactId>esp-api</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

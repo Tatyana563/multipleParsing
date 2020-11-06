@@ -1,4 +1,4 @@
-package ua.tpetrenko.esp.app.configuration;
+package ua.tpetrenko.esp.api;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -26,4 +26,8 @@ public class ConfigProperties {
     private String poolSize;
     @NotEmpty
     private String fora;
+    @NotEmpty
+    private String technodom;
+    @NotEmpty
+    private String chromePath;
 }

@@ -1,8 +1,8 @@
 {
   "properties": [
     {
-      "name": "parser.chrome.path",
+      "name": "parser.timeoutMs",
       "type": "java.lang.String",
-      "description": "Description for parser.chrome.path."
+      "description": "Description for parser.timeoutMs."
   }
 ] }
