@@ -23,6 +23,11 @@
         </dependency>
         <dependency>
             <groupId>ua.tpetrenko</groupId>
+            <artifactId>esp-configuration</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ua.tpetrenko</groupId>
             <artifactId>esp-core</artifactId>
             <version>${project.version}</version>
         </dependency>

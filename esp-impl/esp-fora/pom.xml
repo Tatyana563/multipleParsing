@@ -7,13 +7,7 @@
     <name>[ESP] Implementation: Fora</name>
     <artifactId>esp-fora</artifactId>
     <packaging>jar</packaging>
-    <dependencies>
-        <dependency>
-            <groupId>ua.tpetrenko</groupId>
-            <artifactId>esp-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-    </dependencies>
+
     <parent>
         <groupId>ua.tpetrenko</groupId>
         <artifactId>esp-impl</artifactId>

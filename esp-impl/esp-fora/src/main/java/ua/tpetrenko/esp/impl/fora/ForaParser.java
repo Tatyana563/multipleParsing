@@ -2,13 +2,13 @@ package ua.tpetrenko.esp.impl.fora;
 
 import java.util.ArrayList;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Component;
-import ua.tpetrenko.esp.api.ConfigProperties;
 import ua.tpetrenko.esp.api.dto.CityDto;
 import ua.tpetrenko.esp.api.dto.MenuItemDto;
 import ua.tpetrenko.esp.api.parser.DifferentItemsPerCityMarketParser;
@@ -16,13 +16,16 @@ import ua.tpetrenko.esp.api.dto.MarketInfo;
 import ua.tpetrenko.esp.api.handlers.CityHandler;
 import ua.tpetrenko.esp.api.handlers.MenuItemHandler;
 import ua.tpetrenko.esp.api.handlers.ProductItemHandler;
-
+import ua.tpetrenko.esp.impl.fora.properties.ForaProperties;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class ForaParser implements DifferentItemsPerCityMarketParser {
 
-    private static final MarketInfo INFO = new MarketInfo("Fora.kz", new ConfigProperties().getFora());
+    private static final MarketInfo INFO = new MarketInfo("Fora.kz", "https://fora.kz/");
+
+    private final ForaProperties foraProperties;
 
     private Document rootPage;
 

@@ -25,6 +25,16 @@
 
     <dependencies>
         <dependency>
+            <groupId>ua.tpetrenko</groupId>
+            <artifactId>esp-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ua.tpetrenko</groupId>
+            <artifactId>esp-configuration</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
         </dependency>

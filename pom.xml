@@ -35,6 +35,7 @@
     <!-- Project modules -->
     <modules>
         <module>esp-api</module>
+        <module>esp-configuration</module>
         <module>esp-core</module>
         <module>esp-app</module>
         <module>esp-impl</module>

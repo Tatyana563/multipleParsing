@@ -1,8 +1,0 @@
-{
-  "properties": [
-    {
-      "name": "parser.timeoutMs",
-      "type": "java.lang.String",
-      "description": "Description for parser.timeoutMs."
-  }
-] }
