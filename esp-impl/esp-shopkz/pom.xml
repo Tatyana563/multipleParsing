@@ -14,5 +14,11 @@
         <version>1.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-
+    <dependencies>
+        <dependency>
+        <groupId>ua.tpetrenko</groupId>
+        <artifactId>esp-api</artifactId>
+        <version>${project.version}</version>
+    </dependency>
+    </dependencies>
 </project>
