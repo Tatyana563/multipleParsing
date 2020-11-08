@@ -7,6 +7,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ua.tpetrenko.esp.api.ConfigProperties;
 import ua.tpetrenko.esp.api.dto.CityDto;
@@ -22,7 +23,10 @@ import ua.tpetrenko.esp.api.handlers.ProductItemHandler;
 @Component
 public class ForaParser implements DifferentItemsPerCityMarketParser {
 
-    private static final MarketInfo INFO = new MarketInfo("Fora.kz", new ConfigProperties().getFora());
+    @Autowired
+    ConfigProperties configProperties;
+
+    private final MarketInfo INFO = new MarketInfo("Fora.kz", configProperties.getFora());
 
     private Document rootPage;
 
