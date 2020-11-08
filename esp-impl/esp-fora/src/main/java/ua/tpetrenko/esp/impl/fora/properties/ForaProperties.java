@@ -16,13 +16,11 @@ import ua.tpetrenko.esp.configuration.properties.model.ConnectionProperties;
 @Configuration
 @ConfigurationProperties(prefix = "esp.fora")
 public class ForaProperties {
-    private final GlobalProperties globalProperties;
 
     @NestedConfigurationProperty
     private ConnectionProperties connection;
 
     public ForaProperties(GlobalProperties globalProperties) {
-        this.globalProperties = globalProperties;
         this.connection = globalProperties.getConnection();
     }
 

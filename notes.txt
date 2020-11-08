@@ -19,5 +19,20 @@ https://vladmihalcea.com/the-best-way-to-map-the-discriminatorcolumn-with-jpa-an
 
 3) where is section?
 
+************************
+select item.id, item.name, count(child.id) as child_count
+from esp.menu_item as item
+    left join esp.menu_item as child on item.id = child.fk_parent_item
+group by item.id, item.name order by child_count;
+
+
+
+select item.id, item.name, count(child.id) as child_count
+from esp.menu_item as item
+    left join esp.menu_item as child on item.id = child.fk_parent_item
+group by item.id, item.name
+having count(child.id) = 0
+order by child_count;
+
 
 
