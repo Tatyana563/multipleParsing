@@ -27,7 +27,7 @@ import ua.tpetrenko.esp.impl.technodom.properties.TechnodomProperties;
 @Component
 @RequiredArgsConstructor
 public class TechnodomParser implements DifferentItemsPerCityMarketParser {
-    private static Logger log = LoggerFactory.getLogger("TECHNODOM");
+    private static Logger log = LoggerFactory.getLogger("TECHNODOMLOGGER");
     private static final MarketInfo INFO = new MarketInfo("Technodom", "https://technodom.kz/");
     private static final String CATEGORIES_PAGE = INFO.getUrl() + "all";
 

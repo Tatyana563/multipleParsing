@@ -24,7 +24,7 @@ import ua.tpetrenko.esp.impl.fora.properties.ForaProperties;
 @Component
 @RequiredArgsConstructor
 public class ForaParser implements DifferentItemsPerCityMarketParser {
-    private static Logger log = LoggerFactory.getLogger("FORA");
+    private static Logger log = LoggerFactory.getLogger("FORALOGGER");
     private static final MarketInfo INFO = new MarketInfo("Fora.kz", "https://fora.kz/");
 
     private final ForaProperties foraProperties;

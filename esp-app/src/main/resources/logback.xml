@@ -1,7 +1,7 @@
 <configuration>
 <property name="LOGS_HOME" value="/home/tatyana/IdeaProjects/multipleParsing" />
 
-<appender name="FORA" class="ch.qos.logback.core.ConsoleAppender">
+<appender name="FORA" class="ch.qos.logback.core.rolling.RollingFileAppender">
 <file>${LOG_PATH}/log_fora.log</file>
 <layout class="ch.qos.logback.classic.PatternLayout">
     <Pattern>
@@ -38,7 +38,7 @@
 </appender>
 
 <appender name="TECHNODOM" class="ch.qos.logback.core.rolling.RollingFileAppender">
-<file>${LOGS_HOME}mtechnodom.log</file>
+    <file>${LOG_PATH}/log_technodom.log</file>
 <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
     <Pattern>
         %d{yyyy-MM-dd HH:mm:ss};%msg%n
@@ -54,14 +54,12 @@
 </rollingPolicy>
 </appender>
 
-<logger name="com.myCompany.myProject" level="info" additivity="false">
+<logger name="FORALOGGER" level="info" additivity="false">
 <appender-ref ref="FORA" />
-<appender-ref ref="STDOUT" />
 </logger>
 
-<logger name="esp-log" level="info" additivity="false">
+<logger name="TECHNODOMLOGGER" level="info" additivity="false">
 <appender-ref ref="TECHNODOM" />
-<appender-ref ref="FORA" />
 </logger>
 
 <!--<root level="info">-->
