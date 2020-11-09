@@ -8,6 +8,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import ua.tpetrenko.esp.api.dto.CityDto;
 import ua.tpetrenko.esp.api.dto.MenuItemDto;
@@ -18,11 +20,11 @@ import ua.tpetrenko.esp.api.handlers.MenuItemHandler;
 import ua.tpetrenko.esp.api.handlers.ProductItemHandler;
 import ua.tpetrenko.esp.impl.fora.properties.ForaProperties;
 
-@Slf4j
+//@Slf4j
 @Component
 @RequiredArgsConstructor
 public class ForaParser implements DifferentItemsPerCityMarketParser {
-
+    private static Logger log = LoggerFactory.getLogger("FORA");
     private static final MarketInfo INFO = new MarketInfo("Fora.kz", "https://fora.kz/");
 
     private final ForaProperties foraProperties;

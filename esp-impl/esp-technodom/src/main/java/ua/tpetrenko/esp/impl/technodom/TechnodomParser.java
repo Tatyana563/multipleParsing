@@ -9,6 +9,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ua.tpetrenko.esp.api.parser.DifferentItemsPerCityMarketParser;
@@ -21,17 +23,17 @@ import ua.tpetrenko.esp.impl.technodom.properties.TechnodomProperties;
 /**
  * @author Roman Zdoronok
  */
-@Slf4j
+//@Slf4j
 @Component
 @RequiredArgsConstructor
 public class TechnodomParser implements DifferentItemsPerCityMarketParser {
-
+    private static Logger log = LoggerFactory.getLogger("TECHNODOM");
     private static final MarketInfo INFO = new MarketInfo("Technodom", "https://technodom.kz/");
     private static final String CATEGORIES_PAGE = INFO.getUrl() + "all";
 
     private final TechnodomProperties technodomProperties;
 
-    @Value("${parser.chrome.path}")
+//    @Value("${parser.chrome.path}")
     private String path;
 
     @Override
@@ -41,7 +43,7 @@ public class TechnodomParser implements DifferentItemsPerCityMarketParser {
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
     }
 
     @Override
