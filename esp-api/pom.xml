@@ -6,17 +6,7 @@
 
     <name>[ESP] API module</name>
     <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>${project.version}</source>
-                    <target>${project.version}</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+      </build>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -5,18 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <name>[ESP] Implementation: Shopkz</name>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>${project.version}</source>
-                    <target>${project.version}</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+
     <artifactId>esp-shopkz</artifactId>
     <packaging>jar</packaging>
 
