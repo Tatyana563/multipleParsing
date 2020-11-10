@@ -39,6 +39,7 @@
         <module>esp-core</module>
         <module>esp-app</module>
         <module>esp-impl</module>
+        <module>esp-distrib</module>
     </modules>
 
     <dependencies>
