@@ -1,6 +1,8 @@
 package ua.tpetrenko.esp.impl.shopkz;
 
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import ua.tpetrenko.esp.api.parser.DifferentItemsPerCityMarketParser;
 import ua.tpetrenko.esp.api.dto.MarketInfo;
@@ -11,10 +13,10 @@ import ua.tpetrenko.esp.api.handlers.ProductItemHandler;
 /**
  * @author Roman Zdoronok
  */
-@Slf4j
+//@Slf4j
 @Component
 public class ShopkzParser implements DifferentItemsPerCityMarketParser {
-
+    private static Logger log = LoggerFactory.getLogger("SHOPKZLOGGER");
     private static final MarketInfo INFO = new MarketInfo("Shop.kz", "https://shop.kz/");
 
     @Override

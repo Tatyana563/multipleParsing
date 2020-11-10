@@ -1,69 +1,104 @@
 <configuration>
-<property name="LOGS_HOME" value="/home/tatyana/IdeaProjects/multipleParsing" />
+    <property name="LOGS_HOME" value="/home/tatyana/IdeaProjects/multipleParsing"/>
 
-<appender name="FORA" class="ch.qos.logback.core.rolling.RollingFileAppender">
-<file>${LOG_PATH}/log_fora.log</file>
-<layout class="ch.qos.logback.classic.PatternLayout">
-    <Pattern>
-        %d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n
-    </Pattern>
-</layout>
-    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-        <fileNamePattern>logs/archived/app.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
-        <!-- each archived file, size max 10MB -->
-        <maxFileSize>10MB</maxFileSize>
-        <!-- total size of all archive files, if total size > 20GB, it will delete old archived file -->
-        <totalSizeCap>20GB</totalSizeCap>
-        <!-- 60 days to keep -->
-        <maxHistory>60</maxHistory>
-    </rollingPolicy>
-</appender>
+    <appender name="FORA" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/log_fora.log</file>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>
+                %d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n
+            </Pattern>
+        </layout>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>logs/archived/app.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <!-- each archived file, size max 10MB -->
+            <maxFileSize>10MB</maxFileSize>
+            <!-- total size of all archive files, if total size > 20GB, it will delete old archived file -->
+            <totalSizeCap>20GB</totalSizeCap>
+            <!-- 60 days to keep -->
+            <maxHistory>60</maxHistory>
+        </rollingPolicy>
+    </appender>
 
-<appender name="SHOPKZ"
-          class="ch.qos.logback.core.rolling.RollingFileAppender">
-<file>${LOGS_HOME}shopkz.log</file>
-<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-    <Pattern>
-        %d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n
-    </Pattern>
-</encoder>
+    <appender name="SHOPKZ"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOGS_HOME}shopkz.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>
+                %d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n
+            </Pattern>
+        </encoder>
 
-<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-    <!-- rollover daily -->
-    <fileNamePattern>${LOGS_HOME}shopkz.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-    <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-        <maxFileSize>100MB</maxFileSize>
-    </timeBasedFileNamingAndTriggeringPolicy>
-</rollingPolicy>
-</appender>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${LOGS_HOME}shopkz.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
 
-<appender name="TECHNODOM" class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <file>${LOG_PATH}/log_technodom.log</file>
-<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-    <Pattern>
-        %d{yyyy-MM-dd HH:mm:ss};%msg%n
-    </Pattern>
-</encoder>
+    <appender name="TECHNODOM" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/log_technodom.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>
+                %d{yyyy-MM-dd HH:mm:ss};%msg%n
+            </Pattern>
+        </encoder>
 
-<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-    <!-- rollover daily -->
-    <fileNamePattern>${LOGS_HOME}technodom.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-    <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-        <maxFileSize>100MB</maxFileSize>
-    </timeBasedFileNamingAndTriggeringPolicy>
-</rollingPolicy>
-</appender>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${LOGS_HOME}technodom.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
+    <appender name="MECHTA" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/log_technodom.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>
+                %d{yyyy-MM-dd HH:mm:ss};%msg%n
+            </Pattern>
+        </encoder>
 
-<logger name="FORALOGGER" level="info" additivity="false">
-<appender-ref ref="FORA" />
-</logger>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${LOGS_HOME}technodom.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
+    <appender name="SULPAK" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/log_technodom.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>
+                %d{yyyy-MM-dd HH:mm:ss};%msg%n
+            </Pattern>
+        </encoder>
 
-<logger name="TECHNODOMLOGGER" level="info" additivity="false">
-<appender-ref ref="TECHNODOM" />
-</logger>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${LOGS_HOME}technodom.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
+    <logger name="FORALOGGER" level="info" additivity="false">
+        <appender-ref ref="FORA"/>
+    </logger>
 
-<!--<root level="info">-->
-<!--<appender-ref ref="FORA" />-->
-<!--<appender-ref ref="TECHNODOM" />-->
-<!--</root>-->
-    </configuration>
+    <logger name="TECHNODOMLOGGER" level="info" additivity="false">
+        <appender-ref ref="TECHNODOM"/>
+    </logger>
+    <logger name="MECHTALOGGER" level="info" additivity="false">
+        <appender-ref ref="MECHTA"/>
+    </logger>
+    <logger name="SULPAKLOGGER" level="info" additivity="false">
+        <appender-ref ref="SULPAK"/>
+    </logger>
+    <logger name="SHOPKZLOGGER" level="info" additivity="false">
+        <appender-ref ref="SHOPKZ"/>
+    </logger>
+</configuration>
