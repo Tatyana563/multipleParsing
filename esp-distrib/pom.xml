@@ -3,27 +3,60 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>esp-base</artifactId>
         <groupId>ua.tpetrenko</groupId>
+        <artifactId>esp-base</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
+    <dependencies>
+    <dependency>
+        <groupId>ua.tpetrenko</groupId>
+        <artifactId>esp-api</artifactId>
+        <version>${project.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>ua.tpetrenko</groupId>
+        <artifactId>esp-configuration</artifactId>
+        <version>${project.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>ua.tpetrenko</groupId>
+        <artifactId>esp-core</artifactId>
+        <version>${project.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>ua.tpetrenko</groupId>
+        <artifactId>esp-shopkz</artifactId>
+        <version>${project.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>ua.tpetrenko</groupId>
+        <artifactId>esp-technodom</artifactId>
+        <version>${project.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>ua.tpetrenko</groupId>
+        <artifactId>esp-fora</artifactId>
+        <version>${project.version}</version>
+    </dependency>
+</dependencies>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>esp-distrib</artifactId>
+    <properties>
+        <maven.compiler.source>${project.version}</maven.compiler.source>
+        <maven.compiler.target>${project.version}</maven.compiler.target>
+    </properties>
+
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>3.3.0</version>
                 <configuration>
                     <descriptors>
-                        <descriptor>src/main/resources/distribution/esp-distribution.xml</descriptor>
+                        <descriptor>src/main/resources/distribution/fora-distribution.xml</descriptor>
                     </descriptors>
-                    <finalName>esp-distribution</finalName>
+                    <finalName>fora-distribution</finalName>
                 </configuration>
                 <executions>
                     <execution>
