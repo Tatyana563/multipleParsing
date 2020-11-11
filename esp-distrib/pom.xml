@@ -2,6 +2,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
     <name>[ESP] Distribution project</name>
     <description>E shops multiple parsers project</description>
 
@@ -11,18 +13,42 @@
     <packaging>pom</packaging>
 
     <dependencies>
-    <dependency>
-        <groupId>ua.tpetrenko</groupId>
-        <artifactId>esp-base</artifactId>
-        <version>1.0-SNAPSHOT</version>
-    </dependency>
+        <dependency>
+            <groupId>ua.tpetrenko</groupId>
+            <artifactId>esp-app</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
-    <modelVersion>4.0.0</modelVersion>
-
-
 
     <build>
         <plugins>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/config</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}/../esp-app/src/main/resources</directory>
+                                    <excludes>
+                                        <exclude>application-*.properties</exclude>
+                                    </excludes>
+                                    <includes>
+                                        <include>application.properties</include>
+                                        <include>*.xml</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
@@ -30,6 +56,7 @@
                         <descriptor>src/main/resources/distribution/esp-distribution.xml</descriptor>
                     </descriptors>
                     <finalName>esp-distribution</finalName>
+                    <appendAssemblyId>false</appendAssemblyId>
                 </configuration>
                 <executions>
                     <execution>

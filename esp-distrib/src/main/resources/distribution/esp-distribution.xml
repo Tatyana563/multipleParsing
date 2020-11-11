@@ -3,6 +3,17 @@
     <formats>
         <format>zip</format>
     </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <dependencySets>
+        <dependencySet>
+            <!--Include runtime dependencies-->
+            <outputDirectory>lib</outputDirectory>
+            <useProjectArtifact>false</useProjectArtifact>
+            <unpack>false</unpack>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <useTransitiveFiltering>false</useTransitiveFiltering>
+        </dependencySet>
+    </dependencySets>
     <fileSets>
         <fileSet>
             <directory>src/main/resources/bin</directory>
@@ -14,22 +25,8 @@
             <fileMode>0755</fileMode>
         </fileSet>
         <fileSet>
-            <directory>src/main/resources</directory>
+            <directory>${project.build.directory}/config</directory>
             <outputDirectory>config</outputDirectory>
-            <excludes>
-                <exclude>application-*.properties</exclude>
-            </excludes>
-            <includes>
-                <include>application.properties</include>
-                <include>*.xml</include>
-            </includes>
-        </fileSet>
-        <fileSet>
-            <directory>target</directory>
-            <outputDirectory>lib</outputDirectory>
-            <includes>
-                <include>*.jar</include>
-            </includes>
         </fileSet>
         <fileSet>
             <directory>src/main/resources</directory>
