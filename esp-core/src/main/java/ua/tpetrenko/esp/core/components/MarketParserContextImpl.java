@@ -38,6 +38,6 @@ public class MarketParserContextImpl implements ParserContext {
 
     @Override
     public ProductItemHandler getProductItemHandler() {
-        return productItemHandlerFactory.getProductItemHandler(market);
+        return productItemHandlerFactory.getProductItemHandler(null);
     }
 }

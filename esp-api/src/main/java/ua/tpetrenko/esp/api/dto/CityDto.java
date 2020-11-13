@@ -1,9 +1,6 @@
 package ua.tpetrenko.esp.api.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 /**
