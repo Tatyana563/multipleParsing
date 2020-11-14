@@ -20,11 +20,11 @@ import ua.tpetrenko.esp.api.handlers.MenuItemHandler;
 import ua.tpetrenko.esp.api.handlers.ProductItemHandler;
 import ua.tpetrenko.esp.impl.fora.properties.ForaProperties;
 
-//@Slf4j
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class ForaParser implements DifferentItemsPerCityMarketParser {
-    private static Logger log = LoggerFactory.getLogger("FORALOGGER");
+//    private static Logger log = LoggerFactory.getLogger("FORALOGGER");
     private static final MarketInfo INFO = new MarketInfo("Fora.kz", "https://fora.kz/");
 
     private final ForaProperties foraProperties;

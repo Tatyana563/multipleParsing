@@ -33,6 +33,22 @@ from esp.menu_item as item
 group by item.id, item.name
 having count(child.id) = 0
 order by child_count;
+*****************
+ <pluginManagement> in parent's pom add
+  <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+        </plugins>
 
-
-
+for all children
+****************
+separately implemented in children add
+ <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>  individual conf <configuration>
+            </plugin>
+        </plugins>

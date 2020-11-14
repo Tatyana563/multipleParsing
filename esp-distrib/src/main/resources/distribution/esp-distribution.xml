@@ -1,4 +1,5 @@
-<assembly>
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.1.0 http://maven.apache.org/xsd/assembly-2.1.0.xsd">
     <id>archive</id>
     <formats>
         <format>zip</format>
@@ -12,6 +13,7 @@
             <unpack>false</unpack>
             <useTransitiveDependencies>false</useTransitiveDependencies>
             <useTransitiveFiltering>false</useTransitiveFiltering>
+            <outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
         </dependencySet>
     </dependencySets>
     <fileSets>
