@@ -1,15 +1,18 @@
 package ua.tpetrenko.esp.impl.fora;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import ua.tpetrenko.esp.api.dto.CityDto;
 import ua.tpetrenko.esp.api.dto.MenuItemDto;
@@ -24,7 +27,7 @@ import ua.tpetrenko.esp.impl.fora.properties.ForaProperties;
 @Component
 @RequiredArgsConstructor
 public class ForaParser implements DifferentItemsPerCityMarketParser {
-//    private static Logger log = LoggerFactory.getLogger("FORALOGGER");
+    //    private static Logger log = LoggerFactory.getLogger("FORALOGGER");
     private static final MarketInfo INFO = new MarketInfo("Fora.kz", "https://fora.kz/");
 
     private final ForaProperties foraProperties;
@@ -36,6 +39,7 @@ public class ForaParser implements DifferentItemsPerCityMarketParser {
         return INFO;
     }
 
+    //TODO: use configuration properties
     @Override
     public boolean isEnabled() {
         return true;
@@ -51,10 +55,11 @@ public class ForaParser implements DifferentItemsPerCityMarketParser {
     @Override
     public void parseMainMenu(MenuItemHandler sectionHandler) {
 
-        if(rootPage == null) {
+        if (rootPage == null) {
             throw new IllegalStateException("Не была получена главная страница");
         }
 
+        //TODO: filter 'enabled' sections
         Elements sectionElements = rootPage.select("#js-categories-menu>li");
         log.info("Найдено {} секций.", sectionElements.size());
         for (Element sectionElement : sectionElements) {
@@ -89,7 +94,7 @@ public class ForaParser implements DifferentItemsPerCityMarketParser {
     @Override
     public void parseCities(CityHandler cityHandler) {
 
-        if(rootPage == null) {
+        if (rootPage == null) {
             throw new IllegalStateException("Не была получена главная страница");
         }
 
@@ -106,8 +111,8 @@ public class ForaParser implements DifferentItemsPerCityMarketParser {
     }
 
     @Override
-    public void parseItems(ProductItemHandler productItemHandler) {
-        // Nothing to do.
+    public void parseItems(CityDto cityDto, MenuItemDto menuItemDto, ProductItemHandler productItemHandler) throws IOException {
+        new SingleCategoryProcessor(cityDto, menuItemDto, productItemHandler, prepareCityCookies(cityDto)).run();
     }
 
     @Override
@@ -115,6 +120,17 @@ public class ForaParser implements DifferentItemsPerCityMarketParser {
         // Nothing to do.
     }
 
+    private Map<String, String> prepareCityCookies(CityDto cityDto) throws IOException {
+        log.info("Готовим cookies для города {}", cityDto.getName());
+        Map<String, String> cookies = new HashMap<>();
+        String urlWithCity = INFO.getUrl() + cityDto.getUrl();
+        Connection.Response response = Jsoup.connect(urlWithCity)
+                .cookies(cookies)
+                .method(Connection.Method.GET)
+                .execute();
+        cookies.putAll(response.cookies());
+        return cookies;
+    }
 
     private void processGroupWithCategories(MenuItemHandler groupHandler, Element currentGroup, List<Element> categories) {
         if (currentGroup == null) {

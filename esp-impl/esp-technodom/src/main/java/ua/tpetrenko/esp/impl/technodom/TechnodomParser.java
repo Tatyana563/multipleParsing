@@ -13,6 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import ua.tpetrenko.esp.api.dto.CityDto;
+import ua.tpetrenko.esp.api.dto.MenuItemDto;
 import ua.tpetrenko.esp.api.parser.DifferentItemsPerCityMarketParser;
 import ua.tpetrenko.esp.api.dto.MarketInfo;
 import ua.tpetrenko.esp.api.handlers.CityHandler;
@@ -62,7 +64,7 @@ public class TechnodomParser implements DifferentItemsPerCityMarketParser {
     }
 
     @Override
-    public void parseItems(ProductItemHandler productItemHandler) {
+    public void parseItems(CityDto cityDto, MenuItemDto menuItemDto, ProductItemHandler productItemHandler) {
         // Nothing to do.
     }
 

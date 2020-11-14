@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Configuration;
 import ua.tpetrenko.esp.configuration.properties.GlobalProperties;
 import ua.tpetrenko.esp.configuration.properties.model.ConnectionProperties;
 
+import java.util.List;
+
 /**
  * @author Roman Zdoronok
  */
@@ -16,12 +18,14 @@ import ua.tpetrenko.esp.configuration.properties.model.ConnectionProperties;
 @Configuration
 @ConfigurationProperties(prefix = "esp.fora")
 public class ForaProperties {
-
+//    private boolean enabled;
+//    private List<String> includedCategories;
     @NestedConfigurationProperty
     private ConnectionProperties connection;
 
     public ForaProperties(GlobalProperties globalProperties) {
         this.connection = globalProperties.getConnection();
+//        this.enabled = globalProperties.isEnabled();
     }
 
 }
