@@ -10,11 +10,9 @@ import ua.tpetrenko.esp.api.parser.DifferentItemsPerCityMarketParser;
 import ua.tpetrenko.esp.core.api.ParserContext;
 import ua.tpetrenko.esp.core.model.MarketCity;
 import ua.tpetrenko.esp.core.model.MenuItem;
-import ua.tpetrenko.esp.core.repository.CityRepository;
 import ua.tpetrenko.esp.core.repository.MarketCityRepository;
 import ua.tpetrenko.esp.core.repository.MenuItemRepository;
 
-import java.util.List;
 
 /**
  * @author Roman Zdoronok
@@ -43,7 +41,7 @@ public class DifferentItemsPerCityMarketParserTask extends AbstractMarketParserT
                 for (MenuItem category : categories) {
                     marketParser.parseItems(new CityDto(city.getCity().getName(), city.getUrl()),
                             new MenuItemDto(category.getName(), category.getUrl()),
-                            context.getProductItemHandler(city.getCity(), category));
+                            context.getProductItemHandler(city, category));
                 }
 
             }
