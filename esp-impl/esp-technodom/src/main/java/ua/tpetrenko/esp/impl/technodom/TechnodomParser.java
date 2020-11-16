@@ -45,7 +45,7 @@ public class TechnodomParser implements DifferentItemsPerCityMarketParser {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return false;
     }
 
     @Override
