@@ -5,7 +5,6 @@ import ua.tpetrenko.esp.api.handlers.MenuItemHandler;
 import ua.tpetrenko.esp.api.handlers.ProductItemHandler;
 import ua.tpetrenko.esp.core.model.City;
 import ua.tpetrenko.esp.core.model.Market;
-import ua.tpetrenko.esp.core.model.MarketCity;
 import ua.tpetrenko.esp.core.model.MenuItem;
 
 /**
@@ -15,5 +14,5 @@ public interface ParserContext {
     Market getMarket();
     MenuItemHandler getMenuItemHandler();
     CityHandler getCityHandler();
-    ProductItemHandler getProductItemHandler(MarketCity marketCity, MenuItem menuItem);
+    ProductItemHandler getProductItemHandler(City city, MenuItem menuItem);
 }
