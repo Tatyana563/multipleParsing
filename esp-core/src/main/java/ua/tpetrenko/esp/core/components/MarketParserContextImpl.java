@@ -10,7 +10,6 @@ import ua.tpetrenko.esp.core.factories.MenuItemHandlerFactory;
 import ua.tpetrenko.esp.core.factories.ProductItemHandlerFactory;
 import ua.tpetrenko.esp.core.model.City;
 import ua.tpetrenko.esp.core.model.Market;
-import ua.tpetrenko.esp.core.model.MarketCity;
 import ua.tpetrenko.esp.core.model.MenuItem;
 
 /**
@@ -41,7 +40,7 @@ public class MarketParserContextImpl implements ParserContext {
     }
 
     @Override
-    public ProductItemHandler getProductItemHandler(MarketCity marketCity, MenuItem menuItem) {
-        return productItemHandlerFactory.getProductItemHandler(marketCity, menuItem);
+    public ProductItemHandler getProductItemHandler(City city, MenuItem menuItem) {
+        return productItemHandlerFactory.getProductItemHandler(city, menuItem);
     }
 }

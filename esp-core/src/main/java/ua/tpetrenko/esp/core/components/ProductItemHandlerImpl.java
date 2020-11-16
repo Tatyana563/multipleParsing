@@ -4,7 +4,10 @@ import lombok.RequiredArgsConstructor;
 import ua.tpetrenko.esp.api.dto.ProductItemDto;
 import ua.tpetrenko.esp.api.handlers.ProductItemHandler;
 import ua.tpetrenko.esp.core.mappers.ProductItemsMapper;
-import ua.tpetrenko.esp.core.model.*;
+import ua.tpetrenko.esp.core.model.City;
+import ua.tpetrenko.esp.core.model.MenuItem;
+import ua.tpetrenko.esp.core.model.ProductItem;
+import ua.tpetrenko.esp.core.model.ProductPrice;
 import ua.tpetrenko.esp.core.repository.ProductItemRepository;
 import ua.tpetrenko.esp.core.repository.ProductPriceRepository;
 
@@ -14,7 +17,7 @@ import ua.tpetrenko.esp.core.repository.ProductPriceRepository;
 @RequiredArgsConstructor
 public class ProductItemHandlerImpl implements ProductItemHandler {
 
-    private final MarketCity marketCity;
+    private final City city;
     private final MenuItem menuItem;
     private final ProductItemRepository productItemRepository;
     private final ProductPriceRepository productPriceRepository;
@@ -27,10 +30,10 @@ public class ProductItemHandlerImpl implements ProductItemHandler {
                                                        .orElseGet(() -> new ProductItem().setMenuItem(menuItem));
         productItem = productItemsMapper.toEntity(productItem, itemDto);
         ProductItem updatedItem = productItemRepository.save(productItem);
-        ProductPrice productPrice = productPriceRepository.findOneByProductItemAndMarketCity(productItem, marketCity)
+        ProductPrice productPrice = productPriceRepository.findOneByProductItemAndCity(productItem, city)
                                                           .orElseGet(() -> new ProductPrice()
                                                               .setProductItem(updatedItem)
-                                                              .setMarketCity(marketCity));
+                                                              .setCity(city));
         productPrice.setPrice(itemDto.getPrice());
         productPriceRepository.save(productPrice);
     }

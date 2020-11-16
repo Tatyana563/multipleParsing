@@ -22,8 +22,8 @@ public class ProductPrice {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "fk_market_city", nullable = false)
-    private MarketCity marketCity;
+    @JoinColumn(name = "fk_city", nullable = false)
+    private City city;
 
     @ManyToOne
     @JoinColumn(name = "fk_product_item", nullable = false)

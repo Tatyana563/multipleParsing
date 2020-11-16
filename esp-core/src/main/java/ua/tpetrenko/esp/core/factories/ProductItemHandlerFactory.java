@@ -6,7 +6,6 @@ import ua.tpetrenko.esp.api.handlers.ProductItemHandler;
 import ua.tpetrenko.esp.core.components.ProductItemHandlerImpl;
 import ua.tpetrenko.esp.core.mappers.ProductItemsMapper;
 import ua.tpetrenko.esp.core.model.City;
-import ua.tpetrenko.esp.core.model.MarketCity;
 import ua.tpetrenko.esp.core.model.MenuItem;
 import ua.tpetrenko.esp.core.repository.ProductItemRepository;
 import ua.tpetrenko.esp.core.repository.ProductPriceRepository;
@@ -26,7 +25,7 @@ public class ProductItemHandlerFactory {
         return getProductItemHandler(null, menuItem);
     }
 
-    public ProductItemHandler getProductItemHandler(MarketCity marketCity, MenuItem menuItem) {
-        return new ProductItemHandlerImpl(marketCity, menuItem, productItemRepository, productPriceRepository, productItemsMapper);
+    public ProductItemHandler getProductItemHandler(City city, MenuItem menuItem) {
+        return new ProductItemHandlerImpl(city, menuItem, productItemRepository, productPriceRepository, productItemsMapper);
     }
 }
