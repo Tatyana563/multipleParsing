@@ -5,6 +5,18 @@
     <modelVersion>4.0.0</modelVersion>
 
     <name>[ESP] Implementation: Mechta</name>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>14</source>
+                    <target>14</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
     <artifactId>esp-mechta</artifactId>
     <packaging>jar</packaging>
 
