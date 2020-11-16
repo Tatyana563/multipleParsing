@@ -3,6 +3,8 @@ package ua.tpetrenko.esp.impl.mechta;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -14,12 +16,16 @@ import ua.tpetrenko.esp.api.handlers.CityHandler;
 import ua.tpetrenko.esp.api.handlers.MenuItemHandler;
 import ua.tpetrenko.esp.api.handlers.ProductItemHandler;
 
+import java.io.IOException;
+import java.util.Set;
+
 //@Slf4j
 @Component
 public class MechtaParser implements DifferentItemsPerCityMarketParser {
     private static Logger log = LoggerFactory.getLogger("MECHTALOGGER");
     private static final MarketInfo INFO = new MarketInfo("Mechta.kz", "https://www.mechta.kz/");
-
+    private static final Set<String> SECTIONS = Set.of("Смартфоны и гаджеты", "Ноутбуки и компьютеры", "Тв, аудио, видео",
+            "Техника для дома", "Климат техника", "Кухонная техника", "Встраиваемая техника", "Фото и видео техника", "Игровые приставки и игрушки","Активный отдых");
     private Document rootPage;
 
     @Override
@@ -29,7 +35,7 @@ public class MechtaParser implements DifferentItemsPerCityMarketParser {
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
     }
 
     @Override
@@ -40,13 +46,50 @@ public class MechtaParser implements DifferentItemsPerCityMarketParser {
     }
 
     @Override
-    public void parseMainMenu(MenuItemHandler sectionHandler) {
+    public void parseMainMenu(MenuItemHandler sectionHandler) throws IOException {
 
         if(rootPage == null) {
             throw new IllegalStateException("Не была получена главная страница");
         }
+        Document indexPage = Jsoup.connect(INFO.getUrl()).get();
+        log.info("Получили главную страницу, ищем секции...");
+        Elements sectionElements = indexPage.select(".aa_hm_items_main");
+        for (Element sectionElement : sectionElements) {
+            Element sectionElementLink = sectionElement.selectFirst(">a");
+            String text = sectionElementLink.text();
+            if (SECTIONS.contains(text)) {
+                log.info("Получаем {}...", text);
+                String sectionUrl = sectionElementLink.absUrl("href");
+                MenuItemDto sectionItem = new MenuItemDto(text, sectionUrl);
+                MenuItemHandler groupHandler = sectionHandler.handleSubMenu(sectionItem);
 
+                Elements groupElements = sectionElement.select(".aa_hm_pod2");
+
+                for (Element groupElement : groupElements) {
+                    String groupLink = groupElement.selectFirst("a").absUrl("href");
+                    String groupText = groupElement.selectFirst("a").text();
+
+                    log.info("Получаем {}...", text);
+                    MenuItemDto groupItem = new MenuItemDto(groupText, groupLink);
+
+                    MenuItemHandler categoryHandler = groupHandler.handleSubMenu(groupItem);
+
+                    Elements categoryElements = groupElement.select(".aa_hm_pod3");
+                    for (Element categoryElement : categoryElements) {
+                        String categoryLink = categoryElement.selectFirst("a").absUrl("href");
+                        String categoryText = categoryElement.selectFirst("a").text();
+
+                        log.info("Получаем {}...", text);
+                        MenuItemDto categoryItem = new MenuItemDto(categoryText, categoryLink);
+                        log.info("\tКатегория  {}", categoryText);
+                        categoryHandler.handleSubMenu(categoryItem);
+
+                    }
+                }
+            }
+        }
     }
+
 
     @Override
     public void parseCities(CityHandler cityHandler) {
