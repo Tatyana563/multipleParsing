@@ -5,6 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import ua.tpetrenko.esp.core.api.ParserContext;
 import ua.tpetrenko.esp.api.parser.SimpleMarketParser;
 import ua.tpetrenko.esp.core.model.MenuItem;
+import ua.tpetrenko.esp.core.properties.CoreProperties;
 import ua.tpetrenko.esp.core.repository.MarketCityRepository;
 import ua.tpetrenko.esp.core.repository.MenuItemRepository;
 
@@ -16,8 +17,9 @@ public class SimpleMarketParserTask extends AbstractMarketParserTask<SimpleMarke
     public SimpleMarketParserTask(SimpleMarketParser marketParser,
                                   ParserContext context,
                                   MarketCityRepository marketCityRepository,
-                                  MenuItemRepository menuItemRepository) {
-        super(marketParser, context, marketCityRepository, menuItemRepository);
+                                  MenuItemRepository menuItemRepository,
+                                  CoreProperties coreProperties) {
+        super(marketParser, context, marketCityRepository, menuItemRepository, coreProperties);
     }
 
     @Override
@@ -25,7 +27,7 @@ public class SimpleMarketParserTask extends AbstractMarketParserTask<SimpleMarke
         Page<MenuItem> categories;
         int page = 0;
         // TODO: use common configuration properties (move properties package from app to core)
-        while (!(categories = menuItemRepository.findAllEndpointMenuItems(context.getMarket(), PageRequest.of(page++, 50))).isEmpty()) {
+        while (!(categories = menuItemRepository.findAllEndpointMenuItems(context.getMarket(), PageRequest.of(page++,  coreProperties.getCategoryPageSize()))).isEmpty()) {
             for (MenuItem category : categories) {
                 marketParser.parseItems(context.getProductItemHandler(null, category));
             }

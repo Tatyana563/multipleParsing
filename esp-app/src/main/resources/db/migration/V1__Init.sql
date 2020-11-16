@@ -33,7 +33,7 @@ create table esp.menu_item
 (
     id             bigserial primary key not null,
     name           text                  not null,
-    url            text                  not null,
+    url            text,
     fk_market      bigint                not null,
     fk_parent_item bigint,
     constraint menu_item__market_fkey foreign key (fk_market)

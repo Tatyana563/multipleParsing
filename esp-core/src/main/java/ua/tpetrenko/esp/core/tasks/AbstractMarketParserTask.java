@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import ua.tpetrenko.esp.api.dto.MarketInfo;
 import ua.tpetrenko.esp.api.parser.MarketParser;
 import ua.tpetrenko.esp.core.api.ParserContext;
-import ua.tpetrenko.esp.core.repository.CityRepository;
+import ua.tpetrenko.esp.core.properties.CoreProperties;
 import ua.tpetrenko.esp.core.repository.MarketCityRepository;
 import ua.tpetrenko.esp.core.repository.MenuItemRepository;
 
@@ -20,6 +20,7 @@ public abstract class AbstractMarketParserTask<P extends MarketParser> implement
     protected final ParserContext context;
     protected final MarketCityRepository marketCityRepository;
     protected final MenuItemRepository menuItemRepository;
+    protected final CoreProperties coreProperties;
 
     protected abstract void parseItems() throws Exception;
 

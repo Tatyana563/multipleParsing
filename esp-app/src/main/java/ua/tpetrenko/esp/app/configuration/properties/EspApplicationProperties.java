@@ -14,9 +14,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties(prefix = "esp.app")
 public class EspApplicationProperties {
-
-    @Positive
-    private int categoryPageSize=5000;
     @Positive
     private int parsersPoolSize=10;
 

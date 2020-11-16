@@ -10,11 +10,9 @@ import ua.tpetrenko.esp.api.parser.DifferentItemsPerCityMarketParser;
 import ua.tpetrenko.esp.core.api.ParserContext;
 import ua.tpetrenko.esp.core.model.MarketCity;
 import ua.tpetrenko.esp.core.model.MenuItem;
-import ua.tpetrenko.esp.core.repository.CityRepository;
+import ua.tpetrenko.esp.core.properties.CoreProperties;
 import ua.tpetrenko.esp.core.repository.MarketCityRepository;
 import ua.tpetrenko.esp.core.repository.MenuItemRepository;
-
-import java.util.List;
 
 /**
  * @author Roman Zdoronok
@@ -25,8 +23,9 @@ public class DifferentItemsPerCityMarketParserTask extends AbstractMarketParserT
     public DifferentItemsPerCityMarketParserTask(DifferentItemsPerCityMarketParser marketParser,
                                                  ParserContext context,
                                                  MarketCityRepository marketCityRepository,
-                                                 MenuItemRepository menuItemRepository) {
-        super(marketParser, context, marketCityRepository, menuItemRepository);
+                                                 MenuItemRepository menuItemRepository,
+                                                 CoreProperties coreProperties) {
+        super(marketParser, context, marketCityRepository, menuItemRepository, coreProperties);
     }
 
     @Override
@@ -39,7 +38,7 @@ public class DifferentItemsPerCityMarketParserTask extends AbstractMarketParserT
             Page<MenuItem> categories;
             int page = 0;
             // TODO: use common configuration properties (move properties package from app to core)
-            while (!(categories = menuItemRepository.findAllEndpointMenuItems(context.getMarket(), PageRequest.of(page++, 50))).isEmpty()) {
+            while (!(categories = menuItemRepository.findAllEndpointMenuItems(context.getMarket(), PageRequest.of(page++, coreProperties.getCategoryPageSize()))).isEmpty()) {
                 for (MenuItem category : categories) {
                     marketParser.parseItems(new CityDto(city.getCity().getName(), city.getUrl()),
                             new MenuItemDto(category.getName(), category.getUrl()),

@@ -75,7 +75,7 @@ public class ShopkzParser implements DifferentItemsPerCityMarketParser {
 
                     Element groupAnchor = groupElement.selectFirst(">a");
                     String groupText = groupAnchor.text();
-                    MenuItemDto groupItem = new MenuItemDto(groupText, "null");
+                    MenuItemDto groupItem = new MenuItemDto(groupText, null);
                     log.info("Группа  {}", groupText);
 
                     MenuItemHandler categoryHandler = groupHandler.handleSubMenu(groupItem);
@@ -86,7 +86,7 @@ public class ShopkzParser implements DifferentItemsPerCityMarketParser {
                         String categoryText = categoryAnchor.text();
                         MenuItemDto categoryItem = new MenuItemDto(categoryText, categoryLink);
                         log.info("\tКатегория  {}", categoryText);
-                        categoryHandler.handleSubMenu(categoryItem);
+                        categoryHandler.handle(categoryItem);
                     }
                 }
             }
