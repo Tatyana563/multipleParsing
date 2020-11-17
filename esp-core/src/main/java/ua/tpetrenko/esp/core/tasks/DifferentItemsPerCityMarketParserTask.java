@@ -31,23 +31,25 @@ public class DifferentItemsPerCityMarketParserTask extends AbstractMarketParserT
     @Override
     protected void parseItems() throws Exception {
         marketParser.parseCities(context.getCityHandler());
-
+        int page = 0;
         //TODO: use common configuration properties
-        Page<MarketCity> cities = marketCityRepository.findAllByMarket(context.getMarket(), Pageable.unpaged());
-        for (MarketCity city : cities) {
-            Page<MenuItem> categories;
-            int page = 0;
-            // TODO: use common configuration properties (move properties package from app to core)
-            while (!(categories = menuItemRepository.findAllEndpointMenuItems(context.getMarket(), PageRequest.of(page++, coreProperties.getCategoryPageSize()))).isEmpty()) {
-                for (MenuItem category : categories) {
-                    marketParser.parseItems(new CityDto(city.getCity().getName(), city.getUrl()),
-                            new MenuItemDto(category.getName(), category.getUrl()),
-                            context.getProductItemHandler(city.getCity(), category));
+        Page<MarketCity> cities = marketCityRepository.findAllByMarket(context.getMarket(), PageRequest.of(page++, coreProperties.getCategoryPageSize()));
+        if (!cities.isEmpty()) {
+            for (MarketCity city : cities) {
+                Page<MenuItem> categories;
+
+                // TODO: use common configuration properties (move properties package from app to core)
+                while (!(categories = menuItemRepository.findAllEndpointMenuItems(context.getMarket(), PageRequest.of(page++, coreProperties.getCategoryPageSize()))).isEmpty()) {
+                    for (MenuItem category : categories) {
+                        marketParser.parseItems(new CityDto(city.getCity().getName(), city.getUrl()),
+                                new MenuItemDto(category.getName(), category.getUrl()),
+                                context.getProductItemHandler(city.getCity(), category));
+                    }
+
                 }
-
             }
-        }
 
+        }
     }
 
 }

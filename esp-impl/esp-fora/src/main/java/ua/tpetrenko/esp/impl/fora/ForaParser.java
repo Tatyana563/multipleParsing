@@ -13,6 +13,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ua.tpetrenko.esp.api.dto.CityDto;
 import ua.tpetrenko.esp.api.dto.MenuItemDto;
@@ -29,7 +30,7 @@ import ua.tpetrenko.esp.impl.fora.properties.ForaProperties;
 public class ForaParser implements DifferentItemsPerCityMarketParser {
     //    private static Logger log = LoggerFactory.getLogger("FORALOGGER");
     private static final MarketInfo INFO = new MarketInfo("Fora.kz", "https://fora.kz/");
-
+    @Autowired
     private final ForaProperties foraProperties;
 
     private Document rootPage;
@@ -42,7 +43,7 @@ public class ForaParser implements DifferentItemsPerCityMarketParser {
     //TODO: use configuration properties
     @Override
     public boolean isEnabled() {
-        return true;
+        return foraProperties.isEnabled();
     }
 
     @Override
@@ -64,30 +65,33 @@ public class ForaParser implements DifferentItemsPerCityMarketParser {
         log.info("Найдено {} секций.", sectionElements.size());
         for (Element sectionElement : sectionElements) {
             Element sectionElementLink = sectionElement.selectFirst(">a");
-            String sectionUrl = sectionElementLink.absUrl("href");
-            String sectionUrlWithoutCity = URLUtil.removeCityFromUrl(sectionUrl);
             String text = sectionElementLink.text();
-            log.info("-{}", text);
+            if (foraProperties.getCategoriesWhitelist().contains(text)) {
+                String sectionUrl = sectionElementLink.absUrl("href");
+                String sectionUrlWithoutCity = URLUtil.removeCityFromUrl(sectionUrl);
 
-            MenuItemDto sectionItem = new MenuItemDto(text, sectionUrlWithoutCity);
-            MenuItemHandler groupHandler = sectionHandler.handleSubMenu(sectionItem);
-            Elements groupsAndCategories = sectionElement.select(".category-submenu li");
-            Element currentGroup = null;
-            List<Element> categories = new ArrayList<>();
-            for (Element element : groupsAndCategories) {
-                if (element.hasClass("parent-category")) {
-                    // element is group
-                    // 1. process previously found group and categories
-                    // 2. reset group and list
-                    processGroupWithCategories(groupHandler, currentGroup, categories);
-                    currentGroup = element;
-                    categories.clear();
-                } else {
-                    // element is category
-                    categories.add(element);
+                log.info("-{}", text);
+
+                MenuItemDto sectionItem = new MenuItemDto(text, sectionUrlWithoutCity);
+                MenuItemHandler groupHandler = sectionHandler.handleSubMenu(sectionItem);
+                Elements groupsAndCategories = sectionElement.select(".category-submenu li");
+                Element currentGroup = null;
+                List<Element> categories = new ArrayList<>();
+                for (Element element : groupsAndCategories) {
+                    if (element.hasClass("parent-category")) {
+                        // element is group
+                        // 1. process previously found group and categories
+                        // 2. reset group and list
+                        processGroupWithCategories(groupHandler, currentGroup, categories);
+                        currentGroup = element;
+                        categories.clear();
+                    } else {
+                        // element is category
+                        categories.add(element);
+                    }
                 }
+                processGroupWithCategories(groupHandler, currentGroup, categories);
             }
-            processGroupWithCategories(groupHandler, currentGroup, categories);
         }
     }
 

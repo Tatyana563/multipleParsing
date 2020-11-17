@@ -18,8 +18,8 @@ import java.util.List;
 @Configuration
 @ConfigurationProperties(prefix = "esp.fora")
 public class ForaProperties {
-//    private boolean enabled;
-//    private List<String> includedCategories;
+    private boolean enabled;
+    private List<String> categoriesWhitelist;
     @NestedConfigurationProperty
     private ConnectionProperties connection;
 
