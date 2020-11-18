@@ -7,6 +7,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ua.tpetrenko.esp.api.dto.CityDto;
 import ua.tpetrenko.esp.api.dto.MenuItemDto;
@@ -15,6 +16,7 @@ import ua.tpetrenko.esp.api.dto.MarketInfo;
 import ua.tpetrenko.esp.api.handlers.CityHandler;
 import ua.tpetrenko.esp.api.handlers.MenuItemHandler;
 import ua.tpetrenko.esp.api.handlers.ProductItemHandler;
+import ua.tpetrenko.esp.impl.shopkz.properties.ShopkzProperties;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,7 +34,8 @@ public class ShopkzParser implements DifferentItemsPerCityMarketParser {
     private Document rootPage;
     private static final Set<String> SECTIONS = Set.of("Смартфоны и гаджеты", "Комплектующие", "Ноутбуки и компьютеры", "Компьютерная периферия",
             "Оргтехника и расходные материалы", "Сетевое и серверное оборудование", "Телевизоры, аудио, фото, видео", "Бытовая техника и товары для дома", "Товары для геймеров");
-
+@Autowired
+private ShopkzProperties shopkzProperties;
     @Override
     public MarketInfo getMarketInfo() {
         return INFO;
@@ -40,7 +43,7 @@ public class ShopkzParser implements DifferentItemsPerCityMarketParser {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return shopkzProperties.isEnabled();
     }
 
     @Override

@@ -1,4 +1,4 @@
-package ua.tpetrenko.esp.impl.fora.properties;
+package ua.tpetrenko.esp.impl.shopkz.properties;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -8,24 +8,22 @@ import org.springframework.context.annotation.Configuration;
 import ua.tpetrenko.esp.configuration.properties.GlobalProperties;
 import ua.tpetrenko.esp.configuration.properties.model.ConnectionProperties;
 
-import java.util.List;
-
-/**
- * @author Roman Zdoronok
- */
 @Getter
 @Setter
 @Configuration
-@ConfigurationProperties(prefix = "esp.fora")
-public class ForaProperties {
+@ConfigurationProperties(prefix = "esp.shopkz")
+public class ShopkzProperties {
     private boolean enabled;
     private String[] categoriesWhitelist;
     @NestedConfigurationProperty
     private ConnectionProperties connection;
 
-    public ForaProperties(GlobalProperties globalProperties) {
+    public ShopkzProperties(GlobalProperties globalProperties) {
         this.connection = globalProperties.getConnection();
 //        this.enabled = globalProperties.isEnabled();
     }
-
 }
+
+
+
+

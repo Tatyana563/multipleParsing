@@ -52,7 +52,7 @@ create table esp.product_item
     name         text                  not null,
     url          text                  not null,
     code         text,
-    external_id  text                  not null,
+    external_id  text,
     description  text,
     image_url    text,
     fk_menu_item bigint                not null,

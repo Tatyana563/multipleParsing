@@ -1,12 +1,14 @@
 package ua.tpetrenko.esp.impl.mechta;
 
 import lombok.extern.slf4j.Slf4j;
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ua.tpetrenko.esp.api.dto.CityDto;
 import ua.tpetrenko.esp.api.dto.MenuItemDto;
@@ -15,8 +17,11 @@ import ua.tpetrenko.esp.api.dto.MarketInfo;
 import ua.tpetrenko.esp.api.handlers.CityHandler;
 import ua.tpetrenko.esp.api.handlers.MenuItemHandler;
 import ua.tpetrenko.esp.api.handlers.ProductItemHandler;
+import ua.tpetrenko.esp.impl.mechta.properties.MechtaProperties;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 //@Slf4j
@@ -25,8 +30,10 @@ public class MechtaParser implements DifferentItemsPerCityMarketParser {
     private static Logger log = LoggerFactory.getLogger("MECHTALOGGER");
     private static final MarketInfo INFO = new MarketInfo("Mechta.kz", "https://www.mechta.kz/");
     private static final Set<String> SECTIONS = Set.of("Смартфоны и гаджеты", "Ноутбуки и компьютеры", "Тв, аудио, видео",
-            "Техника для дома", "Климат техника", "Кухонная техника", "Встраиваемая техника", "Фото и видео техника", "Игровые приставки и игрушки","Активный отдых");
+            "Техника для дома", "Климат техника", "Кухонная техника", "Встраиваемая техника", "Фото и видео техника", "Игровые приставки и игрушки", "Активный отдых");
     private Document rootPage;
+    @Autowired
+    private MechtaProperties mechtaProperties;
 
     @Override
     public MarketInfo getMarketInfo() {
@@ -35,7 +42,7 @@ public class MechtaParser implements DifferentItemsPerCityMarketParser {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return mechtaProperties.isEnabled();
     }
 
     @Override
@@ -48,7 +55,7 @@ public class MechtaParser implements DifferentItemsPerCityMarketParser {
     @Override
     public void parseMainMenu(MenuItemHandler sectionHandler) throws IOException {
 
-        if(rootPage == null) {
+        if (rootPage == null) {
             throw new IllegalStateException("Не была получена главная страница");
         }
         Document indexPage = Jsoup.connect(INFO.getUrl()).get();
@@ -94,7 +101,7 @@ public class MechtaParser implements DifferentItemsPerCityMarketParser {
     @Override
     public void parseCities(CityHandler cityHandler) {
 
-        if(rootPage == null) {
+        if (rootPage == null) {
             throw new IllegalStateException("Не была получена главная страница");
         }
 
@@ -110,4 +117,15 @@ public class MechtaParser implements DifferentItemsPerCityMarketParser {
         // Nothing to do.
     }
 
+    private Map<String, String> prepareCityCookies(CityDto cityDto) throws IOException {
+        log.info("Готовим cookies для города {}", cityDto.getName());
+        Map<String, String> cookies = new HashMap<>();
+        String urlWithCity = INFO.getUrl() + cityDto.getUrl();
+        Connection.Response response = Jsoup.connect(urlWithCity)
+                .cookies(cookies)
+                .method(Connection.Method.GET)
+                .execute();
+        cookies.putAll(response.cookies());
+        return cookies;
+    }
 }
