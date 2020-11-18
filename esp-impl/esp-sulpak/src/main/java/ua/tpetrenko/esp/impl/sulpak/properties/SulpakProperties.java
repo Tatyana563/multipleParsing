@@ -15,6 +15,7 @@ import ua.tpetrenko.esp.configuration.properties.model.ConnectionProperties;
 public class SulpakProperties {
     private boolean enabled;
     private String[] categoriesWhitelist;
+    private String path;
     @NestedConfigurationProperty
     private ConnectionProperties connection;
 
