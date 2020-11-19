@@ -111,7 +111,7 @@ public class SingleCategoryProcessor implements Runnable {
 
         for (Element itemElement : itemElements) {
             try {
-                processProductItem(itemElement).ifPresent(productItemHandler::handle);
+                processProductItem(itemElement).ifPresent(itemDto -> productItemHandler.handle(itemDto));
             } catch (Exception e) {
                 log.error("Не удалось распарсить продукт", e);
             }

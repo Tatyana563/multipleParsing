@@ -16,21 +16,24 @@ import ua.tpetrenko.esp.api.dto.MarketInfo;
 import ua.tpetrenko.esp.api.handlers.CityHandler;
 import ua.tpetrenko.esp.api.handlers.MenuItemHandler;
 import ua.tpetrenko.esp.api.handlers.ProductItemHandler;
+import ua.tpetrenko.esp.api.parser.SimpleMarketParser;
 import ua.tpetrenko.esp.impl.shopkz.properties.ShopkzProperties;
+import ua.tpetrenko.esp.impl.shopkz.properties.SingleCategoryProcessor;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * @author Roman Zdoronok
  */
 //@Slf4j
 @Component
-public class ShopkzParser implements DifferentItemsPerCityMarketParser {
+public class ShopkzParser implements SimpleMarketParser {
     private static Logger log = LoggerFactory.getLogger("SHOPKZLOGGER");
-    private static final MarketInfo INFO = new MarketInfo("Shop.kz", "https://shop.kz/");
+    public static final MarketInfo INFO = new MarketInfo("Shop.kz", "https://shop.kz/");
     private Document rootPage;
     private static final Set<String> SECTIONS = Set.of("Смартфоны и гаджеты", "Комплектующие", "Ноутбуки и компьютеры", "Компьютерная периферия",
             "Оргтехника и расходные материалы", "Сетевое и серверное оборудование", "Телевизоры, аудио, фото, видео", "Бытовая техника и товары для дома", "Товары для геймеров");
@@ -97,32 +100,16 @@ private ShopkzProperties shopkzProperties;
     }
 
     @Override
-    public void parseCities(CityHandler cityHandler) {
-
-        if (rootPage == null) {
-            throw new IllegalStateException("Не была получена главная страница");
-        }
-
-        Elements cityElements = rootPage.select(".js-city-select-radio");
-        log.info("Найдено {} городов", cityElements.size());
-        for (Element cityElement : cityElements) {
-            String citySuffix = cityElement.attr("data-href").replace("/", "");
-            String cityName = cityElement.parent().selectFirst("label > a").text();
-
-            log.info("-{}", cityName);
-
-            cityHandler.handle(new CityDto(cityName, citySuffix));
-        }
-    }
-
-    @Override
-    public void parseItems(CityDto cityDto, MenuItemDto menuItemDto, ProductItemHandler productItemHandler) {
-        // Nothing to do.
-    }
-
-    @Override
     public void destroyParser() {
-        // Nothing to do.
+
     }
 
+    @Override
+    public void parseItems(MenuItemDto menuItemDto, ProductItemHandler productItemHandler, CountDownLatch latch)  {
+        new SingleCategoryProcessor(menuItemDto, productItemHandler, latch).run();
+    }
 }
+//  @Override
+//    public void parseItems(CityDto cityDto, MenuItemDto menuItemDto, ProductItemHandler productItemHandler) throws IOException {
+//        new SingleCategoryProcessor(cityDto, menuItemDto, productItemHandler, prepareCityCookies(cityDto)).run();
+//    }

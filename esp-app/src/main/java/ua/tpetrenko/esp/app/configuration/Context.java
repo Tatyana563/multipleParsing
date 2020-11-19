@@ -1,19 +1,18 @@
 package ua.tpetrenko.esp.app.configuration;
 
-import java.util.Set;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import ua.tpetrenko.esp.api.parser.MarketParser;
 import ua.tpetrenko.esp.api.dto.MarketInfo;
+import ua.tpetrenko.esp.api.parser.MarketParser;
 import ua.tpetrenko.esp.core.factories.ParserContextFactory;
 import ua.tpetrenko.esp.core.factories.TaskFactory;
-import ua.tpetrenko.esp.core.tasks.DifferentItemsPerCityMarketParserTask;
+
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author Roman Zdoronok

@@ -66,7 +66,7 @@ create table esp.product_price
 (
     id              bigserial primary key not null,
     price           double precision      not null,
-    fk_city         bigint                not null,
+    fk_city         bigint,
     fk_product_item bigint                not null,
     constraint product_price__city_fkey foreign key (fk_city)
         references esp.city (id) match simple
