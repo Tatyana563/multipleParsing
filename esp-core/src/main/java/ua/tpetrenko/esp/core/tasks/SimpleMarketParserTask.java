@@ -29,24 +29,27 @@ public class SimpleMarketParserTask extends AbstractMarketParserTask<SimpleMarke
     }
 
     @Override
-    protected void parseItems(){
-     //   log.info("Получаем дополнитульную информацию о товарe...");
+    protected void parseItems() throws InterruptedException {
+        //   log.info("Получаем дополнитульную информацию о товарe...");
         ExecutorService executorService = Executors.newFixedThreadPool(50);
         Page<MenuItem> categories;
         int page = 0;
         // TODO: use common configuration properties (move properties package from app to core)
-        int menuItemSize = menuItemRepository.findAll().size();
-        CountDownLatch latch= new CountDownLatch(menuItemSize);
-        while (!(categories = menuItemRepository.findAllEndpointMenuItems(context.getMarket(), PageRequest.of(page++,  coreProperties.getCategoryPageSize()))).isEmpty()) {
+
+        while (!(categories = menuItemRepository.findAllEndpointMenuItems(context.getMarket(), PageRequest.of(page++, coreProperties.getCategoryPageSize()))).isEmpty()) {
+            CountDownLatch latch = new CountDownLatch(categories.getSize());
             for (MenuItem category : categories) {
-         executorService.execute(new Runnable() {
-             @Override
-             public void run() {
-                 marketParser.parseItems(new MenuItemDto(category.getName(), category.getUrl()), context.getProductItemHandler(null, category), latch);
-             }
-         });
+                executorService.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        marketParser.parseItems(new MenuItemDto(category.getName(), category.getUrl()), context.getProductItemHandler(null, category), latch);
+                    }
+                });
             }
 
+            latch.await();
         }
+
+        executorService.shutdown();
     }
 }

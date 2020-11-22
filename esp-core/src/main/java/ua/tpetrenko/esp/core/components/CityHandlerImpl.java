@@ -1,6 +1,6 @@
 package ua.tpetrenko.esp.core.components;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.PlatformTransactionManager;
 import ua.tpetrenko.esp.api.dto.CityDto;
 import ua.tpetrenko.esp.api.handlers.CityHandler;
 import ua.tpetrenko.esp.core.model.City;
@@ -12,15 +12,22 @@ import ua.tpetrenko.esp.core.repository.MarketCityRepository;
 /**
  * @author Roman Zdoronok
  */
-@RequiredArgsConstructor
-public class CityHandlerImpl implements CityHandler {
+public class CityHandlerImpl extends AbstractHandler<CityDto> implements CityHandler {
 
     private final Market market;
     private final CityRepository cityRepository;
     private final MarketCityRepository marketCityRepository;
 
+    public CityHandlerImpl(Market market, CityRepository cityRepository, MarketCityRepository marketCityRepository, PlatformTransactionManager transactionManager) {
+        super(transactionManager);
+        this.market = market;
+        this.cityRepository = cityRepository;
+        this.marketCityRepository = marketCityRepository;
+    }
+
+
     @Override
-    public void handle(CityDto itemDto) {
+    public void doHandle(CityDto itemDto) {
 
         City city = cityRepository.findOneByNameIgnoreCase(itemDto.getName())
                                   .orElseGet(() -> {

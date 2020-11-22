@@ -96,9 +96,10 @@
     </appender>
     <logger name="ua.tpetrenko.esp.impl.fora" level="info" additivity="false">
         <appender-ref ref="FORA"/>
+        <appender-ref ref="STDOUT"/>
     </logger>
 
-    <logger name="TECHNODOMLOGGER" level="info" additivity="false">
+    <logger name="ua.tpetrenko.esp.impl.technodom" level="info" additivity="false">
         <appender-ref ref="TECHNODOM"/>
     </logger>
     <logger name="MECHTALOGGER" level="info" additivity="false">
@@ -109,9 +110,11 @@
     </logger>
     <logger name="SHOPKZLOGGER" level="info" additivity="false">
         <appender-ref ref="SHOPKZ"/>
+        <appender-ref ref="STDOUT"/>
     </logger>
 
     <logger name="ROOT" level="info" >
         <appender-ref ref="STDOUT"/>
+<!--        TODO: add root file appender-->
     </logger>
 </configuration>

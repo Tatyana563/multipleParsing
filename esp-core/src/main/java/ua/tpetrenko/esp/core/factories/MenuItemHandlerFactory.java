@@ -2,6 +2,7 @@ package ua.tpetrenko.esp.core.factories;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
 import ua.tpetrenko.esp.api.handlers.MenuItemHandler;
 import ua.tpetrenko.esp.core.components.MenuItemHandlerImpl;
 import ua.tpetrenko.esp.core.mappers.MenuItemsMapper;
@@ -17,13 +18,14 @@ import ua.tpetrenko.esp.core.repository.MenuItemRepository;
 public class MenuItemHandlerFactory {
     private final MenuItemRepository menuItemRepository;
     private final MenuItemsMapper menuItemsMapper;
+    private final PlatformTransactionManager transactionManager;
 
     public MenuItemHandler getMenuItemHandler(Market market) {
         return getMenuItemHandler(market, null);
     }
 
     public MenuItemHandler getMenuItemHandler(Market market, MenuItem parentMenuItem) {
-        return new MenuItemHandlerImpl(menuItemRepository, menuItemsMapper, market, parentMenuItem);
+        return new MenuItemHandlerImpl(menuItemRepository, menuItemsMapper, market, parentMenuItem, transactionManager);
     }
 
 }

@@ -59,8 +59,11 @@ public class SulpakParser implements DifferentItemsPerCityMarketParser {
 
     private WebDriver driver = null;
 
-    @PostConstruct
-    public void init() {
+    @Override
+    public void prepareParser() throws IOException {
+        log.info("Получаем главную страницу...");
+        rootPage = Jsoup.connect(INFO.getUrl()).get();
+        log.info("Готово.");
         WebDriverManager.chromedriver().setup();
         ChromeOptions options = new ChromeOptions();
         options.setBinary(sulpakProperties.getPath());
@@ -68,21 +71,6 @@ public class SulpakParser implements DifferentItemsPerCityMarketParser {
         options.addArguments("window-size=1920x1080");
         driver = new ChromeDriver(options);
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-    }
-
-    @PreDestroy
-    public void destroy() {
-        if (driver != null) {
-            driver.quit();
-        }
-    }
-
-    @Override
-    public void prepareParser() throws IOException {
-        log.info("Получаем главную страницу...");
-        rootPage = Jsoup.connect(INFO.getUrl()).get();
-        log.info("Готово.");
-        log.info("Подготовка " + getMarketInfo());
     }
 
     @Override
@@ -158,6 +146,8 @@ public class SulpakParser implements DifferentItemsPerCityMarketParser {
 
     @Override
     public void destroyParser() {
-        // Nothing to do.
+        if (driver != null) {
+            driver.quit();
+        }
     }
 }

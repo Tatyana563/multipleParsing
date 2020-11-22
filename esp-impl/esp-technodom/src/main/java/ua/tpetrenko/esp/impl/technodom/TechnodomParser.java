@@ -3,7 +3,6 @@ package ua.tpetrenko.esp.impl.technodom;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -11,7 +10,6 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ua.tpetrenko.esp.api.dto.CityDto;
 import ua.tpetrenko.esp.api.dto.MenuItemDto;
@@ -29,11 +27,13 @@ import ua.tpetrenko.esp.impl.technodom.properties.TechnodomProperties;
 @Component
 @RequiredArgsConstructor
 public class TechnodomParser implements DifferentItemsPerCityMarketParser {
-    private static Logger log = LoggerFactory.getLogger("TECHNODOMLOGGER");
+    private static Logger log = LoggerFactory.getLogger(TechnodomParser.class);
     private static final MarketInfo INFO = new MarketInfo("Technodom", "https://technodom.kz/");
     private static final String CATEGORIES_PAGE = INFO.getUrl() + "all";
 
     private final TechnodomProperties technodomProperties;
+
+    private WebDriver webDriver;
 
 //    @Value("${parser.chrome.path}")
     private String path;
@@ -51,6 +51,12 @@ public class TechnodomParser implements DifferentItemsPerCityMarketParser {
     @Override
     public void prepareParser() {
        log.info("Подготовка " + getMarketInfo());
+        WebDriverManager.chromedriver().setup();
+        ChromeOptions options = new ChromeOptions();
+        options.setBinary(path);
+        options.addArguments("--headless");
+        options.addArguments("window-size=1920x1080");
+        webDriver = new ChromeDriver(options);
     }
 
     @Override
@@ -70,19 +76,15 @@ public class TechnodomParser implements DifferentItemsPerCityMarketParser {
 
     @Override
     public void destroyParser() {
-        // Nothing to do.
+        if (webDriver != null) {
+            webDriver.close();
+        }
     }
 
     public void parseData() {
-        WebDriverManager.chromedriver().setup();
-        ChromeOptions options = new ChromeOptions();
-        options.setBinary(path);
-        options.addArguments("--headless");
-        options.addArguments("window-size=1920x1080");
 
-        WebDriver driver = new ChromeDriver(options);
-        driver.get(CATEGORIES_PAGE);
-        List<WebElement> sectionElements = driver.findElements(By.cssSelector("div.CatalogPage-CategorySection"));
+        webDriver.get(CATEGORIES_PAGE);
+        List<WebElement> sectionElements = webDriver.findElements(By.cssSelector("div.CatalogPage-CategorySection"));
         for (WebElement sectionElement : sectionElements) {
             WebElement sectionTitle = sectionElement.findElement(By.cssSelector("h2.CatalogPage-CategoryTitle"));
             log.info("Section: {}", sectionTitle.getAttribute("innerText"));

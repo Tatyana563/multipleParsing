@@ -1,6 +1,5 @@
 package ua.tpetrenko.esp.impl.shopkz;
 
-import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -18,11 +17,8 @@ import ua.tpetrenko.esp.api.handlers.MenuItemHandler;
 import ua.tpetrenko.esp.api.handlers.ProductItemHandler;
 import ua.tpetrenko.esp.api.parser.SimpleMarketParser;
 import ua.tpetrenko.esp.impl.shopkz.properties.ShopkzProperties;
-import ua.tpetrenko.esp.impl.shopkz.properties.SingleCategoryProcessor;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 

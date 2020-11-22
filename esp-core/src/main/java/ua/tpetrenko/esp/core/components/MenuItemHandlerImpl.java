@@ -1,6 +1,6 @@
 package ua.tpetrenko.esp.core.components;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.PlatformTransactionManager;
 import ua.tpetrenko.esp.api.dto.MenuItemDto;
 import ua.tpetrenko.esp.api.handlers.MenuItemHandler;
 import ua.tpetrenko.esp.core.mappers.MenuItemsMapper;
@@ -11,22 +11,29 @@ import ua.tpetrenko.esp.core.repository.MenuItemRepository;
 /**
  * @author Roman Zdoronok
  */
-@RequiredArgsConstructor
-public class MenuItemHandlerImpl implements MenuItemHandler {
+public class MenuItemHandlerImpl extends AbstractHandler<MenuItemDto> implements MenuItemHandler {
 
     private final MenuItemRepository menuItemRepository;
     private final MenuItemsMapper menuItemsMapper;
     private final Market market;
     private final MenuItem parentMenuItem;
 
-    @Override
-    public MenuItemHandler handleSubMenu(MenuItemDto menuItemDto) {
-        MenuItem menuItem = findOrCreateMenuItem(menuItemDto);
-        return new MenuItemHandlerImpl(menuItemRepository, menuItemsMapper, market, menuItem);
+    public MenuItemHandlerImpl(MenuItemRepository menuItemRepository, MenuItemsMapper menuItemsMapper, Market market, MenuItem parentMenuItem, PlatformTransactionManager transactionManager) {
+        super(transactionManager);
+        this.menuItemRepository = menuItemRepository;
+        this.menuItemsMapper = menuItemsMapper;
+        this.market = market;
+        this.parentMenuItem = parentMenuItem;
     }
 
     @Override
-    public void handle(MenuItemDto menuItemDto) {
+    public MenuItemHandler handleSubMenu(MenuItemDto menuItemDto) {
+        MenuItem menuItem = findOrCreateMenuItem(menuItemDto);
+        return new MenuItemHandlerImpl(menuItemRepository, menuItemsMapper, market, menuItem, transactionManager);
+    }
+
+    @Override
+    public void doHandle(MenuItemDto menuItemDto) {
         checkOrCreateMenuItem(menuItemDto);
     }
 

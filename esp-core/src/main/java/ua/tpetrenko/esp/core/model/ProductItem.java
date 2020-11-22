@@ -24,7 +24,7 @@ public class ProductItem extends AbstractEndpoint {
     @Column(name = "code", columnDefinition = "text")
     private String code;
 
-    @Column(name = "external_id", columnDefinition = "text", nullable = false, unique = true)
+    @Column(name = "external_id", columnDefinition = "text")
     private String externalId;
 
     @Column(name = "image_url", columnDefinition = "text")
