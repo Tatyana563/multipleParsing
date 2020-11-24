@@ -117,6 +117,7 @@
 
     <logger name="ua.tpetrenko.esp.impl.technodom" level="info" additivity="false">
         <appender-ref ref="TECHNODOM"/>
+        <appender-ref ref="STDOUT"/>
     </logger>
     <logger name="ua.tpetrenko.esp.impl.mechta" level="info" additivity="false">
         <appender-ref ref="MECHTA"/>
@@ -124,6 +125,7 @@
     </logger>
     <logger name="ua.tpetrenko.esp.impl.sulpak" level="info" additivity="false">
         <appender-ref ref="SULPAK"/>
+        <appender-ref ref="STDOUT"/>
     </logger>
     <logger name="ua.tpetrenko.esp.impl.shopkz" level="info" additivity="false">
         <appender-ref ref="SHOPKZ"/>

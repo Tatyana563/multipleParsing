@@ -60,7 +60,7 @@ public class MechtaParser implements DifferentItemsPerCityMarketParser {
         }
         Document indexPage = Jsoup.connect(INFO.getUrl()).get();
         log.info("Получили главную страницу, ищем секции...");
-        Elements sectionElements = indexPage.select(".aa_hm_items_main");
+        Elements sectionElements = indexPage.select(".header-first-menu .aa_hm_items_main");
         for (Element sectionElement : sectionElements) {
             Element sectionElementLink = sectionElement.selectFirst(">a");
             String text = sectionElementLink.text();
@@ -69,27 +69,29 @@ public class MechtaParser implements DifferentItemsPerCityMarketParser {
                 String sectionUrl = sectionElementLink.absUrl("href");
                 MenuItemDto sectionItem = new MenuItemDto(text, sectionUrl);
                 MenuItemHandler groupHandler = sectionHandler.handleSubMenu(sectionItem);
+                String sectionRel = sectionElement.attr("rel");
 
-                Elements groupElements = indexPage.select(".aa_hm_pod2");
+                Elements groupElements = indexPage.select(".header-second-menu #jq_aa_th_pod" + sectionRel + " .jq_aa_hm_tab");
 
                 for (Element groupElement : groupElements) {
-                    String groupLink = groupElement.selectFirst("a").absUrl("href");
-                    String groupText = groupElement.selectFirst("a").text();
+                    Element groupAnchor = groupElement.selectFirst(".aa_hm_pod2");
+                    String groupLink = groupAnchor.absUrl("href");
+                    String groupText = groupAnchor.text();
 
                     log.info("Получаем {}...", text);
                     MenuItemDto groupItem = new MenuItemDto(groupText, groupLink);
 
                     MenuItemHandler categoryHandler = groupHandler.handleSubMenu(groupItem);
 
-                    Elements categoryElements = indexPage.select(".aa_hm_pod3");
+                    Elements categoryElements = groupElement.select(".aa_hm_pod3");
                     for (Element categoryElement : categoryElements) {
-                        String categoryLink = categoryElement.selectFirst("a").absUrl("href");
-                        String categoryText = categoryElement.selectFirst("a").text();
+                        String categoryLink = categoryElement.absUrl("href");
+                        String categoryText = categoryElement.text();
 
                         log.info("Получаем {}...", text);
                         MenuItemDto categoryItem = new MenuItemDto(categoryText, categoryLink);
                         log.info("\tКатегория  {}", categoryText);
-                        categoryHandler.handleSubMenu(categoryItem);
+                        categoryHandler.handle(categoryItem);
 
                     }
                 }
