@@ -94,6 +94,22 @@
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
     </appender>
+    <appender name="ROOT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/root.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>
+                %d{yyyy-MM-dd HH:mm:ss};%msg%n
+            </Pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${LOG_PATH}/root.log.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
     <logger name="ua.tpetrenko.esp.impl.fora" level="info" additivity="false">
         <appender-ref ref="FORA"/>
         <appender-ref ref="STDOUT"/>
@@ -102,18 +118,19 @@
     <logger name="ua.tpetrenko.esp.impl.technodom" level="info" additivity="false">
         <appender-ref ref="TECHNODOM"/>
     </logger>
-    <logger name="MECHTALOGGER" level="info" additivity="false">
+    <logger name="ua.tpetrenko.esp.impl.mechta;" level="info" additivity="false">
         <appender-ref ref="MECHTA"/>
     </logger>
-    <logger name="SULPAKLOGGER" level="info" additivity="false">
+    <logger name="ua.tpetrenko.esp.impl.sulpak" level="info" additivity="false">
         <appender-ref ref="SULPAK"/>
     </logger>
-    <logger name="SHOPKZLOGGER" level="info" additivity="false">
+    <logger name="ua.tpetrenko.esp.impl.shopkz" level="info" additivity="false">
         <appender-ref ref="SHOPKZ"/>
         <appender-ref ref="STDOUT"/>
     </logger>
 
     <logger name="ROOT" level="info" >
+        <appender-ref ref="ROOT"/>
         <appender-ref ref="STDOUT"/>
 <!--        TODO: add root file appender-->
     </logger>

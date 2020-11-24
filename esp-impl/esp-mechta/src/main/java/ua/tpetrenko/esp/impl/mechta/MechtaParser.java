@@ -27,7 +27,7 @@ import java.util.Set;
 //@Slf4j
 @Component
 public class MechtaParser implements DifferentItemsPerCityMarketParser {
-    private static Logger log = LoggerFactory.getLogger("MECHTALOGGER");
+    private static Logger log = LoggerFactory.getLogger(MechtaParser.class);
     private static final MarketInfo INFO = new MarketInfo("Mechta.kz", "https://www.mechta.kz/");
     private static final Set<String> SECTIONS = Set.of("Смартфоны и гаджеты", "Ноутбуки и компьютеры", "Тв, аудио, видео",
             "Техника для дома", "Климат техника", "Кухонная техника", "Встраиваемая техника", "Фото и видео техника", "Игровые приставки и игрушки", "Активный отдых");

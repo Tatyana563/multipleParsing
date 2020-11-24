@@ -36,8 +36,7 @@ import java.util.concurrent.TimeUnit;
 //@Slf4j
 @Component
 public class SulpakParser implements DifferentItemsPerCityMarketParser {
-    //  private static Logger log = LoggerFactory.getLogger("SULPAKLOGGER");
-    private static Logger log = LoggerFactory.getLogger("CORE");
+    private static Logger log = LoggerFactory.getLogger(SulpakParser.class);
     private static final MarketInfo INFO = new MarketInfo("Sulpak", "https://www.sulpak.kz/");
     private static final Set<String> SECTIONS = Set.of("Телефоны и гаджеты"/*, "Теле и аудио техника", "Ноутбуки и компьютеры", "Фото и видео техника",
             "Игры и развлечения", "Техника для дома", "Техника для кухни", "Встраиваемая техника"*/);

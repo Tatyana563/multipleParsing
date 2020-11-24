@@ -28,7 +28,7 @@ import java.util.concurrent.CountDownLatch;
 //@Slf4j
 @Component
 public class ShopkzParser implements SimpleMarketParser {
-    private static Logger log = LoggerFactory.getLogger("SHOPKZLOGGER");
+    private static Logger log = LoggerFactory.getLogger(ShopkzParser.class);
     public static final MarketInfo INFO = new MarketInfo("Shop.kz", "https://shop.kz/");
     private Document rootPage;
     private static final Set<String> SECTIONS = Set.of("Смартфоны и гаджеты", "Комплектующие", "Ноутбуки и компьютеры", "Компьютерная периферия",

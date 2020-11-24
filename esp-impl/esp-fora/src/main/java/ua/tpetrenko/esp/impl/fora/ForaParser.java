@@ -29,7 +29,7 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 public class ForaParser implements DifferentItemsPerCityMarketParser {
-    private static Logger log = LoggerFactory.getLogger("FORALOGGER");
+    private static Logger log = LoggerFactory.getLogger(ForaParser.class);
     private static final MarketInfo INFO = new MarketInfo("Fora.kz", "https://fora.kz/");
     @Autowired
     private final ForaProperties foraProperties;
