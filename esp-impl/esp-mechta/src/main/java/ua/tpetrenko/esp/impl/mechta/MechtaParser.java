@@ -27,10 +27,10 @@ import java.util.Set;
 //@Slf4j
 @Component
 public class MechtaParser implements DifferentItemsPerCityMarketParser {
-    private static Logger log = LoggerFactory.getLogger("MECHTALOGGER");
-    private static final MarketInfo INFO = new MarketInfo("Mechta.kz", "https://www.mechta.kz/");
-    private static final Set<String> SECTIONS = Set.of("Смартфоны и гаджеты", "Ноутбуки и компьютеры", "Тв, аудио, видео",
-            "Техника для дома", "Климат техника", "Кухонная техника", "Встраиваемая техника", "Фото и видео техника", "Игровые приставки и игрушки", "Активный отдых");
+    private static Logger log = LoggerFactory.getLogger(MechtaParser.class);
+    public static final MarketInfo INFO = new MarketInfo("Mechta.kz", "https://www.mechta.kz/");
+    private static final Set<String> SECTIONS = Set.of("Смартфоны и гаджеты"/*, "Ноутбуки и компьютеры", "Тв, аудио, видео",
+            "Техника для дома", "Климат техника", "Кухонная техника", "Встраиваемая техника", "Фото и видео техника", "Игровые приставки и игрушки", "Активный отдых"*/);
     private Document rootPage;
     @Autowired
     private MechtaProperties mechtaProperties;
@@ -70,7 +70,7 @@ public class MechtaParser implements DifferentItemsPerCityMarketParser {
                 MenuItemDto sectionItem = new MenuItemDto(text, sectionUrl);
                 MenuItemHandler groupHandler = sectionHandler.handleSubMenu(sectionItem);
 
-                Elements groupElements = sectionElement.select(".aa_hm_pod2");
+                Elements groupElements = indexPage.select(".aa_hm_pod2");
 
                 for (Element groupElement : groupElements) {
                     String groupLink = groupElement.selectFirst("a").absUrl("href");
@@ -81,7 +81,7 @@ public class MechtaParser implements DifferentItemsPerCityMarketParser {
 
                     MenuItemHandler categoryHandler = groupHandler.handleSubMenu(groupItem);
 
-                    Elements categoryElements = groupElement.select(".aa_hm_pod3");
+                    Elements categoryElements = indexPage.select(".aa_hm_pod3");
                     for (Element categoryElement : categoryElements) {
                         String categoryLink = categoryElement.selectFirst("a").absUrl("href");
                         String categoryText = categoryElement.selectFirst("a").text();
@@ -108,8 +108,8 @@ public class MechtaParser implements DifferentItemsPerCityMarketParser {
     }
 
     @Override
-    public void parseItems(CityDto cityDto, MenuItemDto menuItemDto, ProductItemHandler productItemHandler) {
-        // Nothing to do.
+    public void parseItems(CityDto cityDto, MenuItemDto menuItemDto, ProductItemHandler productItemHandler) throws IOException {
+        new SingleCategoryProcessor(cityDto, menuItemDto, productItemHandler, prepareCityCookies(cityDto)).run();
     }
 
     @Override
