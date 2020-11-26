@@ -135,6 +135,5 @@
     <logger name="ROOT" level="info" >
         <appender-ref ref="ROOT"/>
         <appender-ref ref="STDOUT"/>
-<!--        TODO: add root file appender-->
     </logger>
 </configuration>

@@ -41,7 +41,6 @@ public class ForaParser implements DifferentItemsPerCityMarketParser {
         return INFO;
     }
 
-    //TODO: use configuration properties
     @Override
     public boolean isEnabled() {
         return foraProperties.isEnabled();

@@ -34,7 +34,6 @@ public class SimpleMarketParserTask extends AbstractMarketParserTask<SimpleMarke
         ExecutorService executorService = Executors.newFixedThreadPool(50);
         Page<MenuItem> categories;
         int page = 0;
-        // TODO: use common configuration properties (move properties package from app to core)
 
         while (!(categories = menuItemRepository.findAllEndpointMenuItems(context.getMarket(), PageRequest.of(page++, coreProperties.getCategoryPageSize()))).isEmpty()) {
             CountDownLatch latch = new CountDownLatch(categories.getSize());

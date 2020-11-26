@@ -32,13 +32,11 @@ public class DifferentItemsPerCityMarketParserTask extends AbstractMarketParserT
     protected void parseItems() throws Exception {
         marketParser.parseCities(context.getCityHandler());
         int page = 0;
-        //TODO: use common configuration properties
         Page<MarketCity> cities = marketCityRepository.findAllByMarket(context.getMarket(), PageRequest.of(page++, coreProperties.getCategoryPageSize()));
         if (!cities.isEmpty()) {
             for (MarketCity city : cities) {
                 Page<MenuItem> categories;
 
-                // TODO: use common configuration properties (move properties package from app to core)
                 categories = menuItemRepository.findAllEndpointMenuItems(context.getMarket(), PageRequest.of(page++, coreProperties.getCategoryPageSize()));
                 while (!(categories.isEmpty())) {
                     for (MenuItem category : categories) {

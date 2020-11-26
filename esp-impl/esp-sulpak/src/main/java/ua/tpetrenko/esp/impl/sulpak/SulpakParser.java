@@ -12,6 +12,11 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.FluentWait;
+import org.openqa.selenium.support.ui.Wait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +33,7 @@ import ua.tpetrenko.esp.impl.sulpak.properties.SulpakProperties;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -60,16 +66,41 @@ public class SulpakParser implements DifferentItemsPerCityMarketParser {
 
     @Override
     public void prepareParser() throws IOException {
-        log.info("Получаем главную страницу...");
-        rootPage = Jsoup.connect(INFO.getUrl()).get();
-        log.info("Готово.");
+        log.info("Инициализируем webDriver...");
         WebDriverManager.chromedriver().setup();
         ChromeOptions options = new ChromeOptions();
         options.setBinary(sulpakProperties.getPath());
-//       options.addArguments("--headless");
+//        options.addArguments("--headless");
         options.addArguments("window-size=1920x1080");
         driver = new ChromeDriver(options);
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        log.info("Получаем главную страницу...");
+        driver.get(INFO.getUrl());
+        log.info("Готово.");
+        Actions action = new Actions(driver);
+        action.moveToElement(driver.findElement(By.cssSelector(".cart-block")));
+
+        for (int i = 0; i < 10; i++) {
+            action.moveByOffset(0, 1);
+        }
+
+        log.info("Выполняем перемещение мышки..");
+        action.perform();
+        log.info("Завершиии перемещение мышки");
+        Wait<WebDriver> wait = new FluentWait<>(driver)
+                .withTimeout(Duration.ofSeconds(10))
+                .pollingEvery(Duration.ofMillis(200));
+
+        try {
+            String yesButton = "button#location-window-button-yes";
+            log.info("Ожидаем появления заветной кнопки");
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(yesButton)));
+            log.info("Дождались кнопку");
+            driver.findElement(By.cssSelector(yesButton)).click();
+        } catch (Exception e) {
+            log.warn("Не дождались модального окна выбора города", e);
+        }
+        rootPage = Jsoup.parse(driver.getPageSource());
     }
 
     @Override
@@ -117,12 +148,14 @@ public class SulpakParser implements DifferentItemsPerCityMarketParser {
     }
 
     @Override
-    //TODO parse with selenium
     public void parseCities(CityHandler cityHandler) {
-       driver.findElement(By.cssSelector("show-map-link")).click();
-        Document pageWithCitiesModal = Jsoup.parse(driver.getPageSource());
-
-        cityHandler.handle(new CityDto("Караганда", "karagandy"));
+        Elements cityElements = rootPage.select(".cities-list-main > label");
+        log.info("Парсим города:");
+        for (Element cityElement : cityElements) {
+            String cityName = cityElement.text();
+            log.info("\t-{}", cityName);
+            cityHandler.handle(new CityDto(cityName, cityElement.attr("data-id")));
+        }
     }
 
 
@@ -145,8 +178,8 @@ public class SulpakParser implements DifferentItemsPerCityMarketParser {
 
     @Override
     public void destroyParser() {
-        if (driver != null) {
+        /*if (driver != null) {
             driver.quit();
-        }
+        }*/
     }
 }
