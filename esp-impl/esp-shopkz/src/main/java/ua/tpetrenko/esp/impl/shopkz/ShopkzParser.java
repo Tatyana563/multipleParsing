@@ -36,6 +36,7 @@ public class ShopkzParser implements SimpleMarketParser {
             "Оргтехника и расходные материалы", "Сетевое и серверное оборудование", "Телевизоры, аудио, фото, видео", "Бытовая техника и товары для дома", "Товары для геймеров");
 
     private final ShopkzProperties shopkzProperties;
+    //TODO ~
     private final String[] whiteList;
 
     public ShopkzParser(ShopkzProperties shopkzProperties) {
@@ -58,7 +59,6 @@ public class ShopkzParser implements SimpleMarketParser {
         log.info("Получаем главную страницу...");
         rootPage = Jsoup.connect(INFO.getUrl()).get();
         log.info("Готово.");
-        log.info("Подготовка " + getMarketInfo());
     }
 
     @Override

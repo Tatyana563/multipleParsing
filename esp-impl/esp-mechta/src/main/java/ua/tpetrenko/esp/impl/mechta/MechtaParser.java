@@ -35,6 +35,7 @@ public class MechtaParser implements DifferentItemsPerCityMarketParser {
     private Document rootPage;
 
     private final MechtaProperties mechtaProperties;
+    //TODO: use list
     private final String[] whiteList;
 
     public MechtaParser(MechtaProperties mechtaProperties) {
@@ -115,6 +116,8 @@ public class MechtaParser implements DifferentItemsPerCityMarketParser {
         if (rootPage == null) {
             throw new IllegalStateException("Не была получена главная страница");
         }
+
+        //TODO: parse cities
 
     }
 

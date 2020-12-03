@@ -57,13 +57,12 @@ public class ForaParser implements DifferentItemsPerCityMarketParser {
             throw new IllegalStateException("Не была получена главная страница");
         }
 
-        //TODO: filter 'enabled' sections
         Elements sectionElements = rootPage.select("#js-categories-menu>li");
         log.info("Найдено {} секций.", sectionElements.size());
         for (Element sectionElement : sectionElements) {
             Element sectionElementLink = sectionElement.selectFirst(">a");
             String text = sectionElementLink.text();
-            if (Arrays.asList(foraProperties.getCategoriesWhitelist()).contains(text)) {
+            if (foraProperties.getCategoriesWhitelist().contains(text)) {
                 String sectionUrl = sectionElementLink.absUrl("href");
                 String sectionUrlWithoutCity = URLUtil.removeCityFromUrl(sectionUrl);
 

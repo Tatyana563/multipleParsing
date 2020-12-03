@@ -6,6 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.context.annotation.Configuration;
 import ua.tpetrenko.esp.configuration.properties.GlobalProperties;
+import ua.tpetrenko.esp.configuration.properties.model.ChromeProperties;
 import ua.tpetrenko.esp.configuration.properties.model.ConnectionProperties;
 
 @Getter
@@ -14,13 +15,16 @@ import ua.tpetrenko.esp.configuration.properties.model.ConnectionProperties;
 @ConfigurationProperties(prefix = "esp.sulpak")
 public class SulpakProperties {
     private boolean enabled;
+    //TODO ~
     private String[] categoriesWhitelist;
-    private String path;
     @NestedConfigurationProperty
     private ConnectionProperties connection;
+    @NestedConfigurationProperty
+    private ChromeProperties chrome;
 
     public SulpakProperties(GlobalProperties globalProperties) {
+        this.enabled = globalProperties.isEnabled();
         this.connection = globalProperties.getConnection();
-//        this.enabled = globalProperties.isEnabled();
+        this.chrome = globalProperties.getChrome();
     }
 }

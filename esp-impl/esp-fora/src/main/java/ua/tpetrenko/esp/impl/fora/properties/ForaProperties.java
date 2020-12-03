@@ -18,14 +18,15 @@ import java.util.List;
 @Configuration
 @ConfigurationProperties(prefix = "esp.fora")
 public class ForaProperties {
+    //TODO: move common properties to a parent class ParserProperties
     private boolean enabled;
-    private String[] categoriesWhitelist;
+    private List<String> categoriesWhitelist;
     @NestedConfigurationProperty
     private ConnectionProperties connection;
 
     public ForaProperties(GlobalProperties globalProperties) {
+        this.enabled = globalProperties.isEnabled();
         this.connection = globalProperties.getConnection();
-//        this.enabled = globalProperties.isEnabled();
     }
 
 }

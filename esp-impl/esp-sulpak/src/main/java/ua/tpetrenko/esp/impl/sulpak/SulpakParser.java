@@ -1,6 +1,7 @@
 package ua.tpetrenko.esp.impl.sulpak;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -42,16 +43,19 @@ import java.util.concurrent.TimeUnit;
 
 //@Slf4j
 @Component
+@RequiredArgsConstructor
 public class SulpakParser implements DifferentItemsPerCityMarketParser {
     private static Logger log = LoggerFactory.getLogger(SulpakParser.class);
     private static final MarketInfo INFO = new MarketInfo("Sulpak", "https://www.sulpak.kz/");
     private static final Set<String> SECTIONS = Set.of("Телефоны и гаджеты"/*, "Теле и аудио техника", "Ноутбуки и компьютеры", "Фото и видео техника",
             "Игры и развлечения", "Техника для дома", "Техника для кухни", "Встраиваемая техника"*/);
+
+    //TODO: move to .properties "blacklist"
     private static final Set<String> GROUPS_EXCEPTIONS = Set.of("Купить дешевле");
     public static final String pathPart = "f/planshetiy_graficheskie/";
     private Document rootPage;
-    @Autowired
-    private SulpakProperties sulpakProperties;
+
+    private final SulpakProperties sulpakProperties;
 
     @Override
     public MarketInfo getMarketInfo() {
@@ -70,7 +74,7 @@ public class SulpakParser implements DifferentItemsPerCityMarketParser {
         log.info("Инициализируем webDriver...");
         WebDriverManager.chromedriver().setup();
         ChromeOptions options = new ChromeOptions();
-        options.setBinary(sulpakProperties.getPath());
+        options.setBinary(sulpakProperties.getChrome().getPath());
 //        options.addArguments("--headless");
         options.addArguments("window-size=1920x1080");
         driver = new ChromeDriver(options);
@@ -115,6 +119,7 @@ public class SulpakParser implements DifferentItemsPerCityMarketParser {
         Elements sectionElements = indexPage.select(".catalog-category-item a");
         for (Element sectionElement : sectionElements) {
             String text = sectionElement.text();
+            //TODO ~
             if(Arrays.asList(sulpakProperties.getCategoriesWhitelist()).contains(text)){
                 log.info("Получаем {}...", text);
                 String sectionUrl = sectionElement.absUrl("href");
@@ -128,6 +133,7 @@ public class SulpakParser implements DifferentItemsPerCityMarketParser {
                     String groupUrl = groupElement.absUrl("href");
                     String groupText = groupElement.text();
                     log.info("Группа  {}", groupText);
+                    //TODO ~
                     if (!GROUPS_EXCEPTIONS.contains(groupText)) {
                         MenuItemDto groupItem = new MenuItemDto(groupText, groupUrl);
                         log.info("Группа  {}", groupText);
@@ -179,8 +185,8 @@ public class SulpakParser implements DifferentItemsPerCityMarketParser {
 
     @Override
     public void destroyParser() {
-        /*if (driver != null) {
+        if (driver != null) {
             driver.quit();
-        }*/
+        }
     }
 }

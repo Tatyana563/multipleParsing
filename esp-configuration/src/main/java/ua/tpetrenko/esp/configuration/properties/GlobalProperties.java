@@ -21,5 +21,6 @@ public class GlobalProperties {
     private ConnectionProperties connection = new ConnectionProperties();
     @NestedConfigurationProperty
     private ChromeProperties chrome = new ChromeProperties();
+    private boolean enabled;
 
 }

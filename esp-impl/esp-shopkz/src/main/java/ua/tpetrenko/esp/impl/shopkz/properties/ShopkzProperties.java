@@ -14,13 +14,14 @@ import ua.tpetrenko.esp.configuration.properties.model.ConnectionProperties;
 @ConfigurationProperties(prefix = "esp.shopkz")
 public class ShopkzProperties {
     private boolean enabled;
+    //TODO ~
     private String[] categoriesWhitelist;
     @NestedConfigurationProperty
     private ConnectionProperties connection;
 
     public ShopkzProperties(GlobalProperties globalProperties) {
+        this.enabled = globalProperties.isEnabled();
         this.connection = globalProperties.getConnection();
-//        this.enabled = globalProperties.isEnabled();
     }
 }
 

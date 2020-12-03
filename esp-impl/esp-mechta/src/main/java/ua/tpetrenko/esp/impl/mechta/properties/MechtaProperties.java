@@ -14,12 +14,13 @@ import ua.tpetrenko.esp.configuration.properties.model.ConnectionProperties;
 @ConfigurationProperties(prefix = "esp.mechta")
 public class MechtaProperties {
     private boolean enabled;
+    //TOO: change type
     private String[] categoriesWhitelist;
     @NestedConfigurationProperty
     private ConnectionProperties connection;
 
     public MechtaProperties(GlobalProperties globalProperties) {
+        this.enabled = globalProperties.isEnabled();
         this.connection = globalProperties.getConnection();
-//        this.enabled = globalProperties.isEnabled();
     }
 }
