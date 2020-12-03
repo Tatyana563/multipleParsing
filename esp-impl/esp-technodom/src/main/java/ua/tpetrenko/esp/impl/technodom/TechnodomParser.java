@@ -176,11 +176,6 @@ public class TechnodomParser implements DifferentItemsPerCityMarketParser{
 
 
     @Override
-    public void parseCities(CityHandler cityHandler) throws Exception {
-        cityHandler.handle();
-    }
-
-    @Override
     public void parseItems(CityDto cityDto, MenuItemDto menuItemDto, ProductItemHandler productItemHandler) {
         // Nothing to do.
     }
