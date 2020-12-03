@@ -20,10 +20,7 @@ import ua.tpetrenko.esp.api.parser.DifferentItemsPerCityMarketParser;
 import ua.tpetrenko.esp.impl.fora.properties.ForaProperties;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 //@Slf4j
 @Component
@@ -66,31 +63,32 @@ public class ForaParser implements DifferentItemsPerCityMarketParser {
         for (Element sectionElement : sectionElements) {
             Element sectionElementLink = sectionElement.selectFirst(">a");
             String text = sectionElementLink.text();
-            //     if (Arrays.asList(foraProperties.getCategoriesWhitelist()).contains(text)) {
-            String sectionUrl = sectionElementLink.absUrl("href");
-            String sectionUrlWithoutCity = URLUtil.removeCityFromUrl(sectionUrl);
+            if (Arrays.asList(foraProperties.getCategoriesWhitelist()).contains(text)) {
+                String sectionUrl = sectionElementLink.absUrl("href");
+                String sectionUrlWithoutCity = URLUtil.removeCityFromUrl(sectionUrl);
 
-            log.info("-{}", text);
+                log.info("-{}", text);
 
-            MenuItemDto sectionItem = new MenuItemDto(text, sectionUrlWithoutCity);
-            MenuItemHandler groupHandler = sectionHandler.handleSubMenu(sectionItem);
-            Elements groupsAndCategories = sectionElement.select(".category-submenu li");
-            Element currentGroup = null;
-            List<Element> categories = new ArrayList<>();
-            for (Element element : groupsAndCategories) {
-                if (element.hasClass("parent-category")) {
-                    // element is group
-                    // 1. process previously found group and categories
-                    // 2. reset group and list
-                    processGroupWithCategories(groupHandler, currentGroup, categories);
-                    currentGroup = element;
-                    categories.clear();
-                } else {
-                    // element is category
-                    categories.add(element);
+                MenuItemDto sectionItem = new MenuItemDto(text, sectionUrlWithoutCity);
+                MenuItemHandler groupHandler = sectionHandler.handleSubMenu(sectionItem);
+                Elements groupsAndCategories = sectionElement.select(".category-submenu li");
+                Element currentGroup = null;
+                List<Element> categories = new ArrayList<>();
+                for (Element element : groupsAndCategories) {
+                    if (element.hasClass("parent-category")) {
+                        // element is group
+                        // 1. process previously found group and categories
+                        // 2. reset group and list
+                        processGroupWithCategories(groupHandler, currentGroup, categories);
+                        currentGroup = element;
+                        categories.clear();
+                    } else {
+                        // element is category
+                        categories.add(element);
+                    }
                 }
+                processGroupWithCategories(groupHandler, currentGroup, categories);
             }
-            processGroupWithCategories(groupHandler, currentGroup, categories);
         }
     }
 

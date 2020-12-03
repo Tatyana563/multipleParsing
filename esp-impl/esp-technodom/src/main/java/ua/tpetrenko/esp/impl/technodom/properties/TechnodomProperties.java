@@ -20,13 +20,13 @@ import ua.tpetrenko.esp.configuration.properties.model.ConnectionProperties;
 @ConfigurationProperties(prefix = "esp.technodom")
 public class TechnodomProperties extends ConnectionProperties {
     private final GlobalProperties globalProperties;
-
+    private boolean enabled;
     private ConnectionProperties connection;
     private ChromeProperties chrome;
-
+    private String[] categoriesWhitelist;
     @DurationUnit(ChronoUnit.MILLIS)
     private Duration modalWindowPresentTimeoutMs = Duration.ofSeconds(20);
-
+    private Integer modalWindowTimeout;
     public TechnodomProperties(GlobalProperties globalProperties) {
         this.globalProperties = globalProperties;
         this.connection = globalProperties.getConnection();

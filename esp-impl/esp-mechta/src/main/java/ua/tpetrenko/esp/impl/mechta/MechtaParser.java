@@ -20,6 +20,7 @@ import ua.tpetrenko.esp.api.handlers.ProductItemHandler;
 import ua.tpetrenko.esp.impl.mechta.properties.MechtaProperties;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -32,8 +33,14 @@ public class MechtaParser implements DifferentItemsPerCityMarketParser {
     private static final Set<String> SECTIONS = Set.of("Смартфоны и гаджеты"/*, "Ноутбуки и компьютеры", "Тв, аудио, видео",
             "Техника для дома", "Климат техника", "Кухонная техника", "Встраиваемая техника", "Фото и видео техника", "Игровые приставки и игрушки", "Активный отдых"*/);
     private Document rootPage;
-    @Autowired
-    private MechtaProperties mechtaProperties;
+
+    private final MechtaProperties mechtaProperties;
+    private final String[] whiteList;
+
+    public MechtaParser(MechtaProperties mechtaProperties) {
+        this.mechtaProperties = mechtaProperties;
+        this.whiteList = mechtaProperties.getCategoriesWhitelist();
+    }
 
     @Override
     public MarketInfo getMarketInfo() {
@@ -64,35 +71,37 @@ public class MechtaParser implements DifferentItemsPerCityMarketParser {
         for (Element sectionElement : sectionElements) {
             Element sectionElementLink = sectionElement.selectFirst(">a");
             String text = sectionElementLink.text();
-            if (SECTIONS.contains(text)) {
-                log.info("Получаем {}...", text);
-                String sectionUrl = sectionElementLink.absUrl("href");
-                MenuItemDto sectionItem = new MenuItemDto(text, sectionUrl);
-                MenuItemHandler groupHandler = sectionHandler.handleSubMenu(sectionItem);
-                String sectionRel = sectionElement.attr("rel");
-
-                Elements groupElements = indexPage.select(".header-second-menu #jq_aa_th_pod" + sectionRel + " .jq_aa_hm_tab");
-
-                for (Element groupElement : groupElements) {
-                    Element groupAnchor = groupElement.selectFirst(".aa_hm_pod2");
-                    String groupLink = groupAnchor.absUrl("href");
-                    String groupText = groupAnchor.text();
-
+            if(Arrays.asList(mechtaProperties.getCategoriesWhitelist()).contains(text)) {
+                if (SECTIONS.contains(text)) {
                     log.info("Получаем {}...", text);
-                    MenuItemDto groupItem = new MenuItemDto(groupText, groupLink);
+                    String sectionUrl = sectionElementLink.absUrl("href");
+                    MenuItemDto sectionItem = new MenuItemDto(text, sectionUrl);
+                    MenuItemHandler groupHandler = sectionHandler.handleSubMenu(sectionItem);
+                    String sectionRel = sectionElement.attr("rel");
 
-                    MenuItemHandler categoryHandler = groupHandler.handleSubMenu(groupItem);
+                    Elements groupElements = indexPage.select(".header-second-menu #jq_aa_th_pod" + sectionRel + " .jq_aa_hm_tab");
 
-                    Elements categoryElements = groupElement.select(".aa_hm_pod3");
-                    for (Element categoryElement : categoryElements) {
-                        String categoryLink = categoryElement.absUrl("href");
-                        String categoryText = categoryElement.text();
+                    for (Element groupElement : groupElements) {
+                        Element groupAnchor = groupElement.selectFirst(".aa_hm_pod2");
+                        String groupLink = groupAnchor.absUrl("href");
+                        String groupText = groupAnchor.text();
 
                         log.info("Получаем {}...", text);
-                        MenuItemDto categoryItem = new MenuItemDto(categoryText, categoryLink);
-                        log.info("\tКатегория  {}", categoryText);
-                        categoryHandler.handle(categoryItem);
+                        MenuItemDto groupItem = new MenuItemDto(groupText, groupLink);
 
+                        MenuItemHandler categoryHandler = groupHandler.handleSubMenu(groupItem);
+
+                        Elements categoryElements = groupElement.select(".aa_hm_pod3");
+                        for (Element categoryElement : categoryElements) {
+                            String categoryLink = categoryElement.absUrl("href");
+                            String categoryText = categoryElement.text();
+
+                            log.info("Получаем {}...", text);
+                            MenuItemDto categoryItem = new MenuItemDto(categoryText, categoryLink);
+                            log.info("\tКатегория  {}", categoryText);
+                            categoryHandler.handle(categoryItem);
+
+                        }
                     }
                 }
             }

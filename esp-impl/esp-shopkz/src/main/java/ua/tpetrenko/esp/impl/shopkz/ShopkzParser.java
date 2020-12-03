@@ -19,6 +19,7 @@ import ua.tpetrenko.esp.api.parser.SimpleMarketParser;
 import ua.tpetrenko.esp.impl.shopkz.properties.ShopkzProperties;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
@@ -33,8 +34,15 @@ public class ShopkzParser implements SimpleMarketParser {
     private Document rootPage;
     private static final Set<String> SECTIONS = Set.of("Смартфоны и гаджеты", "Комплектующие", "Ноутбуки и компьютеры", "Компьютерная периферия",
             "Оргтехника и расходные материалы", "Сетевое и серверное оборудование", "Телевизоры, аудио, фото, видео", "Бытовая техника и товары для дома", "Товары для геймеров");
-@Autowired
-private ShopkzProperties shopkzProperties;
+
+    private final ShopkzProperties shopkzProperties;
+    private final String[] whiteList;
+
+    public ShopkzParser(ShopkzProperties shopkzProperties) {
+        this.shopkzProperties = shopkzProperties;
+        this.whiteList = shopkzProperties.getCategoriesWhitelist();
+    }
+
     @Override
     public MarketInfo getMarketInfo() {
         return INFO;
@@ -65,7 +73,7 @@ private ShopkzProperties shopkzProperties;
         for (Element sectionElement : sectionElements) {
             Element sectionAnchor = sectionElement.selectFirst(">a");
             String text = sectionAnchor.text();
-            if (SECTIONS.contains(text)) {
+            if (Arrays.asList(whiteList).contains(text)) {
                 log.info("Получаем {}...", text);
                 String sectionUrl = sectionAnchor.absUrl("href");
                 MenuItemDto sectionItem = new MenuItemDto(text, sectionUrl);
@@ -101,7 +109,7 @@ private ShopkzProperties shopkzProperties;
     }
 
     @Override
-    public void parseItems(MenuItemDto menuItemDto, ProductItemHandler productItemHandler, CountDownLatch latch)  {
+    public void parseItems(MenuItemDto menuItemDto, ProductItemHandler productItemHandler, CountDownLatch latch) {
         new SingleCategoryProcessor(menuItemDto, productItemHandler, latch).run();
     }
 }

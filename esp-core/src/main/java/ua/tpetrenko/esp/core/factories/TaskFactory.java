@@ -3,6 +3,7 @@ package ua.tpetrenko.esp.core.factories;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ua.tpetrenko.esp.api.parser.DifferentItemsPerCityMarketParser;
+import ua.tpetrenko.esp.api.parser.DifferentItemsPerCityMarketParserSelenium;
 import ua.tpetrenko.esp.api.parser.MarketParser;
 import ua.tpetrenko.esp.core.api.ParserContext;
 import ua.tpetrenko.esp.api.parser.SimpleMarketParser;
@@ -31,7 +32,7 @@ public class TaskFactory {
                     menuItemRepository,
                     coreProperties);
         }
-        if (parser instanceof DifferentItemsPerCityMarketParser) {
+        if (parser instanceof DifferentItemsPerCityMarketParser||parser instanceof DifferentItemsPerCityMarketParserSelenium) {
             return new DifferentItemsPerCityMarketParserTask((DifferentItemsPerCityMarketParser) parser,
                     context,
                     marketCityRepository,

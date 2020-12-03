@@ -34,6 +34,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.io.IOException;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -114,7 +115,7 @@ public class SulpakParser implements DifferentItemsPerCityMarketParser {
         Elements sectionElements = indexPage.select(".catalog-category-item a");
         for (Element sectionElement : sectionElements) {
             String text = sectionElement.text();
-            if (SECTIONS.contains(text)) {
+            if(Arrays.asList(sulpakProperties.getCategoriesWhitelist()).contains(text)){
                 log.info("Получаем {}...", text);
                 String sectionUrl = sectionElement.absUrl("href");
                 MenuItemDto sectionItem = new MenuItemDto(text, sectionUrl);
