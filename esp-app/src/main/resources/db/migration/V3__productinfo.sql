@@ -1,22 +1,18 @@
 create table esp.product_item_info
 (
-    id          bigserial not null
-        constraint product_item_info_pkey
-            primary key,
-    external_id text,
-    description text,
-
-    ADD constraint product_info_product_item_fk foreign key (id)
+    id              bigserial not null primary key,
+    external_id     text,
+    description     text,
+    fk_product_item bigint    not null,
+    constraint product_info__product_item_fk foreign key (fk_product_item)
         references esp.product_item (id) match simple
         on update no action
-        on delete no action;
+        on delete no action
+);
 
-UPDATE esp.product_item_info
-SET external_id = product_item.external_id FROM esp.product_item
-SET description = product_item.description FROM esp.product_item
+INSERT INTO  esp.product_item_info (external_id, description, fk_product_item)
+    SELECT external_id, description, id FROM esp.product_item;
 
 ALTER TABLE esp.product_item
-DROP COLUMN external_id,
-DROP COLUMN description,
-
-);
+    DROP COLUMN external_id,
+    DROP COLUMN description;

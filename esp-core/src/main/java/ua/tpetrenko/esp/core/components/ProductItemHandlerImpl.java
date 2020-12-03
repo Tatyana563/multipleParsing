@@ -34,14 +34,16 @@ public class ProductItemHandlerImpl implements ProductItemHandler {
     @Override
     public void handle(ProductItemDto itemDto) {
 
-        ProductItem productItem = productItemRepository.findOneByMenuItemAndExternalId(menuItem, itemDto.getExternalId())
+        ProductItem productItem = productItemRepository.findOneByMenuItemAndUrl(menuItem, itemDto.getUrl())
                 .orElseGet(() -> new ProductItem().setMenuItem(menuItem));
         productItem = productItemsMapper.toEntity(productItem, itemDto);
         ProductItem updatedItem = productItemRepository.save(productItem);
 
-        productItemInfoRepository.findOneByProductItemId(productItem.getId())
-                .orElseGet(() -> new ProductItemInfo().setDescription(itemDto.getDescription())).setExternalId(itemDto.getExternalId());
-
+        ProductItemInfo productItemInfo = productItemInfoRepository.findOneByProductItem(productItem)
+                .orElseGet(() -> new ProductItemInfo().setProductItem(updatedItem)
+                        .setDescription(itemDto.getDescription())
+                .setExternalId(itemDto.getExternalId()));
+        productItemInfoRepository.save(productItemInfo);
 
         ProductPrice productPrice = productPriceRepository.findOneByProductItemAndCity(productItem, city)
                 .orElseGet(() -> new ProductPrice()

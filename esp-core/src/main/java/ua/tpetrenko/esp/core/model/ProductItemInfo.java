@@ -10,29 +10,25 @@ import ua.tpetrenko.esp.core.model.MenuItem;
 import javax.persistence.*;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @Accessors(chain = true)
 @Entity
 @Table(name = "product_item_info")
-public class ProductItemInfo extends AbstractEndpoint {
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @Column(name = "id", columnDefinition = "bigserial")
-//    private Long id;
+public class ProductItemInfo {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", columnDefinition = "bigserial")
+    private Long id;
 
     @Column(name = "external_id", columnDefinition = "text", nullable = false, unique = true)
     private String externalId;
-
 
     @Column(name = "description", columnDefinition = "text")
     private String description;
 
     @OneToOne
-    @JoinColumn(name = "fk_menu_item", nullable = false)
-    private MenuItem menuItem;
-
-    @ManyToOne
+    @JoinColumn(name = "fk_product_item", nullable = false)
     private ProductItem productItem;
 
 }

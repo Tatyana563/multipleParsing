@@ -8,5 +8,5 @@ import ua.tpetrenko.esp.core.model.ProductItem;
 
 @Repository
 public interface ProductItemRepository extends JpaRepository<ProductItem, Long> {
-    Optional<ProductItem> findOneByMenuItemAndExternalId(MenuItem menuItem, String externalId);
+    Optional<ProductItem> findOneByMenuItemAndUrl(MenuItem menuItem, String url);
 }

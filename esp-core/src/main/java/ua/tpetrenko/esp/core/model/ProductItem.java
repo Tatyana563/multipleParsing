@@ -19,10 +19,6 @@ import java.util.Set;
 @Entity
 @Table(name = "product_item")
 public class ProductItem extends AbstractEndpoint {
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @Column(name = "id", columnDefinition = "bigserial")
-//    private Long id;
 
     @Column(name = "code", columnDefinition = "text")
     private String code;
@@ -34,7 +30,7 @@ public class ProductItem extends AbstractEndpoint {
     @JoinColumn(name = "fk_menu_item", nullable = false)
     private MenuItem menuItem;
 
-    @OneToMany(mappedBy = "productItem", fetch = FetchType.EAGER)
-    private Set<ProductItemInfo> itemInfoSet;
+    @OneToOne(mappedBy = "productItem", fetch = FetchType.EAGER)
+    private ProductItemInfo itemInfo;
 
 }
