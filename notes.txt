@@ -62,3 +62,4 @@ versions ?
 ************************************************************************
 PROBLEMS:
 1) sulpak encoding of whitelist;
+2) how dto get into  ProductItemHandlerImpl?
