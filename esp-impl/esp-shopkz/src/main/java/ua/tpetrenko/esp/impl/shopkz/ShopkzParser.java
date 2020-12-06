@@ -20,6 +20,7 @@ import ua.tpetrenko.esp.impl.shopkz.properties.ShopkzProperties;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
@@ -32,12 +33,9 @@ public class ShopkzParser implements SimpleMarketParser {
     private static Logger log = LoggerFactory.getLogger(ShopkzParser.class);
     public static final MarketInfo INFO = new MarketInfo("Shop.kz", "https://shop.kz/");
     private Document rootPage;
-    private static final Set<String> SECTIONS = Set.of("Смартфоны и гаджеты", "Комплектующие", "Ноутбуки и компьютеры", "Компьютерная периферия",
-            "Оргтехника и расходные материалы", "Сетевое и серверное оборудование", "Телевизоры, аудио, фото, видео", "Бытовая техника и товары для дома", "Товары для геймеров");
-
     private final ShopkzProperties shopkzProperties;
     //TODO ~
-    private final String[] whiteList;
+    private final List<String> whiteList;
 
     public ShopkzParser(ShopkzProperties shopkzProperties) {
         this.shopkzProperties = shopkzProperties;
@@ -73,7 +71,7 @@ public class ShopkzParser implements SimpleMarketParser {
         for (Element sectionElement : sectionElements) {
             Element sectionAnchor = sectionElement.selectFirst(">a");
             String text = sectionAnchor.text();
-            if (Arrays.asList(whiteList).contains(text)) {
+            if (whiteList.contains(text)) {
                 log.info("Получаем {}...", text);
                 String sectionUrl = sectionAnchor.absUrl("href");
                 MenuItemDto sectionItem = new MenuItemDto(text, sectionUrl);

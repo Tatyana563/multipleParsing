@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Configuration;
 import ua.tpetrenko.esp.configuration.properties.GlobalProperties;
 import ua.tpetrenko.esp.configuration.properties.model.ConnectionProperties;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Configuration
@@ -15,7 +17,7 @@ import ua.tpetrenko.esp.configuration.properties.model.ConnectionProperties;
 public class ShopkzProperties {
     private boolean enabled;
     //TODO ~
-    private String[] categoriesWhitelist;
+    private List<String> categoriesWhitelist;
     @NestedConfigurationProperty
     private ConnectionProperties connection;
 

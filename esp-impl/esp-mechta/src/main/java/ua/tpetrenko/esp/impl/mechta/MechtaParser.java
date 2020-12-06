@@ -20,27 +20,19 @@ import ua.tpetrenko.esp.api.handlers.ProductItemHandler;
 import ua.tpetrenko.esp.impl.mechta.properties.MechtaProperties;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 //@Slf4j
 @Component
 public class MechtaParser implements DifferentItemsPerCityMarketParser {
     private static Logger log = LoggerFactory.getLogger(MechtaParser.class);
     public static final MarketInfo INFO = new MarketInfo("Mechta.kz", "https://www.mechta.kz/");
-    private static final Set<String> SECTIONS = Set.of("Смартфоны и гаджеты"/*, "Ноутбуки и компьютеры", "Тв, аудио, видео",
-            "Техника для дома", "Климат техника", "Кухонная техника", "Встраиваемая техника", "Фото и видео техника", "Игровые приставки и игрушки", "Активный отдых"*/);
     private Document rootPage;
 
     private final MechtaProperties mechtaProperties;
-    //TODO: use list
-    private final String[] whiteList;
 
     public MechtaParser(MechtaProperties mechtaProperties) {
         this.mechtaProperties = mechtaProperties;
-        this.whiteList = mechtaProperties.getCategoriesWhitelist();
     }
 
     @Override
@@ -72,37 +64,35 @@ public class MechtaParser implements DifferentItemsPerCityMarketParser {
         for (Element sectionElement : sectionElements) {
             Element sectionElementLink = sectionElement.selectFirst(">a");
             String text = sectionElementLink.text();
-            if(Arrays.asList(mechtaProperties.getCategoriesWhitelist()).contains(text)) {
-                if (SECTIONS.contains(text)) {
+            if(mechtaProperties.getCategoriesWhitelist().contains(text)) {
+                log.info("Получаем {}...", text);
+                String sectionUrl = sectionElementLink.absUrl("href");
+                MenuItemDto sectionItem = new MenuItemDto(text, sectionUrl);
+                MenuItemHandler groupHandler = sectionHandler.handleSubMenu(sectionItem);
+                String sectionRel = sectionElement.attr("rel");
+
+                Elements groupElements = indexPage.select(".header-second-menu #jq_aa_th_pod" + sectionRel + " .jq_aa_hm_tab");
+
+                for (Element groupElement : groupElements) {
+                    Element groupAnchor = groupElement.selectFirst(".aa_hm_pod2");
+                    String groupLink = groupAnchor.absUrl("href");
+                    String groupText = groupAnchor.text();
+
                     log.info("Получаем {}...", text);
-                    String sectionUrl = sectionElementLink.absUrl("href");
-                    MenuItemDto sectionItem = new MenuItemDto(text, sectionUrl);
-                    MenuItemHandler groupHandler = sectionHandler.handleSubMenu(sectionItem);
-                    String sectionRel = sectionElement.attr("rel");
+                    MenuItemDto groupItem = new MenuItemDto(groupText, groupLink);
 
-                    Elements groupElements = indexPage.select(".header-second-menu #jq_aa_th_pod" + sectionRel + " .jq_aa_hm_tab");
+                    MenuItemHandler categoryHandler = groupHandler.handleSubMenu(groupItem);
 
-                    for (Element groupElement : groupElements) {
-                        Element groupAnchor = groupElement.selectFirst(".aa_hm_pod2");
-                        String groupLink = groupAnchor.absUrl("href");
-                        String groupText = groupAnchor.text();
+                    Elements categoryElements = groupElement.select(".aa_hm_pod3");
+                    for (Element categoryElement : categoryElements) {
+                        String categoryLink = categoryElement.absUrl("href");
+                        String categoryText = categoryElement.text();
 
                         log.info("Получаем {}...", text);
-                        MenuItemDto groupItem = new MenuItemDto(groupText, groupLink);
+                        MenuItemDto categoryItem = new MenuItemDto(categoryText, categoryLink);
+                        log.info("\tКатегория  {}", categoryText);
+                        categoryHandler.handle(categoryItem);
 
-                        MenuItemHandler categoryHandler = groupHandler.handleSubMenu(groupItem);
-
-                        Elements categoryElements = groupElement.select(".aa_hm_pod3");
-                        for (Element categoryElement : categoryElements) {
-                            String categoryLink = categoryElement.absUrl("href");
-                            String categoryText = categoryElement.text();
-
-                            log.info("Получаем {}...", text);
-                            MenuItemDto categoryItem = new MenuItemDto(categoryText, categoryLink);
-                            log.info("\tКатегория  {}", categoryText);
-                            categoryHandler.handle(categoryItem);
-
-                        }
                     }
                 }
             }
@@ -118,9 +108,26 @@ public class MechtaParser implements DifferentItemsPerCityMarketParser {
         }
 
         //TODO: parse cities
-
+        Elements cityElements = rootPage.select(".aa_htcity_cities > a");
+        log.info("Парсим города:");
+        for (Element cityElement : cityElements) {
+            String cityName = cityElement.text();
+            log.info("\t-{}", cityName);
+            cityHandler.handle(new CityDto(cityName, cityElement.attr("href")));
+//?setcity=a
+//https://www.mechta.kz/?setcity=bn
+        }
     }
-
+//    @Override
+//    public void parseCities(CityHandler cityHandler) {
+//        Elements cityElements = rootPage.select(".cities-list-main > label");
+//        log.info("Парсим города:");
+//        for (Element cityElement : cityElements) {
+//            String cityName = cityElement.text();
+//            log.info("\t-{}", cityName);
+//            cityHandler.handle(new CityDto(cityName, cityElement.attr("data-id")));
+//        }
+//    }
     @Override
     public void parseItems(CityDto cityDto, MenuItemDto menuItemDto, ProductItemHandler productItemHandler) throws IOException {
         new SingleCategoryProcessor(cityDto, menuItemDto, productItemHandler, prepareCityCookies(cityDto)).run();

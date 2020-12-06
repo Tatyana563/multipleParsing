@@ -77,7 +77,6 @@ public class SingleCategoryProcessor implements Runnable {
     }
 
 
-
     private int getTotalPages(Document firstPage) {
         Element lastPage = firstPage.selectFirst(".modern-page-navigation>a:nth-last-of-type(2)");
         if (lastPage != null) {
@@ -93,7 +92,7 @@ public class SingleCategoryProcessor implements Runnable {
 //            return;
 //        }
 
-        Elements itemElements = itemsPage.select(".aa_section_catalog");
+        Elements itemElements = itemsPage.select(".aa_section_catalog .aa_sectiontov");
 
         for (Element itemElement : itemElements) {
             try {
@@ -112,8 +111,8 @@ public class SingleCategoryProcessor implements Runnable {
 
     private Optional<ProductItemDto> processProductItem(Element itemElement) {
         String code = null;
-        String price = null;
-        String imageUrl=null;
+        Double price = null;
+        String imageUrl = null;
         String itemUrl = itemElement.selectFirst(".ifont14.j_product_link").absUrl("href");
         String itemText = itemElement.selectFirst(".aa_std_name").text();
         String itemCode = itemElement.selectFirst(".element-table-article.only-desktop").text();
@@ -125,22 +124,24 @@ public class SingleCategoryProcessor implements Runnable {
         }
         Matcher priceMatcher = PRICE_PATTERN.matcher(itemPrice);
         if (priceMatcher.find()) {
-            price = priceMatcher.group(0).replaceAll("\\s*", "");
+            price = Double.valueOf(priceMatcher.group(0).replaceAll("\\s*", ""));
         }
         String test = itemElement.selectFirst(".aa_st_imglink.j_product_link").attr("style");
 
         Matcher imageMatcher = IMAGE_PATTERN.matcher(test);
+
+        //TODO: check improvements
         if (imageMatcher.find()) {
-
             String image = imageMatcher.group(2).replace("'", "");
-
-          imageUrl = INFO + image;
+            String root = image.startsWith("/")
+                    ? INFO.getUrl().substring(0, INFO.getUrl().length() - 1)
+                    : menuItemDto.getUrl();
+            imageUrl = root + image;
         }
-            return Optional.of(new ProductItemDto(itemText, itemUrl)
-                    .setCode(itemCode.toString())
-
-                    .setImageUrl(imageUrl)
-                    .setPrice(Double.valueOf(price)));
+        return Optional.of(new ProductItemDto(itemText, itemUrl)
+                .setCode(code)
+                .setImageUrl(imageUrl)
+                .setPrice(price));
 
     }
 

@@ -120,7 +120,7 @@ public class SulpakParser implements DifferentItemsPerCityMarketParser {
         for (Element sectionElement : sectionElements) {
             String text = sectionElement.text();
             //TODO ~
-            if(Arrays.asList(sulpakProperties.getCategoriesWhitelist()).contains(text)){
+            if(sulpakProperties.getCategoriesWhitelist().contains(text)){
                 log.info("Получаем {}...", text);
                 String sectionUrl = sectionElement.absUrl("href");
                 MenuItemDto sectionItem = new MenuItemDto(text, sectionUrl);
