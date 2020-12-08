@@ -40,3 +40,7 @@ public abstract class AbstractMarketParserTask<P extends MarketParser> implement
     }
 
 }
+//no such element: Unable to locate element: {.ReactModal__Content.CitiesModal .ModalNext__CloseBtn"}
+//ModalNext__CloseBtn ModalNext__CloseBtn-Cross reset-button-styles
+//ModalNext__CloseBtn ModalNext__CloseBtn-Cross reset-button-styles
+//ModalNext__CloseBtn ModalNext__CloseBtn-Cross reset-button-styles

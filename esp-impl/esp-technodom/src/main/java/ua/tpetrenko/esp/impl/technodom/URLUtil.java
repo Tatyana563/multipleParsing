@@ -10,17 +10,16 @@ public final class URLUtil {
         // Only static methods
     }
 
-    public static String removeCityFromUrl(String rawUrl, String prefix) {
+    public static String removeCityFromUrl(String rawUrl) {
         String str = "https://www.technodom.kz/kazygurt/vsjo-dlja-gejmerov/xbox/aksessuary-xbox";
         List<String> result = new ArrayList<>();
-        String[] split = str.split("/");
+        String[] split =rawUrl.split("/");
         List<String> list = Arrays.asList(split);
         for (int i = 4; i < list.size(); i++) {
             result.add(list.get(i));
         }
 
-        String join = Constants.URL + "/" + String.join("/", result);
-        return join;
+    return Constants.URL + "/" + String.join("/", result);
     }
 
     public static String extractExternalIdFromUrl(String rawUrl) {

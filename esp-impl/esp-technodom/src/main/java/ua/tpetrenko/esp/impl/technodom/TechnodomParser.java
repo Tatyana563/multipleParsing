@@ -1,13 +1,6 @@
 package ua.tpetrenko.esp.impl.technodom;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
-
-import java.time.Duration;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -25,14 +18,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import ua.tpetrenko.esp.api.dto.CityDto;
-import ua.tpetrenko.esp.api.dto.MenuItemDto;
-import ua.tpetrenko.esp.api.parser.DifferentItemsPerCityMarketParser;
 import ua.tpetrenko.esp.api.dto.MarketInfo;
+import ua.tpetrenko.esp.api.dto.MenuItemDto;
 import ua.tpetrenko.esp.api.handlers.CityHandler;
 import ua.tpetrenko.esp.api.handlers.MenuItemHandler;
 import ua.tpetrenko.esp.api.handlers.ProductItemHandler;
-import ua.tpetrenko.esp.api.parser.DifferentItemsPerCityMarketParserSelenium;
+import ua.tpetrenko.esp.api.parser.DifferentItemsPerCityMarketParser;
 import ua.tpetrenko.esp.impl.technodom.properties.TechnodomProperties;
+
+import java.time.Duration;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Roman Zdoronok
@@ -40,7 +36,7 @@ import ua.tpetrenko.esp.impl.technodom.properties.TechnodomProperties;
 //@Slf4j
 @Component
 //@RequiredArgsConstructor
-public class TechnodomParser implements DifferentItemsPerCityMarketParser{
+public class TechnodomParser implements DifferentItemsPerCityMarketParser {
     private static Logger log = LoggerFactory.getLogger(TechnodomParser.class);
     private static final MarketInfo INFO = new MarketInfo("Technodom", "https://technodom.kz/");
 
@@ -81,6 +77,11 @@ public class TechnodomParser implements DifferentItemsPerCityMarketParser{
     }
 
     private void closeModals() {
+        Wait<WebDriver> wait = new FluentWait<>(webDriver)
+                .withMessage("Preset popup not found")
+                .withTimeout(Duration.ofSeconds(10))
+                .pollingEvery(Duration.ofMillis(200));
+
         long modalTimeout = technodomProperties.getModalWindowPresentTimeoutMs().toMillis();
         try {
             log.info("Ожидаем возможные модальные окна {} мс...", modalTimeout);
@@ -88,26 +89,28 @@ public class TechnodomParser implements DifferentItemsPerCityMarketParser{
             log.info("Дождались");
             WebElement element;
             //TODO: use wait api
-            while ((element = webDriver.findElement(
-                    By.cssSelector("div[id$='-popup-modal'] [id$='-popup-close']"))).isDisplayed()) {
-                element.click();
-                Thread.sleep(1000L);
-            }
+//            while ((element = webDriver.findElement(
+//                    By.cssSelector("div[id$='-popup-modal'] [id$='-popup-close']"))).isDisplayed()) {
+//                element.click();
+//                Thread.sleep(1000L);
+//            }
+//            try {
+//                wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("div[id$='-popup-modal'] [id$='-popup-close']")));
+//             //   wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("div[id$='-popup-modal'] [id$='-popup-close']")));
+//            } catch (Exception e) {
+//                log.error("Не удалось  отобразить окно с подарком", e);
+//                return;
+//            }
         } catch (NoSuchElementException noSuchElementException) {
             // nothing to do.
         } catch (Exception e) {
-            log.error("Проблема определения модальыых окон", e);
+            log.error("Проблема определения модальных окон", e);
         }
 
-        Wait<WebDriver> wait = new FluentWait<>(webDriver)
-                .withMessage("City list not found")
-                .withTimeout(Duration.ofSeconds(10))
-                .pollingEvery(Duration.ofMillis(200));
 
         try {
             wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".ReactModal__Content.VerifyCityModal")));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error("Не удалось загрузить список городов", e);
             return;
         }
@@ -185,7 +188,8 @@ public class TechnodomParser implements DifferentItemsPerCityMarketParser{
         for (Element cityUrl : cityUrls) {
             String cityName = cityUrl.text();
             log.info("Город: {}", cityName);
-            String cityLink = URLUtil.extractCityFromUrl(cityUrl.attr("href"), Constants.ALL_SUFFIX);;
+            String cityLink = URLUtil.extractCityFromUrl(cityUrl.attr("href"), Constants.ALL_SUFFIX);
+            ;
             cityHandler.handle(new CityDto(cityName, cityLink));
         }
 
@@ -194,12 +198,27 @@ public class TechnodomParser implements DifferentItemsPerCityMarketParser{
 
     @Override
     public void parseItems(CityDto cityDto, MenuItemDto menuItemDto, ProductItemHandler productItemHandler) {
-        //TODO parse items
-        //1. select city (click on city with webdriver)
-        //2. get category page
-        //3. parse items
-        //4. next page
-        //5. goto 3.
+        openCitiesPopup();
+        List<WebElement> cityLinks = webDriver.findElements(By.cssSelector("a.CitiesModal__List-Item"));
+        for (WebElement cityLink : cityLinks) {
+            if (cityDto.getName().equalsIgnoreCase(cityLink.getText())) {
+                cityLink.click();
+                //   break;
+            }
+            try {
+
+                new SingleCategoryProcessor(cityDto, menuItemDto, productItemHandler, webDriver).run();
+
+            } catch (Exception e) {
+                log.error("Не удалось распарсить продукт", e);
+            }
+            //TODO parse items
+            //1. select city (click on city with webdriver)
+            //2. get category page
+            //3. parse items
+            //4. next page
+            //5. goto 3.
+        }
     }
 
     @Override
@@ -212,14 +231,13 @@ public class TechnodomParser implements DifferentItemsPerCityMarketParser{
     private void openCitiesPopup() {
         Wait<WebDriver> wait = new FluentWait<>(webDriver)
                 .withMessage("City popup not found")
-                .withTimeout(Duration.ofSeconds(10))
+                .withTimeout(Duration.ofSeconds(120))
                 .pollingEvery(Duration.ofMillis(200));
 
         try {
             log.info("Ожидаем доступности модального окна выбора городов");
             wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".CitySelector__Button")));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error("Не найдена кнопка отображения списка городов", e);
             return;
         }
@@ -231,7 +249,10 @@ public class TechnodomParser implements DifferentItemsPerCityMarketParser{
 
     private void closeCitiesPopup() {
         log.info("Закрываем модальное окно выбора городов...");
-        webDriver.findElement(By.cssSelector(".ReactModal__Content.CitiesModal .ModalNext__CloseBtn")).click();
+    //    webDriver.findElement(By.cssSelector(".ReactModal__Content.CitiesModal .ModalNext__CloseBtn")).click();
+        webDriver.findElement(By.cssSelector(".ModalNext__CloseBtn")).click();
+
     }
 
 }
+//ModalNext__CloseBtn ModalNext__CloseBtn-Cross reset-button-styles
