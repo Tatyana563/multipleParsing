@@ -70,7 +70,7 @@ public class TechnodomParser implements DifferentItemsPerCityMarketParser{
         WebDriverManager.chromedriver().setup();
         ChromeOptions options = new ChromeOptions();
         options.setBinary(technodomProperties.getChrome().getPath());
-        options.addArguments("--headless");
+//        options.addArguments("--headless");
         options.addArguments("window-size=1920x1080");
         webDriver = new ChromeDriver(options);
         webDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
@@ -86,13 +86,13 @@ public class TechnodomParser implements DifferentItemsPerCityMarketParser{
             log.info("Ожидаем возможные модальные окна {} мс...", modalTimeout);
             Thread.sleep(modalTimeout);
             log.info("Дождались");
-//            WebElement element;
-//            //TODO: use wait api
-//            while ((element = webDriver.findElement(
-//                    By.cssSelector("div[id$='-popup-modal'] [id$='-popup-close']"))).isDisplayed()) {
-//                element.click();
-//                Thread.sleep(1000L);
-//            }
+            WebElement element;
+            //TODO: use wait api
+            while ((element = webDriver.findElement(
+                    By.cssSelector("div[id$='-popup-modal'] [id$='-popup-close']"))).isDisplayed()) {
+                element.click();
+                Thread.sleep(1000L);
+            }
         } catch (NoSuchElementException noSuchElementException) {
             // nothing to do.
         } catch (Exception e) {

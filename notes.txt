@@ -52,6 +52,12 @@ separately implemented in children add
                 <configuration>  individual conf <configuration>
             </plugin>
         </plugins>
+
+1) get amount of correct images from 2 to 5 randomly;
+2) generate random positions for correct images from from 0 to 8;
+3)from  answerPositions randomly get positions for CaptchaImage;
+4) remove these positions from available positions;
+5) for other images choose random positions from available positions;
 ************************************
 versions ?
 <dependency>
@@ -61,5 +67,6 @@ versions ?
 </dependency>
 ************************************************************************
 PROBLEMS:
-1) sulpak encoding of whitelist;
-2) how dto get into  ProductItemHandlerImpl?
+
+1) how dto get into  ProductItemHandlerImpl?
+2) tehnodom whitelist hangs

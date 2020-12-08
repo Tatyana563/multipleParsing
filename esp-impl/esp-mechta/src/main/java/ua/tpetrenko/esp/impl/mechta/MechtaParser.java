@@ -114,20 +114,10 @@ public class MechtaParser implements DifferentItemsPerCityMarketParser {
             String cityName = cityElement.text();
             log.info("\t-{}", cityName);
             cityHandler.handle(new CityDto(cityName, cityElement.attr("href")));
-//?setcity=a
-//https://www.mechta.kz/?setcity=bn
+
         }
     }
-//    @Override
-//    public void parseCities(CityHandler cityHandler) {
-//        Elements cityElements = rootPage.select(".cities-list-main > label");
-//        log.info("Парсим города:");
-//        for (Element cityElement : cityElements) {
-//            String cityName = cityElement.text();
-//            log.info("\t-{}", cityName);
-//            cityHandler.handle(new CityDto(cityName, cityElement.attr("data-id")));
-//        }
-//    }
+
     @Override
     public void parseItems(CityDto cityDto, MenuItemDto menuItemDto, ProductItemHandler productItemHandler) throws IOException {
         new SingleCategoryProcessor(cityDto, menuItemDto, productItemHandler, prepareCityCookies(cityDto)).run();

@@ -47,11 +47,7 @@ import java.util.concurrent.TimeUnit;
 public class SulpakParser implements DifferentItemsPerCityMarketParser {
     private static Logger log = LoggerFactory.getLogger(SulpakParser.class);
     private static final MarketInfo INFO = new MarketInfo("Sulpak", "https://www.sulpak.kz/");
-    private static final Set<String> SECTIONS = Set.of("Телефоны и гаджеты"/*, "Теле и аудио техника", "Ноутбуки и компьютеры", "Фото и видео техника",
-            "Игры и развлечения", "Техника для дома", "Техника для кухни", "Встраиваемая техника"*/);
-
     //TODO: move to .properties "blacklist"
-    private static final Set<String> GROUPS_EXCEPTIONS = Set.of("Купить дешевле");
     public static final String pathPart = "f/planshetiy_graficheskie/";
     private Document rootPage;
 
@@ -134,7 +130,7 @@ public class SulpakParser implements DifferentItemsPerCityMarketParser {
                     String groupText = groupElement.text();
                     log.info("Группа  {}", groupText);
                     //TODO ~
-                    if (!GROUPS_EXCEPTIONS.contains(groupText)) {
+                    if (!sulpakProperties.getCategoriesBlacklist().contains(groupText)) {
                         MenuItemDto groupItem = new MenuItemDto(groupText, groupUrl);
                         log.info("Группа  {}", groupText);
                         MenuItemHandler categoryHandler = groupHandler.handleSubMenu(groupItem);

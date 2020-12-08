@@ -19,6 +19,7 @@ public class SulpakProperties {
     private boolean enabled;
     //TODO ~
     private List<String> categoriesWhitelist;
+    private List<String> categoriesBlacklist;
     @NestedConfigurationProperty
     private ConnectionProperties connection;
     @NestedConfigurationProperty
