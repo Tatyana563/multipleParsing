@@ -107,7 +107,6 @@ public class MechtaParser implements DifferentItemsPerCityMarketParser {
             throw new IllegalStateException("Не была получена главная страница");
         }
 
-        //TODO: parse cities
         Elements cityElements = rootPage.select(".aa_htcity_cities > a");
         log.info("Парсим города:");
         for (Element cityElement : cityElements) {

@@ -38,7 +38,7 @@ public class SingleCategoryProcessor implements Runnable {
     private final ProductItemHandler productItemHandler;
     private final WebDriver webDriver;
 
-
+    //TODO: copy 'technodomkz' implementation
     @Override
     public void run() {
         try {
@@ -48,11 +48,10 @@ public class SingleCategoryProcessor implements Runnable {
             synchronized (webDriver) {
 
                 String categorySuffix = URLUtil.getCategorySuffix(menuItemDto.getUrl(), Constants.URL);
-                //TODO: take into account empty city suffix
                 //https://www.technodom.kz/noutbuki-i-komp-jutery/noutbuki-i-aksessuary/noutbuki
                 //https://www.technodom.kz/aktobe/noutbuki-i-komp-jutery/noutbuki-i-aksessuary/noutbuki
                if (cityDto.getUrl() == null) {
-                categoryUrl = String.format("%s/%s", Constants.URL, categorySuffix);
+                    categoryUrl = String.format("%s/%s", Constants.URL, categorySuffix);
                 } else {
                     categoryUrl = String.format("%s/%s/%s", Constants.URL, cityDto.getUrl(), categorySuffix);
                 }

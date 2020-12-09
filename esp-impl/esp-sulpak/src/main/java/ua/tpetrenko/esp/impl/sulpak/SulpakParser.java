@@ -9,6 +9,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -40,6 +41,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 //@Slf4j
 @Component
@@ -128,7 +130,6 @@ public class SulpakParser implements DifferentItemsPerCityMarketParser {
                 for (Element groupElement : groupElements) {
                     String groupUrl = groupElement.absUrl("href");
                     String groupText = groupElement.text();
-                    log.info("Группа  {}", groupText);
                     //TODO ~
                     if (!sulpakProperties.getCategoriesBlacklist().contains(groupText)) {
                         MenuItemDto groupItem = new MenuItemDto(groupText, groupUrl);
@@ -141,7 +142,6 @@ public class SulpakParser implements DifferentItemsPerCityMarketParser {
                             String categoryText = categoryElement.text();
                             log.info("\tКатегория  {}", categoryText);
                             MenuItemDto categoryItem = new MenuItemDto(categoryText, categoryLink);
-                            log.info("\tКатегория  {}", categoryText);
                             categoryHandler.handleSubMenu(categoryItem);
                         }
                     }
@@ -164,15 +164,25 @@ public class SulpakParser implements DifferentItemsPerCityMarketParser {
 
     private Map<String, String> prepareCityCookies(CityDto cityDto) throws IOException {
         log.info("Готовим cookies для города {}", cityDto.getName());
-        Map<String, String> cookies = new HashMap<>();
-        String urlWithCity = String.format("%s%s%s", INFO.getUrl(), pathPart, cityDto.getUrl());
-        Connection.Response response = Jsoup.connect(urlWithCity)
-                .cookies(cookies)
-                .method(Connection.Method.GET)
-                .execute();
-        cookies.putAll(response.cookies());
-        return cookies;
+        //TODO: use webdriver to change current city,
+        //Next - convert set cookies to map<string, string> - <name, value>
+        return driver.manage().getCookies().stream().collect(Collectors.toMap(Cookie::getName, Cookie::getValue));
+//        Map<String, String> cookies = new HashMap<>();
+//        String urlWithCity = String.format("%s%s%s", INFO.getUrl(), pathPart, cityDto.getUrl());
+//        Connection.Response response = Jsoup.connect(urlWithCity)
+//                .cookies(cookies)
+//                .method(Connection.Method.GET)
+//                .execute();
+//        cookies.putAll(response.cookies());
+//        return cookies;
     }
+
+    /*
+    Jsoup.connect("https://www.sulpak.kz/Home/SetCity")
+        .requestBody("{\"cityId\":60,\"params\":{\"controller\":\"Home\",\"action\":\"Index\",\"cityName\":\"zharkent\"},\"path\":\"/\"}")
+//        .cookies(cookies)
+                .method(Connection.Method.POST)
+        .execute()*/
 
     @Override
     public void parseItems(CityDto cityDto, MenuItemDto menuItemDto, ProductItemHandler productItemHandler) throws IOException {

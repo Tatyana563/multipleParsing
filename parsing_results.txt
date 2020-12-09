@@ -1,6 +1,6 @@
 1) SHOP.KZ (esp3)
 product_item fk_menu_item is 277,m nut in menu_item id = 282
-Items:13040
+Items:13040 +
 2) SULPAK.KZ (esp4) - failed with cookies;
 3) MECHTA (esp5)
 4)

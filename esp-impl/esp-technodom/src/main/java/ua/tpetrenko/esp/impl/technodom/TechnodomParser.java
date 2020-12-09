@@ -203,21 +203,22 @@ public class TechnodomParser implements DifferentItemsPerCityMarketParser {
         for (WebElement cityLink : cityLinks) {
             if (cityDto.getName().equalsIgnoreCase(cityLink.getText())) {
                 cityLink.click();
-                //   break;
+                 break;
             }
-            try {
 
-                new SingleCategoryProcessor(cityDto, menuItemDto, productItemHandler, webDriver).run();
-
-            } catch (Exception e) {
-                log.error("Не удалось распарсить продукт", e);
-            }
             //TODO parse items
             //1. select city (click on city with webdriver)
             //2. get category page
             //3. parse items
             //4. next page
             //5. goto 3.
+        }
+        try {
+
+            new SingleCategoryProcessor(cityDto, menuItemDto, productItemHandler, webDriver).run();
+
+        } catch (Exception e) {
+            log.error("Не удалось распарсить продукт", e);
         }
     }
 

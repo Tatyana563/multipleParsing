@@ -130,7 +130,6 @@ public class SingleCategoryProcessor implements Runnable {
 
         Matcher imageMatcher = IMAGE_PATTERN.matcher(test);
 
-        //TODO: check improvements
         if (imageMatcher.find()) {
             String image = imageMatcher.group(2).replace("'", "");
             String root = image.startsWith("/")
