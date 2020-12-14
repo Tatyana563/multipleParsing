@@ -17,6 +17,8 @@ import ua.tpetrenko.esp.api.handlers.CityHandler;
 import ua.tpetrenko.esp.api.handlers.MenuItemHandler;
 import ua.tpetrenko.esp.api.handlers.ProductItemHandler;
 import ua.tpetrenko.esp.api.parser.DifferentItemsPerCityMarketParser;
+import ua.tpetrenko.esp.api.parser.MarketParser;
+import ua.tpetrenko.esp.impl.common.AbstractPerCityParser;
 import ua.tpetrenko.esp.impl.fora.properties.ForaProperties;
 
 import java.io.IOException;
@@ -25,7 +27,7 @@ import java.util.*;
 //@Slf4j
 @Component
 @RequiredArgsConstructor
-public class ForaParser implements DifferentItemsPerCityMarketParser {
+public class ForaParser extends AbstractPerCityParser implements MarketParser {
     private static Logger log = LoggerFactory.getLogger(ForaParser.class);
     private static final MarketInfo INFO = new MarketInfo("Fora.kz", "https://fora.kz/");
     @Autowired

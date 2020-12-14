@@ -24,19 +24,23 @@ public class Context {
 
     private final Set<MarketParser> parsers;
     private final ParserContextFactory parserContextFactory;
-    private final TaskFactory taskFactory;
 
     @Bean
     public ApplicationRunner applicationRunner() {
         return args -> {
-            ExecutorService executorService = Executors.newFixedThreadPool(3);
 
             for (MarketParser parser : parsers) {
-
                 MarketInfo marketInfo = parser.getMarketInfo();
                 log.info("Parser for {} [{}]", marketInfo.getName(), parser.isEnabled() ? "enabled" : "disabled");
+            }
+
+            ExecutorService executorService = Executors.newFixedThreadPool(3);
+            for (MarketParser parser : parsers) {
+                MarketInfo marketInfo = parser.getMarketInfo();
+
                 if (parser.isEnabled()) {
-                    executorService.submit(taskFactory.getTask(parser, parserContextFactory.getParserContext(marketInfo)));
+                    log.info("Submitting parser execution task for {}", marketInfo.getName());
+                    executorService.submit(() -> parser.doParse(parserContextFactory.getParserContext(marketInfo)));
                 }
             }
         };
