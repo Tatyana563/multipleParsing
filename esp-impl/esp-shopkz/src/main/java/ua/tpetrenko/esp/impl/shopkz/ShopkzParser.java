@@ -35,11 +35,8 @@ public class ShopkzParser implements SimpleMarketParser {
     private Document rootPage;
     private final ShopkzProperties shopkzProperties;
     //TODO ~
-    private final List<String> whiteList;
-
     public ShopkzParser(ShopkzProperties shopkzProperties) {
         this.shopkzProperties = shopkzProperties;
-        this.whiteList = shopkzProperties.getCategoriesWhitelist();
     }
 
     @Override
@@ -71,7 +68,7 @@ public class ShopkzParser implements SimpleMarketParser {
         for (Element sectionElement : sectionElements) {
             Element sectionAnchor = sectionElement.selectFirst(">a");
             String text = sectionAnchor.text();
-            if (whiteList.contains(text)) {
+            if (shopkzProperties.getCategoriesWhitelist().contains(text)) {
                 log.info("Получаем {}...", text);
                 String sectionUrl = sectionAnchor.absUrl("href");
                 MenuItemDto sectionItem = new MenuItemDto(text, sectionUrl);

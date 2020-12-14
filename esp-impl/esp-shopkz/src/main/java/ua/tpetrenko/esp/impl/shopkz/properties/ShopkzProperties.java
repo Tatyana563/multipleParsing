@@ -7,6 +7,8 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.context.annotation.Configuration;
 import ua.tpetrenko.esp.configuration.properties.GlobalProperties;
 import ua.tpetrenko.esp.configuration.properties.model.ConnectionProperties;
+import ua.tpetrenko.esp.configuration.properties.model.ParserProperties;
+import ua.tpetrenko.esp.impl.shopkz.ShopkzParser;
 
 import java.util.List;
 
@@ -14,10 +16,9 @@ import java.util.List;
 @Setter
 @Configuration
 @ConfigurationProperties(prefix = "esp.shopkz")
-public class ShopkzProperties {
-    private boolean enabled;
+public class ShopkzProperties extends ParserProperties {
+
     //TODO ~
-    private List<String> categoriesWhitelist;
     @NestedConfigurationProperty
     private ConnectionProperties connection;
 

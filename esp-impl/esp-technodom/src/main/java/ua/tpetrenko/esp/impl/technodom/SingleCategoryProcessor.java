@@ -2,21 +2,24 @@ package ua.tpetrenko.esp.impl.technodom;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.FluentWait;
+import org.openqa.selenium.support.ui.Wait;
 import ua.tpetrenko.esp.api.dto.CityDto;
 import ua.tpetrenko.esp.api.dto.MenuItemDto;
 import ua.tpetrenko.esp.api.dto.ProductItemDto;
 import ua.tpetrenko.esp.api.handlers.ProductItemHandler;
+import ua.tpetrenko.esp.impl.technodom.properties.TechnodomProperties;
 
-import java.io.IOException;
 import java.time.Duration;
-import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CountDownLatch;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,56 +32,79 @@ public class SingleCategoryProcessor implements Runnable {
 
     private static final String PAGE_URL_FORMAT = "?sort=views&page=%d";
     private static final Integer NUMBER_OF_PRODUCTS_PER_PAGE = 18;
-    private static final Pattern PATTERN = Pattern.compile("Артикул:\\s*(\\S*)");
-    private static final Pattern PRICE_PATTERN = Pattern.compile("(^([0-9]+\\s*)*)");
     private static final Pattern QUANTITY_PATTERN = Pattern.compile("(\\d+)");
 
     private final CityDto cityDto;
     private final MenuItemDto menuItemDto;
     private final ProductItemHandler productItemHandler;
     private final WebDriver webDriver;
+    private final TechnodomProperties properties;
+
 
     //TODO: copy 'technodomkz' implementation
     @Override
     public void run() {
+
         try {
             log.warn("Начиначем обработку категории '{}'", menuItemDto.getName());
             String categoryUrl;
             String pageUrlFormat;
-            synchronized (webDriver) {
-
-                String categorySuffix = URLUtil.getCategorySuffix(menuItemDto.getUrl(), Constants.URL);
-                //https://www.technodom.kz/noutbuki-i-komp-jutery/noutbuki-i-aksessuary/noutbuki
-                //https://www.technodom.kz/aktobe/noutbuki-i-komp-jutery/noutbuki-i-aksessuary/noutbuki
-               if (cityDto.getUrl() == null) {
-                    categoryUrl = String.format("%s/%s", Constants.URL, categorySuffix);
-                } else {
-                    categoryUrl = String.format("%s/%s/%s", Constants.URL, cityDto.getUrl(), categorySuffix);
-                }
-                pageUrlFormat = categoryUrl + PAGE_URL_FORMAT;
-                String firstPageUrl = String.format(pageUrlFormat, 1);
-               //https://www.technodom.kz/abai/smartfony-i-gadzhety/aksessuary-dlja-telefonov/podstavki?sort=views&page=1
-                webDriver.get(firstPageUrl);
+            String categorySuffix = URLUtil.getCategorySuffix(menuItemDto.getUrl(), Constants.URL);
+            if (cityDto.getUrl() == null) {
+                categoryUrl = String.format("%s/%s", Constants.URL, categorySuffix);
+            } else {
+                categoryUrl = String.format("%s/%s/%s", Constants.URL, cityDto.getUrl(), categorySuffix);
             }
-            Document itemsPage = Jsoup.parse(webDriver.getPageSource());
+            pageUrlFormat = categoryUrl + PAGE_URL_FORMAT;
+            String firstPageUrl = String.format(pageUrlFormat, 1);
+            Document itemsPage = loadItemsPage(firstPageUrl);
             if (itemsPage != null) {
                 int totalPages = getTotalPages(itemsPage);
                 parseItems(itemsPage);
                 for (int pageNumber = 2; pageNumber <= totalPages; pageNumber++) {
                     log.info("Получаем список товаров ({}) - страница {}", menuItemDto.getName(), pageNumber);
                     String pageUrl = String.format(pageUrlFormat, pageNumber);
-                    webDriver.get(pageUrl);
-                    Document itemsPages = Jsoup.parse(webDriver.getPageSource());
+                    Document itemsPages = null;
+                    synchronized (webDriver) {
+                        webDriver.get(pageUrl);
+                        long start = System.currentTimeMillis();
+                        int attempts = 0;
+                        boolean failed = false;
+                        while (!webDriver.findElements(By.cssSelector(".CategoryProductList .ProductCard.ProductCard_isLoading")).isEmpty()) {
+                            if (System.currentTimeMillis() - start >= (properties.getConnection().getReadTimeoutMs()).toMillisPart()) {
+                                log.warn("Слишком долго получаем данные");
+                                if (attempts <= properties.getConnection().getRetryCount()) {
+                                    start = System.currentTimeMillis();
+                                    attempts++;
+                                    webDriver.get(pageUrl);
+                                } else {
+                                    // go to next items page.
+                                    failed = true;
+                                    break;
+                                }
+                            } else {
+                                Thread.sleep(200);
+                            }
+                        }
+                        if (failed) {
+                            continue;
+                        }
+                        itemsPages = Jsoup.parse(webDriver.getPageSource());
+                    }
                     parseItems(itemsPages);
                 }
-
+            } else {
+                log.error("Не удалось получить первую страницу категории");
             }
-
+        } catch (Exception exception) {
+            log.error("Не получилось распарсить категорию", exception);
         } finally {
             log.warn("Обработка категории '{}' завершена", menuItemDto.getName());
+           // latch.countDown();
         }
     }
-//CategoryPagination-Arrow CategoryPagination-Arrow_direction_last
+
+    //CategoryPagination-Arrow CategoryPagination-Arrow_direction_last
     private int getTotalPages(Document firstPage) {
         Element pageElement = firstPage.selectFirst(".CategoryPage-ItemsCount");
         if (pageElement != null) {
@@ -129,7 +155,7 @@ public class SingleCategoryProcessor implements Runnable {
     }
 
     private Optional<ProductItemDto> processProductItem(Element itemElement) {
-      //  String itemPhoto = itemElement.selectFirst(".ProductCard-Image img").absUrl("src");
+        //  String itemPhoto = itemElement.selectFirst(".ProductCard-Image img").absUrl("src");
         String itemUrl = itemElement.selectFirst(".ProductCard-Content").attr("href");
         String itemText = itemElement.selectFirst("h4").text();
         String itemPriceValue = itemElement.selectFirst(".ProductPrice data[value]").attr("value");
@@ -138,17 +164,43 @@ public class SingleCategoryProcessor implements Runnable {
         String externalCode = URLUtil.extractExternalIdFromUrl(itemUrl);
         if (externalCode != null && externalCode.isEmpty()) {
             log.warn("Продукт без кода: {}\n{}", itemText, itemUrl);
-          return Optional.empty();
+            return Optional.empty();
         }
 
         String itemUrlWithoutCity = URLUtil.removeCityFromUrl(itemUrl);
 
         return Optional.of(new ProductItemDto(itemText, itemUrlWithoutCity)
-                                         .setExternalId(null)
-                                         .setCode(externalCode)
-                                         .setDescription(null)
-                                         .setImageUrl(itemUrl)
-                                         .setPrice(Double.valueOf(itemPriceValue)));
-          }
+                .setExternalId(null)
+                .setCode(externalCode)
+                .setDescription(null)
+                .setImageUrl(itemUrl)
+                .setPrice(Double.valueOf(itemPriceValue)));
+    }
+
+    private Document loadItemsPage(String pageUrl) {
+        int attempts = 0;
+        synchronized (webDriver) {
+            while (attempts <= properties.getConnection().getRetryCount()) {
+                webDriver.get(pageUrl);
+                Wait<WebDriver> wait = new FluentWait<>(webDriver)
+                        .withMessage("Product items not found")
+                        .withTimeout(Duration.ofSeconds(10))
+                        .pollingEvery(Duration.ofMillis(200));
+
+                try {
+                    wait.until(
+                            ExpectedConditions.presenceOfElementLocated(
+                                    By.cssSelector(".CategoryProductList .ProductCard:not(.ProductCard_isLoading)")));
+                } catch (Exception e) {
+                    log.error("Не удалось загрузить список продуктов", e);
+                    attempts++;
+                    continue;
+                }
+
+                return Jsoup.parse(webDriver.getPageSource());
+            }
+        }
+        return null;
+    }
 }
 

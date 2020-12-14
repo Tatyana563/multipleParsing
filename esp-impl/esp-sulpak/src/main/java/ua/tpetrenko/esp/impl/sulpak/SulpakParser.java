@@ -50,7 +50,6 @@ public class SulpakParser implements DifferentItemsPerCityMarketParser {
     private static Logger log = LoggerFactory.getLogger(SulpakParser.class);
     private static final MarketInfo INFO = new MarketInfo("Sulpak", "https://www.sulpak.kz/");
     //TODO: move to .properties "blacklist"
-    public static final String pathPart = "f/planshetiy_graficheskie/";
     private Document rootPage;
 
     private final SulpakProperties sulpakProperties;

@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import ua.tpetrenko.esp.configuration.properties.GlobalProperties;
 import ua.tpetrenko.esp.configuration.properties.model.ChromeProperties;
 import ua.tpetrenko.esp.configuration.properties.model.ConnectionProperties;
+import ua.tpetrenko.esp.configuration.properties.model.ParserProperties;
 
 import java.util.List;
 
@@ -15,10 +16,8 @@ import java.util.List;
 @Setter
 @Configuration
 @ConfigurationProperties(prefix = "esp.sulpak")
-public class SulpakProperties {
-    private boolean enabled;
+public class SulpakProperties extends ParserProperties {
     //TODO ~
-    private List<String> categoriesWhitelist;
     private List<String> categoriesBlacklist;
     @NestedConfigurationProperty
     private ConnectionProperties connection;
@@ -26,7 +25,6 @@ public class SulpakProperties {
     private ChromeProperties chrome;
 
     public SulpakProperties(GlobalProperties globalProperties) {
-        this.enabled = globalProperties.isEnabled();
         this.connection = globalProperties.getConnection();
         this.chrome = globalProperties.getChrome();
     }

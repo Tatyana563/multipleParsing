@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import ua.tpetrenko.esp.configuration.properties.GlobalProperties;
 import ua.tpetrenko.esp.configuration.properties.model.ChromeProperties;
 import ua.tpetrenko.esp.configuration.properties.model.ConnectionProperties;
+import ua.tpetrenko.esp.configuration.properties.model.ParserProperties;
 
 /**
  * @author Roman Zdoronok
@@ -22,9 +23,7 @@ import ua.tpetrenko.esp.configuration.properties.model.ConnectionProperties;
 @Setter
 @Configuration
 @ConfigurationProperties(prefix = "esp.technodom")
-public class TechnodomProperties {
-    private boolean enabled;
-    private List<String> categoriesWhitelist = Collections.emptyList();
+public class TechnodomProperties extends ParserProperties {
     @NestedConfigurationProperty
     private ConnectionProperties connection;
     @NestedConfigurationProperty

@@ -16,6 +16,7 @@ import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Wait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ua.tpetrenko.esp.api.dto.CityDto;
 import ua.tpetrenko.esp.api.dto.MarketInfo;
@@ -28,6 +29,7 @@ import ua.tpetrenko.esp.impl.technodom.properties.TechnodomProperties;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -41,11 +43,10 @@ public class TechnodomParser implements DifferentItemsPerCityMarketParser {
     private static final MarketInfo INFO = new MarketInfo("Technodom", "https://technodom.kz/");
 
     private final TechnodomProperties technodomProperties;
-    private final List<String> whiteList;
+
 
     public TechnodomParser(TechnodomProperties technodomProperties) {
         this.technodomProperties = technodomProperties;
-        this.whiteList = technodomProperties.getCategoriesWhitelist();
     }
 
     private WebDriver webDriver;
@@ -151,7 +152,7 @@ public class TechnodomParser implements DifferentItemsPerCityMarketParser {
         for (Element sectionElement : sectionElements) {
             Element sectionTitle = sectionElement.selectFirst("h2.CatalogPage-CategoryTitle");
             String sectionName = sectionTitle.text();
-            if (whiteList.contains(sectionName)) {
+            if (technodomProperties.getCategoriesWhitelist().contains(sectionName)) {
                 log.info("Секция: {}", sectionName);
                 MenuItemDto sectionItem = new MenuItemDto(sectionName, null);
                 MenuItemHandler groupHandler = menuItemHandler.handleSubMenu(sectionItem);
@@ -189,7 +190,7 @@ public class TechnodomParser implements DifferentItemsPerCityMarketParser {
             String cityName = cityUrl.text();
             log.info("Город: {}", cityName);
             String cityLink = URLUtil.extractCityFromUrl(cityUrl.attr("href"), Constants.ALL_SUFFIX);
-            ;
+
             cityHandler.handle(new CityDto(cityName, cityLink));
         }
 
@@ -198,12 +199,14 @@ public class TechnodomParser implements DifferentItemsPerCityMarketParser {
 
     @Override
     public void parseItems(CityDto cityDto, MenuItemDto menuItemDto, ProductItemHandler productItemHandler) {
+
+
         openCitiesPopup();
         List<WebElement> cityLinks = webDriver.findElements(By.cssSelector("a.CitiesModal__List-Item"));
         for (WebElement cityLink : cityLinks) {
             if (cityDto.getName().equalsIgnoreCase(cityLink.getText())) {
                 cityLink.click();
-                 break;
+                break;
             }
 
             //TODO parse items
@@ -212,13 +215,14 @@ public class TechnodomParser implements DifferentItemsPerCityMarketParser {
             //3. parse items
             //4. next page
             //5. goto 3.
-        }
-        try {
 
-            new SingleCategoryProcessor(cityDto, menuItemDto, productItemHandler, webDriver).run();
+            try {
 
-        } catch (Exception e) {
-            log.error("Не удалось распарсить продукт", e);
+                new SingleCategoryProcessor(cityDto, menuItemDto, productItemHandler, webDriver, technodomProperties).run();
+
+            } catch (Exception e) {
+                log.error("Не удалось распарсить продукт", e);
+            }
         }
     }
 
@@ -250,10 +254,6 @@ public class TechnodomParser implements DifferentItemsPerCityMarketParser {
 
     private void closeCitiesPopup() {
         log.info("Закрываем модальное окно выбора городов...");
-    //    webDriver.findElement(By.cssSelector(".ReactModal__Content.CitiesModal .ModalNext__CloseBtn")).click();
-        webDriver.findElement(By.cssSelector(".ModalNext__CloseBtn")).click();
-
+        webDriver.findElement(By.cssSelector(".ReactModal__Content.CitiesModal .ModalNext__CloseBtn")).click();
     }
-
 }
-//ModalNext__CloseBtn ModalNext__CloseBtn-Cross reset-button-styles

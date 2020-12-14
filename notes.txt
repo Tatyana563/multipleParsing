@@ -68,5 +68,5 @@ versions ?
 ************************************************************************
 PROBLEMS:
 
-1) how dto get into  ProductItemHandlerImpl?
-2) tehnodom whitelist hangs
+1) Caused by: org.postgresql.util.PSQLException: ERROR: null value in column "fk_parent_item" violates not-null constraint
+2) properties.getConnection().getReadTimeoutMs()).toMillisPart() - connection between TechnodomParser and Global Properties

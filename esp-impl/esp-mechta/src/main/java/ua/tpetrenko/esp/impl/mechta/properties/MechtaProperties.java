@@ -16,10 +16,8 @@ import java.util.List;
 @Setter
 @Configuration
 @ConfigurationProperties(prefix = "esp.mechta")
-public class MechtaProperties {
-    private boolean enabled;
-    //TOO: change type
-    private List<String> categoriesWhitelist;
+public class MechtaProperties extends ParserProperties {
+    //TODO: change type
     @NestedConfigurationProperty
     private ConnectionProperties connection;
 
