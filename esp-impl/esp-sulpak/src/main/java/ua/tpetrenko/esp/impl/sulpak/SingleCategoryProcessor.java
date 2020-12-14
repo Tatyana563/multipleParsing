@@ -109,10 +109,9 @@ public class SingleCategoryProcessor implements Runnable {
 
     private Optional<ProductItemDto> processProductItem(Element itemElement) {
         Double itemPrice = Double.valueOf(itemElement.attr("data-price"));
-        Element a = itemElement.selectFirst("a.title");
-        String itemText = a.text();
+        Element a = itemElement.selectFirst(".goods-tiles .product-container-right-side>a");
         String itemLink = a.absUrl("href");
-
+        String itemText = a.text();
         log.info("Нашли товар {}/{}", itemText, itemPrice);
 
         String itemAvailability = itemElement.selectFirst("span.availability").text();
