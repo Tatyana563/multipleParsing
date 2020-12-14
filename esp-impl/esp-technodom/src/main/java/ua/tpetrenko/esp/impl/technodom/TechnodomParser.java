@@ -201,13 +201,13 @@ public class TechnodomParser implements DifferentItemsPerCityMarketParser {
     public void parseItems(CityDto cityDto, MenuItemDto menuItemDto, ProductItemHandler productItemHandler) {
 
 
-        openCitiesPopup();
-        List<WebElement> cityLinks = webDriver.findElements(By.cssSelector("a.CitiesModal__List-Item"));
-        for (WebElement cityLink : cityLinks) {
-            if (cityDto.getName().equalsIgnoreCase(cityLink.getText())) {
-                cityLink.click();
-                break;
-            }
+//        openCitiesPopup();
+//        List<WebElement> cityLinks = webDriver.findElements(By.cssSelector("a.CitiesModal__List-Item"));
+//        for (WebElement cityLink : cityLinks) {
+//            if (cityDto.getName().equalsIgnoreCase(cityLink.getText())) {
+//                cityLink.click();
+//                break;
+//            }
 
             //TODO parse items
             //1. select city (click on city with webdriver)
@@ -224,7 +224,7 @@ public class TechnodomParser implements DifferentItemsPerCityMarketParser {
                 log.error("Не удалось распарсить продукт", e);
             }
         }
-    }
+
 
     @Override
     public void destroyParser() {
@@ -248,6 +248,15 @@ public class TechnodomParser implements DifferentItemsPerCityMarketParser {
         }
         webDriver.findElement(By.cssSelector(".CitySelector__Button")).click();
         log.info("Открываем модальное окно выбора городов...");
+
+        try {
+            log.info("Ожидаем доступности конкретного города");
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".CitiesModal__More-Btn")));
+        } catch (Exception e) {
+            log.error("Не найдена кнопка отображения города", e);
+            return;
+        }
+
         webDriver.findElement(By.cssSelector(".CitiesModal__More-Btn")).click();
         log.info("Жмем \"Еще...\"");
     }
