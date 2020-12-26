@@ -1,43 +1,34 @@
 package ua.tpetrenko.esp.impl.shopkz;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ua.tpetrenko.esp.api.dto.CityDto;
 import ua.tpetrenko.esp.api.dto.MenuItemDto;
-import ua.tpetrenko.esp.api.parser.DifferentItemsPerCityMarketParser;
 import ua.tpetrenko.esp.api.dto.MarketInfo;
-import ua.tpetrenko.esp.api.handlers.CityHandler;
 import ua.tpetrenko.esp.api.handlers.MenuItemHandler;
 import ua.tpetrenko.esp.api.handlers.ProductItemHandler;
 import ua.tpetrenko.esp.api.parser.SimpleMarketParser;
 import ua.tpetrenko.esp.impl.shopkz.properties.ShopkzProperties;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 
 /**
  * @author Roman Zdoronok
  */
-//@Slf4j
+@Slf4j
 @Component
+@RequiredArgsConstructor
 public class ShopkzParser implements SimpleMarketParser {
-    private static Logger log = LoggerFactory.getLogger(ShopkzParser.class);
     public static final MarketInfo INFO = new MarketInfo("Shop.kz", "https://shop.kz/");
-    private Document rootPage;
+
     private final ShopkzProperties shopkzProperties;
-    //TODO ~
-    public ShopkzParser(ShopkzProperties shopkzProperties) {
-        this.shopkzProperties = shopkzProperties;
-    }
+
+    private Document rootPage;
 
     @Override
     public MarketInfo getMarketInfo() {

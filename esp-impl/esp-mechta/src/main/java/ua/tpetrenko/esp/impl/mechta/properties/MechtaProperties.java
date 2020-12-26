@@ -17,12 +17,9 @@ import java.util.List;
 @Configuration
 @ConfigurationProperties(prefix = "esp.mechta")
 public class MechtaProperties extends ParserProperties {
-    //TODO: change type
-    @NestedConfigurationProperty
-    private ConnectionProperties connection;
 
     public MechtaProperties(GlobalProperties globalProperties) {
         this.enabled = globalProperties.isEnabled();
-        this.connection = globalProperties.getConnection();
+        this.connection = new ConnectionProperties(globalProperties.getConnection());
     }
 }

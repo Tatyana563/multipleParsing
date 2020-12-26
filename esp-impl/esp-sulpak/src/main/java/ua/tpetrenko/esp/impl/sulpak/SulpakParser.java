@@ -11,17 +11,12 @@ import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Wait;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ua.tpetrenko.esp.api.dto.CityDto;
 import ua.tpetrenko.esp.api.dto.MenuItemDto;
@@ -32,27 +27,23 @@ import ua.tpetrenko.esp.api.handlers.MenuItemHandler;
 import ua.tpetrenko.esp.api.handlers.ProductItemHandler;
 import ua.tpetrenko.esp.impl.sulpak.properties.SulpakProperties;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.Duration;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-//@Slf4j
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class SulpakParser implements DifferentItemsPerCityMarketParser {
-    private static Logger log = LoggerFactory.getLogger(SulpakParser.class);
     private static final MarketInfo INFO = new MarketInfo("Sulpak", "https://www.sulpak.kz/");
-    //TODO: move to .properties "blacklist"
-    private Document rootPage;
 
     private final SulpakProperties sulpakProperties;
+
+    private Document rootPage;
 
     @Override
     public MarketInfo getMarketInfo() {
@@ -111,30 +102,29 @@ public class SulpakParser implements DifferentItemsPerCityMarketParser {
         if (rootPage == null) {
             throw new IllegalStateException("Не была получена главная страница");
         }
-        Document indexPage = Jsoup.connect(INFO.getUrl()).get();
+        Document indexPage = loadDocument(INFO.getUrl());
         log.info("Получили главную страницу, ищем секции...");
         Elements sectionElements = indexPage.select(".catalog-category-item a");
         for (Element sectionElement : sectionElements) {
             String text = sectionElement.text();
-            //TODO ~
             if(sulpakProperties.getCategoriesWhitelist().contains(text)){
                 log.info("Получаем {}...", text);
                 String sectionUrl = sectionElement.absUrl("href");
                 MenuItemDto sectionItem = new MenuItemDto(text, sectionUrl);
                 MenuItemHandler groupHandler = sectionHandler.handleSubMenu(sectionItem);
 
-                Document groupPage = Jsoup.connect(sectionUrl).get();
+                Document groupPage = loadDocument(sectionUrl);
                 log.info("Получили {}, ищем группы...", text);
                 Elements groupElements = groupPage.select(".portal-menu-title a");
                 for (Element groupElement : groupElements) {
                     String groupUrl = groupElement.absUrl("href");
                     String groupText = groupElement.text();
-                    //TODO ~
                     if (!sulpakProperties.getCategoriesBlacklist().contains(groupText)) {
                         MenuItemDto groupItem = new MenuItemDto(groupText, groupUrl);
                         log.info("Группа  {}", groupText);
                         MenuItemHandler categoryHandler = groupHandler.handleSubMenu(groupItem);
-                        Document categoryPage = Jsoup.connect(groupUrl).get();
+                        //TODO: use categories from groups page. Do not load another page.
+                        Document categoryPage = loadDocument(groupUrl);
                         Elements categoryElements = categoryPage.select(".portal-parts-list a");
                         for (Element categoryElement : categoryElements) {
                             String categoryLink = categoryElement.absUrl("href");
@@ -151,6 +141,7 @@ public class SulpakParser implements DifferentItemsPerCityMarketParser {
 
     @Override
     public void parseCities(CityHandler cityHandler) {
+        //TODO: correct selector
         Elements cityElements = rootPage.select(".cities-list-main > label");
         log.info("Парсим города:");
         for (Element cityElement : cityElements) {
@@ -163,7 +154,7 @@ public class SulpakParser implements DifferentItemsPerCityMarketParser {
 
     private Map<String, String> prepareCityCookies(CityDto cityDto) throws IOException {
         log.info("Готовим cookies для города {}", cityDto.getName());
-        //TODO: use webdriver to change current city,
+        //TODO: use webdriver to change current city (copy from technodom ?)
         //Next - convert set cookies to map<string, string> - <name, value>
         return driver.manage().getCookies().stream().collect(Collectors.toMap(Cookie::getName, Cookie::getValue));
 //        Map<String, String> cookies = new HashMap<>();
@@ -193,5 +184,9 @@ public class SulpakParser implements DifferentItemsPerCityMarketParser {
         if (driver != null) {
             driver.quit();
         }
+    }
+
+    private Document loadDocument(String url) throws IOException {
+        return Jsoup.parse(new URL(url), (int) sulpakProperties.getConnection().getReadTimeoutMs().toMillis());
     }
 }

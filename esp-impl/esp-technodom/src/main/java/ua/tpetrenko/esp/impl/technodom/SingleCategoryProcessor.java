@@ -41,7 +41,7 @@ public class SingleCategoryProcessor implements Runnable {
     private final TechnodomProperties properties;
 
 
-    //TODO: copy 'technodomkz' implementation
+    //TODO: check implementation
     @Override
     public void run() {
 

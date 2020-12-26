@@ -2,8 +2,6 @@ package ua.tpetrenko.esp.impl.technodom.properties;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
-import java.util.Collections;
-import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +11,6 @@ import org.springframework.boot.convert.DurationUnit;
 import org.springframework.context.annotation.Configuration;
 import ua.tpetrenko.esp.configuration.properties.GlobalProperties;
 import ua.tpetrenko.esp.configuration.properties.model.ChromeProperties;
-import ua.tpetrenko.esp.configuration.properties.model.ConnectionProperties;
 import ua.tpetrenko.esp.configuration.properties.model.ParserProperties;
 
 /**
@@ -24,14 +21,16 @@ import ua.tpetrenko.esp.configuration.properties.model.ParserProperties;
 @Configuration
 @ConfigurationProperties(prefix = "esp.technodom")
 public class TechnodomProperties extends ParserProperties {
-    @NestedConfigurationProperty
-    private ConnectionProperties connection;
+
     @NestedConfigurationProperty
     private ChromeProperties chrome;
+
     @DurationUnit(ChronoUnit.MILLIS)
     private Duration modalWindowPresentTimeoutMs = Duration.ofSeconds(20);
     public TechnodomProperties(GlobalProperties globalProperties) {
+        //TODO: create connection properties copy
         this.connection = globalProperties.getConnection();
+        //TODO: create crome properties copy
         this.chrome = globalProperties.getChrome();
     }
 }
