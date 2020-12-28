@@ -11,6 +11,7 @@ import org.springframework.boot.convert.DurationUnit;
 import org.springframework.context.annotation.Configuration;
 import ua.tpetrenko.esp.configuration.properties.GlobalProperties;
 import ua.tpetrenko.esp.configuration.properties.model.ChromeProperties;
+import ua.tpetrenko.esp.configuration.properties.model.ConnectionProperties;
 import ua.tpetrenko.esp.configuration.properties.model.ParserProperties;
 
 /**
@@ -29,8 +30,8 @@ public class TechnodomProperties extends ParserProperties {
     private Duration modalWindowPresentTimeoutMs = Duration.ofSeconds(20);
     public TechnodomProperties(GlobalProperties globalProperties) {
         //TODO: create connection properties copy
-        this.connection = globalProperties.getConnection();
+        this.connection = new ConnectionProperties(globalProperties.getConnection().getReadTimeoutMs(), globalProperties.getConnection().getRetryCount());
         //TODO: create crome properties copy
-        this.chrome = globalProperties.getChrome();
+        this.chrome = new ChromeProperties(globalProperties.getChrome());
     }
 }

@@ -125,13 +125,14 @@ public class SulpakParser implements DifferentItemsPerCityMarketParser {
                         MenuItemHandler categoryHandler = groupHandler.handleSubMenu(groupItem);
                         //TODO: use categories from groups page. Do not load another page.
                         Document categoryPage = loadDocument(groupUrl);
-                        Elements categoryElements = categoryPage.select(".portal-parts-list a");
+                        Elements categoryElements = categoryPage.select(".portal-menu-items>a");
                         for (Element categoryElement : categoryElements) {
                             String categoryLink = categoryElement.absUrl("href");
                             String categoryText = categoryElement.text();
                             log.info("\tКатегория  {}", categoryText);
                             MenuItemDto categoryItem = new MenuItemDto(categoryText, categoryLink);
                             categoryHandler.handleSubMenu(categoryItem);
+
                         }
                     }
                 }

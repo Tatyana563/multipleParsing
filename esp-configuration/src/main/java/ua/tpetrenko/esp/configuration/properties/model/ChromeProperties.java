@@ -15,8 +15,10 @@ import lombok.Setter;
 public class ChromeProperties {
     private String path = null;
     private List<String> arguments = Arrays.asList("--headless", "window-size=1920x1080");
+    //TODO: copy fields
 
     public ChromeProperties(ChromeProperties another) {
-        //TODO: copy fields
+        this.path = another.getPath();
+        this.arguments = another.getArguments();
     }
 }
