@@ -193,18 +193,12 @@ public class TechnodomParser implements DifferentItemsPerCityMarketParser {
 
         openCitiesPopup();
         List<WebElement> cityLinks = webDriver.findElements(By.cssSelector("a.CitiesModal__List-Item"));
-//        for (WebElement cityLink : cityLinks) {
-//            if (cityDto.getName().equalsIgnoreCase(cityLink.getText())) {
-//                cityLink.click();
-//                break;
-//            }
-
-            //TODO parse items
-            //1. select city (click on city with webdriver)
-            //2. get category page
-            //3. parse items
-            //4. next page
-            //5. goto 3.
+        for (WebElement cityLink : cityLinks) {
+            if (cityDto.getName().equalsIgnoreCase(cityLink.getText())) {
+                cityLink.click();
+                break;
+            }
+        }
 
             try {
 
@@ -213,7 +207,8 @@ public class TechnodomParser implements DifferentItemsPerCityMarketParser {
             } catch (Exception e) {
                 log.error("Не удалось распарсить продукт", e);
             }
-        }
+
+    }
 
 
 
