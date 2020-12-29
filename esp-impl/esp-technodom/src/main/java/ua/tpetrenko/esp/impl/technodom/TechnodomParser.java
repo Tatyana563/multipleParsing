@@ -90,18 +90,7 @@ public class TechnodomParser implements DifferentItemsPerCityMarketParser {
             log.info("Дождались");
             WebElement element;
             //TODO: use wait api
-//            while ((element = webDriver.findElement(
-//                    By.cssSelector("div[id$='-popup-modal'] [id$='-popup-close']"))).isDisplayed()) {
-//                element.click();
-//                Thread.sleep(1000L);
-//            }
-//            try {
-//                wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("div[id$='-popup-modal'] [id$='-popup-close']")));
-//             //   wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("div[id$='-popup-modal'] [id$='-popup-close']")));
-//            } catch (Exception e) {
-//                log.error("Не удалось  отобразить окно с подарком", e);
-//                return;
-//            }
+
         } catch (NoSuchElementException noSuchElementException) {
             // nothing to do.
         } catch (Exception e) {
@@ -137,27 +126,27 @@ public class TechnodomParser implements DifferentItemsPerCityMarketParser {
         webDriver.get(Constants.CATEGORIES_URL);
         Wait<WebDriver> wait = new FluentWait<>(webDriver)
                 .withMessage("Categories not found")
-                .withTimeout(Duration.ofSeconds(10))
+                .withTimeout(Duration.ofSeconds(30))
                 .pollingEvery(Duration.ofMillis(200));
 
         try {
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("div.CatalogPage-CategorySection")));
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".CatalogPage-CategorySection")));
         } catch (Exception e) {
             log.error("Не удалось загрузить список категорий", e);
             return;
         }
         Document document = Jsoup.parse(webDriver.getPageSource());
         log.info("Получили главную страницу, ищем секции...");
-        Elements sectionElements = document.select("div.CatalogPage-CategorySection");
+        Elements sectionElements = document.select(".CatalogPage-CategorySection");
         for (Element sectionElement : sectionElements) {
-            Element sectionTitle = sectionElement.selectFirst("h2.CatalogPage-CategoryTitle");
+            Element sectionTitle = sectionElement.selectFirst("h3.CatalogPage-CategoryTitle");
             String sectionName = sectionTitle.text();
             if (technodomProperties.getCategoriesWhitelist().contains(sectionName)) {
                 log.info("Секция: {}", sectionName);
                 MenuItemDto sectionItem = new MenuItemDto(sectionName, null);
                 MenuItemHandler groupHandler = menuItemHandler.handleSubMenu(sectionItem);
 
-                Elements groupElements = sectionElement.select("div.CatalogPage-Category");
+                Elements groupElements = sectionElement.select(".CatalogPage-Category");
                 for (Element groupElement : groupElements) {
                     String groupLink = groupElement.selectFirst("h3.CatalogPage-SubcategoryTitle > a").absUrl("href");
                     String groupTitle = groupElement.selectFirst("h3.CatalogPage-SubcategoryTitle > a").text();
@@ -201,13 +190,13 @@ public class TechnodomParser implements DifferentItemsPerCityMarketParser {
     public void parseItems(CityDto cityDto, MenuItemDto menuItemDto, ProductItemHandler productItemHandler) {
 
 
-//        openCitiesPopup();
-//        List<WebElement> cityLinks = webDriver.findElements(By.cssSelector("a.CitiesModal__List-Item"));
-//        for (WebElement cityLink : cityLinks) {
-//            if (cityDto.getName().equalsIgnoreCase(cityLink.getText())) {
-//                cityLink.click();
-//                break;
-//            }
+        openCitiesPopup();
+        List<WebElement> cityLinks = webDriver.findElements(By.cssSelector("a.CitiesModal__List-Item"));
+        for (WebElement cityLink : cityLinks) {
+            if (cityDto.getName().equalsIgnoreCase(cityLink.getText())) {
+                cityLink.click();
+                break;
+            }
 
             //TODO parse items
             //1. select city (click on city with webdriver)
@@ -224,6 +213,7 @@ public class TechnodomParser implements DifferentItemsPerCityMarketParser {
                 log.error("Не удалось распарсить продукт", e);
             }
         }
+    }
 
 
     @Override
@@ -251,18 +241,22 @@ public class TechnodomParser implements DifferentItemsPerCityMarketParser {
 
         try {
             log.info("Ожидаем доступности конкретного города");
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".CitiesModal__More-Btn")));
+          //  wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".CitiesModal__More-Btn")));
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".CitiesModal__List-Item_Bold")));
+
         } catch (Exception e) {
             log.error("Не найдена кнопка отображения города", e);
             return;
         }
 
-        webDriver.findElement(By.cssSelector(".CitiesModal__More-Btn")).click();
+      //  webDriver.findElement(By.cssSelector(".CitiesModal__More-Btn")).click();
+        webDriver.findElement(By.cssSelector(".CitiesModal__List-Item_Bold")).click();
         log.info("Жмем \"Еще...\"");
     }
 
     private void closeCitiesPopup() {
         log.info("Закрываем модальное окно выбора городов...");
         webDriver.findElement(By.cssSelector(".ReactModal__Content.CitiesModal .ModalNext__CloseBtn")).click();
+      //  webDriver.findElement(By.cssSelector(".ModalNext__CloseBtn ModalNext__CloseBtn-Cross")).click();
     }
 }
