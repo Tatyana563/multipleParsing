@@ -143,7 +143,7 @@ public class SulpakParser implements DifferentItemsPerCityMarketParser {
     @Override
     public void parseCities(CityHandler cityHandler) {
         //TODO: correct selector
-        Elements cityElements = rootPage.select(".cities-list-main > label");
+        Elements cityElements = rootPage.select(".cities-map-block>ul>li");
         log.info("Парсим города:");
         for (Element cityElement : cityElements) {
             String cityName = cityElement.text();
