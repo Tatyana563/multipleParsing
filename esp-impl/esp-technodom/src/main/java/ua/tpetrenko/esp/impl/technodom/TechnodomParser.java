@@ -43,7 +43,7 @@ public class TechnodomParser implements DifferentItemsPerCityMarketParser {
     private static final MarketInfo INFO = new MarketInfo("Technodom", "https://technodom.kz/");
 
     private final TechnodomProperties technodomProperties;
-
+    private Object key = new Object();
 
     public TechnodomParser(TechnodomProperties technodomProperties) {
         this.technodomProperties = technodomProperties;
@@ -170,20 +170,21 @@ public class TechnodomParser implements DifferentItemsPerCityMarketParser {
 
     @Override
     public void parseCities(CityHandler cityHandler) throws Exception {
+        synchronized (key) {
+            openCitiesPopup();
 
-        openCitiesPopup();
+            Document pageWithCitiesModal = Jsoup.parse(webDriver.getPageSource());
+            Elements cityUrls = pageWithCitiesModal.select("a.CitiesModal__List-Item");
+            for (Element cityUrl : cityUrls) {
+                String cityName = cityUrl.text();
+                log.info("Город: {}", cityName);
+                String cityLink = URLUtil.extractCityFromUrl(cityUrl.attr("href"), Constants.ALL_SUFFIX);
 
-        Document pageWithCitiesModal = Jsoup.parse(webDriver.getPageSource());
-        Elements cityUrls = pageWithCitiesModal.select("a.CitiesModal__List-Item");
-        for (Element cityUrl : cityUrls) {
-            String cityName = cityUrl.text();
-            log.info("Город: {}", cityName);
-            String cityLink = URLUtil.extractCityFromUrl(cityUrl.attr("href"), Constants.ALL_SUFFIX);
+                cityHandler.handle(new CityDto(cityName, cityLink));
+            }
 
-            cityHandler.handle(new CityDto(cityName, cityLink));
+            closeCitiesPopup();
         }
-
-        closeCitiesPopup();
     }
 
     @Override
@@ -192,11 +193,11 @@ public class TechnodomParser implements DifferentItemsPerCityMarketParser {
 
         openCitiesPopup();
         List<WebElement> cityLinks = webDriver.findElements(By.cssSelector("a.CitiesModal__List-Item"));
-        for (WebElement cityLink : cityLinks) {
-            if (cityDto.getName().equalsIgnoreCase(cityLink.getText())) {
-                cityLink.click();
-                break;
-            }
+//        for (WebElement cityLink : cityLinks) {
+//            if (cityDto.getName().equalsIgnoreCase(cityLink.getText())) {
+//                cityLink.click();
+//                break;
+//            }
 
             //TODO parse items
             //1. select city (click on city with webdriver)
@@ -213,7 +214,7 @@ public class TechnodomParser implements DifferentItemsPerCityMarketParser {
                 log.error("Не удалось распарсить продукт", e);
             }
         }
-    }
+
 
 
     @Override
@@ -241,8 +242,8 @@ public class TechnodomParser implements DifferentItemsPerCityMarketParser {
 
         try {
             log.info("Ожидаем доступности конкретного города");
-          //  wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".CitiesModal__More-Btn")));
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".CitiesModal__List-Item_Bold")));
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".CitiesModal__More-Btn")));
+          //  wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".CitiesModal__List-Item_Bold")));
 
         } catch (Exception e) {
             log.error("Не найдена кнопка отображения города", e);
@@ -250,8 +251,8 @@ public class TechnodomParser implements DifferentItemsPerCityMarketParser {
         }
 
       //  webDriver.findElement(By.cssSelector(".CitiesModal__More-Btn")).click();
-        webDriver.findElement(By.cssSelector(".CitiesModal__List-Item_Bold")).click();
-        log.info("Жмем \"Еще...\"");
+//        webDriver.findElement(By.cssSelector(".LinkNext CitiesModal__More-Btn")).click();
+//        log.info("Жмем \"Еще...\"");
     }
 
     private void closeCitiesPopup() {
