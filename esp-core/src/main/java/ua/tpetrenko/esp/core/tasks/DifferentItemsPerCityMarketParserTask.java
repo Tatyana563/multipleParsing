@@ -31,6 +31,10 @@ public class DifferentItemsPerCityMarketParserTask extends AbstractMarketParserT
     @Override
     protected void parseItems() throws Exception {
         marketParser.parseCities(context.getCityHandler());
+        //TODO: fix city iterators:
+        // use paging for cities
+        // use paging for categories (for each city)
+        // advice: use separate paging params for each loop. Reset counters.
         int page = 0;
         Page<MarketCity> cities = marketCityRepository.findAllByMarket(context.getMarket(), PageRequest.of(page++, coreProperties.getCategoryPageSize()));
         if (!cities.isEmpty()) {

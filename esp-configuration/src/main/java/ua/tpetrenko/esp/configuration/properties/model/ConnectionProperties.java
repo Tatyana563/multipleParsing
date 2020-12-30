@@ -16,7 +16,6 @@ import org.springframework.boot.convert.DurationUnit;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class ConnectionProperties {
     @DurationUnit(ChronoUnit.MILLIS)
     private Duration readTimeoutMs = Duration.ofSeconds(30);

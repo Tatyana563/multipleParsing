@@ -89,7 +89,6 @@ public class TechnodomParser implements DifferentItemsPerCityMarketParser {
             Thread.sleep(modalTimeout);
             log.info("Дождались");
             WebElement element;
-            //TODO: use wait api
 
         } catch (NoSuchElementException noSuchElementException) {
             // nothing to do.
@@ -101,7 +100,7 @@ public class TechnodomParser implements DifferentItemsPerCityMarketParser {
         try {
             wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".ReactModal__Content.VerifyCityModal")));
         } catch (Exception e) {
-            log.error("Не удалось загрузить список городов", e);
+            log.error("Не дождались модального окна подтверждения текущего города", e);
             return;
         }
         try {

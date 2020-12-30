@@ -41,12 +41,11 @@ public class SingleCategoryProcessor implements Runnable {
     private final TechnodomProperties properties;
 
 
-    //TODO: check implementation
     @Override
     public void run() {
 
         try {
-            log.warn("Начиначем обработку категории '{}'", menuItemDto.getName());
+            log.warn("Начиначем обработку категории '{}', для города {}", menuItemDto.getName(), cityDto.getName());
             String categoryUrl;
             String pageUrlFormat;
             String categorySuffix = URLUtil.getCategorySuffix(menuItemDto.getUrl(), Constants.URL);
@@ -64,21 +63,22 @@ public class SingleCategoryProcessor implements Runnable {
                 for (int pageNumber = 2; pageNumber <= totalPages; pageNumber++) {
                     log.info("Получаем список товаров ({}) - страница {}", menuItemDto.getName(), pageNumber);
                     String pageUrl = String.format(pageUrlFormat, pageNumber);
-                    Document itemsPages = null;
                     synchronized (webDriver) {
                         webDriver.get(pageUrl);
                         long start = System.currentTimeMillis();
-                        int attempts = 0;
+                        int attempts = 1;
                         boolean failed = false;
                         while (!webDriver.findElements(By.cssSelector(".CategoryProductList .ProductCard.ProductCard_isLoading")).isEmpty()) {
-                            if (System.currentTimeMillis() - start >= (properties.getConnection().getReadTimeoutMs()).toMillisPart()) {
+                            if (System.currentTimeMillis() - start >= properties.getConnection().getReadTimeoutMs().toMillis()) {
                                 log.warn("Слишком долго получаем данные");
                                 if (attempts <= properties.getConnection().getRetryCount()) {
                                     start = System.currentTimeMillis();
                                     attempts++;
+                                    log.info("В {} раз запрашиваем {}", attempts, pageUrl);
                                     webDriver.get(pageUrl);
                                 } else {
                                     // go to next items page.
+                                    log.error("Не удалось получить данные для {}", pageUrl);
                                     failed = true;
                                     break;
                                 }
@@ -89,9 +89,9 @@ public class SingleCategoryProcessor implements Runnable {
                         if (failed) {
                             continue;
                         }
-                        itemsPages = Jsoup.parse(webDriver.getPageSource());
+                        itemsPage = Jsoup.parse(webDriver.getPageSource());
                     }
-                    parseItems(itemsPages);
+                    parseItems(itemsPage);
                 }
             } else {
                 log.error("Не удалось получить первую страницу категории");
@@ -188,6 +188,8 @@ public class SingleCategoryProcessor implements Runnable {
                         .pollingEvery(Duration.ofMillis(200));
 
                 try {
+                    //TODO: get (wait) total items count, and if there iz zero then return null-document
+                    //TODO: check application.log at timestamp 2020-12-29 15:22:18;
                     wait.until(
                             ExpectedConditions.presenceOfElementLocated(
                                     By.cssSelector(".CategoryProductList .ProductCard:not(.ProductCard_isLoading)")));

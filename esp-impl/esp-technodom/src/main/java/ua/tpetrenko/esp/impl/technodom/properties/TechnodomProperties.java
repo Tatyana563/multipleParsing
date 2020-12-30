@@ -29,9 +29,7 @@ public class TechnodomProperties extends ParserProperties {
     @DurationUnit(ChronoUnit.MILLIS)
     private Duration modalWindowPresentTimeoutMs = Duration.ofSeconds(20);
     public TechnodomProperties(GlobalProperties globalProperties) {
-        //TODO: create connection properties copy
-        this.connection = new ConnectionProperties(globalProperties.getConnection().getReadTimeoutMs(), globalProperties.getConnection().getRetryCount());
-        //TODO: create crome properties copy
+        this.connection = new ConnectionProperties(globalProperties.getConnection());
         this.chrome = new ChromeProperties(globalProperties.getChrome());
     }
 }

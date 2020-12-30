@@ -17,7 +17,6 @@ public class ShopkzProperties extends ParserProperties {
 
     public ShopkzProperties(GlobalProperties globalProperties) {
         this.enabled = globalProperties.isEnabled();
-        //TODO: create connection properties copy
         this.connection = new ConnectionProperties(globalProperties.getConnection());
     }
 }

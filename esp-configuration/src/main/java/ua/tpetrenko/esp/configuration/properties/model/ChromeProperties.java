@@ -1,5 +1,6 @@
 package ua.tpetrenko.esp.configuration.properties.model;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import lombok.Getter;
@@ -15,10 +16,9 @@ import lombok.Setter;
 public class ChromeProperties {
     private String path = null;
     private List<String> arguments = Arrays.asList("--headless", "window-size=1920x1080");
-    //TODO: copy fields
 
     public ChromeProperties(ChromeProperties another) {
         this.path = another.getPath();
-        this.arguments = another.getArguments();
+        this.arguments = new ArrayList<>(another.getArguments());
     }
 }

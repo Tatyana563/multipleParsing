@@ -19,9 +19,7 @@ public class SulpakProperties extends ParserProperties {
     private ChromeProperties chrome;
 
     public SulpakProperties(GlobalProperties globalProperties) {
-        //TODO: create connection properties copy
-        this.connection = new ConnectionProperties(globalProperties.getConnection().getReadTimeoutMs(), globalProperties.getConnection().getRetryCount());
-        //TODO: create crome properties copy
+        this.connection = new ConnectionProperties(globalProperties.getConnection());
         this.chrome = new ChromeProperties(globalProperties.getChrome());
     }
 }
