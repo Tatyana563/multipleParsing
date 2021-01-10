@@ -121,18 +121,15 @@ public class SulpakParser implements DifferentItemsPerCityMarketParser {
                     String groupText = groupElement.text();
                     if (!sulpakProperties.getCategoriesBlacklist().contains(groupText)) {
                         MenuItemDto groupItem = new MenuItemDto(groupText, groupUrl);
-                        log.info("Группа  {}", groupText);
+                        log.info("Группа {}", groupText);
                         MenuItemHandler categoryHandler = groupHandler.handleSubMenu(groupItem);
-                        //TODO: use categories from groups page. Do not load another page.
-                        Document categoryPage = loadDocument(groupUrl);
-                        Elements categoryElements = categoryPage.select(".portal-menu-items>a");
+                        Elements categoryElements = groupElement.closest(".portal-menu-block.category-block").select(".portal-menu-items.accordion-content>a");
                         for (Element categoryElement : categoryElements) {
                             String categoryLink = categoryElement.absUrl("href");
-                            String categoryText = categoryElement.text();
-                            log.info("\tКатегория  {}", categoryText);
+                            String categoryText = categoryElement.ownText();
+                            log.info("\tКатегория {}", categoryText);
                             MenuItemDto categoryItem = new MenuItemDto(categoryText, categoryLink);
                             categoryHandler.handleSubMenu(categoryItem);
-
                         }
                     }
                 }
@@ -142,7 +139,6 @@ public class SulpakParser implements DifferentItemsPerCityMarketParser {
 
     @Override
     public void parseCities(CityHandler cityHandler) {
-        //TODO: correct selector
         Elements cityElements = rootPage.select(".cities-map-block>ul>li");
         log.info("Парсим города:");
         for (Element cityElement : cityElements) {

@@ -188,8 +188,17 @@ public class SingleCategoryProcessor implements Runnable {
                         .pollingEvery(Duration.ofMillis(200));
 
                 try {
-                    //TODO: get (wait) total items count, and if there iz zero then return null-document
-                    //TODO: check application.log at timestamp 2020-12-29 15:22:18;
+                    wait.until(
+                            ExpectedConditions.presenceOfElementLocated(
+                                    By.cssSelector(".CategoryPage-ItemsCount")));
+
+                    String amountOfItems = Jsoup.parse(webDriver.getPageSource()).selectFirst(".CategoryPage-ItemsCount").text();
+                    Matcher matcher = QUANTITY_PATTERN.matcher(amountOfItems);
+                    if (matcher.find() && Integer.parseInt(matcher.group(1)) == 0) {
+                        log.warn("Нет товаров для категории {} в городе {}.", menuItemDto.getName(), cityDto.getName());
+                        return null;
+                    }
+
                     wait.until(
                             ExpectedConditions.presenceOfElementLocated(
                                     By.cssSelector(".CategoryProductList .ProductCard:not(.ProductCard_isLoading)")));

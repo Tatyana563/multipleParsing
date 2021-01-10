@@ -31,28 +31,33 @@ public class DifferentItemsPerCityMarketParserTask extends AbstractMarketParserT
     @Override
     protected void parseItems() throws Exception {
         marketParser.parseCities(context.getCityHandler());
-        //TODO: fix city iterators:
-        // use paging for cities
-        // use paging for categories (for each city)
-        // advice: use separate paging params for each loop. Reset counters.
-        int page = 0;
-        Page<MarketCity> cities = marketCityRepository.findAllByMarket(context.getMarket(), PageRequest.of(page++, coreProperties.getCategoryPageSize()));
-        if (!cities.isEmpty()) {
+        int cityPage = 0;
+        Page<MarketCity> cities = marketCityRepository.findAllByMarket(context.getMarket(), PageRequest.of(cityPage++, coreProperties.getCategoryPageSize()));
+        while (!(cities.isEmpty())) {
             for (MarketCity city : cities) {
                 Page<MenuItem> categories;
 
-                categories = menuItemRepository.findAllEndpointMenuItems(context.getMarket(), PageRequest.of(page++, coreProperties.getCategoryPageSize()));
+                int categoryPage = 0;
+                categories = getMenuItemsPage(categoryPage++);
                 while (!(categories.isEmpty())) {
                     for (MenuItem category : categories) {
                         marketParser.parseItems(new CityDto(city.getCity().getName(), city.getUrl()),
                                 new MenuItemDto(category.getName(), category.getUrl()),
                                 context.getProductItemHandler(city.getCity(), category));
                     }
-
+                    categories = getMenuItemsPage(categoryPage++);
                 }
             }
+            cities = marketCityRepository.findAllByMarket(context.getMarket(), PageRequest.of(cityPage++, coreProperties.getCategoryPageSize()));
 
         }
+
     }
+
+    private Page<MenuItem> getMenuItemsPage(int categoryPage) {
+        return menuItemRepository.findAllEndpointMenuItems(context.getMarket(), PageRequest.of(categoryPage, coreProperties.getCategoryPageSize()));
+    }
+
+    private boolean getRandomBoolean() {return true;}
 
 }
