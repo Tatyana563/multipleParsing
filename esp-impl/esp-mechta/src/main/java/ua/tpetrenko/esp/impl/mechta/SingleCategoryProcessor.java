@@ -13,6 +13,9 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.FluentWait;
+import org.openqa.selenium.support.ui.Wait;
 import ua.tpetrenko.esp.api.dto.CityDto;
 import ua.tpetrenko.esp.api.dto.MenuItemDto;
 import ua.tpetrenko.esp.api.dto.ProductItemDto;
@@ -106,16 +109,29 @@ private WebDriver webDriver;
         webDriver = new ChromeDriver(options);
         webDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         webDriver.get(itemsPage.location());
-        String loadedPage = webDriver.getPageSource();
-        Document document = Jsoup.parse(loadedPage);
-        Elements itemElements = document.select(".hoverCard-child");
-        for (Element itemElement : itemElements) {
-            try {
-                processProductItem(itemElement).ifPresent(productItemHandler::handle);
-            } catch (Exception e) {
-                log.error("Не удалось распарсить продукт", e);
-            }
 
+        Wait<WebDriver> wait = new FluentWait<>(webDriver)
+                .withMessage("Product items not found")
+                .withTimeout(Duration.ofSeconds(10))
+                .pollingEvery(Duration.ofMillis(200));
+
+        try {
+            wait.until(
+                    ExpectedConditions.presenceOfElementLocated(
+                            By.cssSelector(".hoverCard-child")));
+            Document document = Jsoup.parse(webDriver.getPageSource());
+            Elements itemElements = document.select(".hoverCard-child");
+            for (Element itemElement : itemElements) {
+                try {
+                    processProductItem(itemElement).ifPresent(productItemHandler::handle);
+                } catch (Exception e) {
+                    log.error("Не удалось распарсить продукт", e);
+                }
+
+            }
+        }
+        catch (Exception e) {
+            log.error("Не  дождались странички с продуктами", e);
         }
     }
 
