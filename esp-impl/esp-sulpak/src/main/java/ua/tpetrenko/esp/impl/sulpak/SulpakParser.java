@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -162,12 +163,12 @@ public class SulpakParser implements DifferentItemsPerCityMarketParser {
 //        .cookies(cookies)
                 .method(Connection.Method.POST)
         .execute()*/
-
+//
     @Override
     public void parseItems(CityDto cityDto, MenuItemDto menuItemDto, ProductItemHandler productItemHandler) throws IOException {
         new SingleCategoryProcessor(cityDto, menuItemDto, productItemHandler, prepareCityCookies(cityDto)).run();
     }
-
+//
     @Override
     public void destroyParser() {
         if (driver != null) {

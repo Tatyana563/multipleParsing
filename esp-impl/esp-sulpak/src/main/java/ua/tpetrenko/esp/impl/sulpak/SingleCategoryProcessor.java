@@ -36,7 +36,8 @@ public class SingleCategoryProcessor implements Runnable {
     private final ProductItemHandler productItemHandler;
     private final Map<String, String> cookies;
 
-    //https://www.sulpak.kz/f/monitoriy/karagandy?page=2
+    //https://www.sulpak.kz/f/smartfoniy/shieli
+    //https://www.sulpak.kz/f/smartfoniy/kulsary
     @Override
     public void run() {
         try {

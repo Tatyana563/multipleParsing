@@ -22,4 +22,5 @@ public class MechtaProperties extends ParserProperties {
         this.enabled = globalProperties.isEnabled();
         this.connection = new ConnectionProperties(globalProperties.getConnection());
     }
+
 }

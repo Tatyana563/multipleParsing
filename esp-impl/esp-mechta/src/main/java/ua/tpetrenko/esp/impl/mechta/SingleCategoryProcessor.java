@@ -1,32 +1,24 @@
 package ua.tpetrenko.esp.impl.mechta;
 
-import io.github.bonigarcia.wdm.WebDriverManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.FluentWait;
-import org.openqa.selenium.support.ui.Wait;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.client.RestTemplate;
 import ua.tpetrenko.esp.api.dto.CityDto;
 import ua.tpetrenko.esp.api.dto.MenuItemDto;
 import ua.tpetrenko.esp.api.dto.ProductItemDto;
 import ua.tpetrenko.esp.api.handlers.ProductItemHandler;
-import ua.tpetrenko.esp.impl.mechta.properties.MechtaProperties;
 
 import java.io.IOException;
 import java.time.Duration;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -48,7 +40,10 @@ public class SingleCategoryProcessor implements Runnable {
     private final ProductItemHandler productItemHandler;
     private final Map<String, String> cookies;
 
-private WebDriver webDriver;
+    private WebDriver webDriver;
+
+    private final RestTemplate restTemplate;
+
 
     @Override
     public void run() {
@@ -102,36 +97,13 @@ private WebDriver webDriver;
             log.error("Используется другой город {}", itemsPage.selectFirst("a.current-city").text());
             return;
         }
-        WebDriverManager.chromedriver().setup();
-        ChromeOptions options = new ChromeOptions();
-        // options.addArguments("--headless");
-        options.addArguments("window-size=1920x1080");
-        webDriver = new ChromeDriver(options);
-        webDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-        webDriver.get(itemsPage.location());
-
-        Wait<WebDriver> wait = new FluentWait<>(webDriver)
-                .withMessage("Product items not found")
-                .withTimeout(Duration.ofSeconds(10))
-                .pollingEvery(Duration.ofMillis(200));
-
-        try {
-            wait.until(
-                    ExpectedConditions.presenceOfElementLocated(
-                            By.cssSelector(".hoverCard-child")));
-            Document document = Jsoup.parse(webDriver.getPageSource());
-            Elements itemElements = document.select(".hoverCard-child");
-            for (Element itemElement : itemElements) {
-                try {
-                    processProductItem(itemElement).ifPresent(productItemHandler::handle);
-                } catch (Exception e) {
-                    log.error("Не удалось распарсить продукт", e);
-                }
-
-            }
-        }
-        catch (Exception e) {
-            log.error("Не  дождались странички с продуктами", e);
+        //   HttpHeaders headers = new HttpHeaders();
+        //  headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+        //   HttpEntity<String> entity = new HttpEntity<String>();
+        for (int i = 0; i < 18; i++) {
+            String input = String.format("https://www.mechta.kz/api/main/catalog_new/index.php?section=holodilniki&catalog=true&page_element_count%d", i);
+            ProductItemDto productItemDto = restTemplate.getForObject(input, ProductItemDto.class);
+            productItemHandler.handle(productItemDto);
         }
     }
 

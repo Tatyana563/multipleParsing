@@ -1,12 +1,13 @@
-1) SHOP.KZ (esp3)
-product_item fk_menu_item is 277,m nut in menu_item id = 282
-Items:13040 +
-   + ready
-2) SULPAK.KZ (esp4) - failed with cookies;
-   - finish todos
-3) MECHTA (esp5)
+1) SHOP.KZ
++ ready
+
+2) SULPAK.KZ (esp4) ;
+
+3) MECHTA (esp5) - fail
    - test
+
 4) FORA
    + ready
-5) TECHNODOM
+
+5) TECHNODOM - 24h just 3 cities;
     - test
