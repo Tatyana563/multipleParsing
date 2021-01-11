@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
 import ua.tpetrenko.esp.api.dto.MarketInfo;
 import ua.tpetrenko.esp.api.parser.MarketParser;
 import ua.tpetrenko.esp.core.factories.ParserContextFactory;
@@ -40,5 +41,10 @@ public class Context {
                 }
             }
         };
+    }
+    @Bean
+    public RestTemplate getRestTemplate() {
+        return new RestTemplate();
+
     }
 }

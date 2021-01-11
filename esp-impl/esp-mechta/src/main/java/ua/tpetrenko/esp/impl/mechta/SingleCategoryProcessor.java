@@ -97,9 +97,6 @@ public class SingleCategoryProcessor implements Runnable {
             log.error("Используется другой город {}", itemsPage.selectFirst("a.current-city").text());
             return;
         }
-        //   HttpHeaders headers = new HttpHeaders();
-        //  headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-        //   HttpEntity<String> entity = new HttpEntity<String>();
         for (int i = 0; i < 18; i++) {
             String input = String.format("https://www.mechta.kz/api/main/catalog_new/index.php?section=holodilniki&catalog=true&page_element_count%d", i);
             ProductItemDto productItemDto = restTemplate.getForObject(input, ProductItemDto.class);

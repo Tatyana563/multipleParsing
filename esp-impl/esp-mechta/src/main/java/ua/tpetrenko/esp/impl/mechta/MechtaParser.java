@@ -45,10 +45,7 @@ public class MechtaParser implements DifferentItemsPerCityMarketParser {
     @Autowired
     private RestTemplate restTemplate;
 
-    @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
+
     @Override
     public MarketInfo getMarketInfo() {
         return INFO;
