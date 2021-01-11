@@ -1,5 +1,6 @@
 package ua.tpetrenko.esp.impl.mechta;
 
+import io.github.bonigarcia.wdm.WebDriverManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Connection;
@@ -7,15 +8,22 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import ua.tpetrenko.esp.api.dto.CityDto;
 import ua.tpetrenko.esp.api.dto.MenuItemDto;
 import ua.tpetrenko.esp.api.dto.ProductItemDto;
 import ua.tpetrenko.esp.api.handlers.ProductItemHandler;
+import ua.tpetrenko.esp.impl.mechta.properties.MechtaProperties;
 
 import java.io.IOException;
 import java.time.Duration;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,7 +36,6 @@ import static ua.tpetrenko.esp.impl.mechta.MechtaParser.INFO;
 @RequiredArgsConstructor
 public class SingleCategoryProcessor implements Runnable {
 
-
     private static final String PAGE_URL_CONSTANT = "?PAGEN_2=%d&sort=popular&adesc=asc";
     private static final Pattern PRICE_PATTERN = Pattern.compile("(\\d*\\s*\\d*\\s*\\d*\\s*\\d*\\s*\\d*\\s*\\d*)");
     private static final Pattern IMAGE_PATTERN = Pattern.compile("(background-image: url\\()(.*)(\\))");
@@ -38,6 +45,7 @@ public class SingleCategoryProcessor implements Runnable {
     private final ProductItemHandler productItemHandler;
     private final Map<String, String> cookies;
 
+private WebDriver webDriver;
 
     @Override
     public void run() {
@@ -69,7 +77,7 @@ public class SingleCategoryProcessor implements Runnable {
                 }
             }
 
-        } catch (IOException ioException) {
+        } catch (IOException | InterruptedException ioException) {
             log.error("Не получилось распарсить категорию", ioException);
         } finally {
             log.warn("Обработка категории '{}' завершена", menuItemDto.getName());
@@ -86,14 +94,21 @@ public class SingleCategoryProcessor implements Runnable {
         return 0;
     }
 
-    private void parseItems(Document itemsPage) {
-//        if (!isValidCity(itemsPage)) {
-//            log.error("Используется другой город {}", itemsPage.selectFirst("a.current-city").text());
-//            return;
-//        }
-
-        Elements itemElements = itemsPage.select(".aa_section_catalog .aa_sectiontov");
-
+    private void parseItems(Document itemsPage) throws InterruptedException {
+        if (!isValidCity(itemsPage)) {
+            log.error("Используется другой город {}", itemsPage.selectFirst("a.current-city").text());
+            return;
+        }
+        WebDriverManager.chromedriver().setup();
+        ChromeOptions options = new ChromeOptions();
+        // options.addArguments("--headless");
+        options.addArguments("window-size=1920x1080");
+        webDriver = new ChromeDriver(options);
+        webDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        webDriver.get(itemsPage.location());
+        String loadedPage = webDriver.getPageSource();
+        Document document = Jsoup.parse(loadedPage);
+        Elements itemElements = document.select(".hoverCard-child");
         for (Element itemElement : itemElements) {
             try {
                 processProductItem(itemElement).ifPresent(productItemHandler::handle);
