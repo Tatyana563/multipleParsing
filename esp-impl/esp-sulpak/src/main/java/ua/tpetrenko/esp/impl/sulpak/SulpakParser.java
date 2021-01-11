@@ -154,14 +154,6 @@ public class SulpakParser implements DifferentItemsPerCityMarketParser {
         //TODO: use webdriver to change current city (copy from technodom ?)
         //Next - convert set cookies to map<string, string> - <name, value>
         return driver.manage().getCookies().stream().collect(Collectors.toMap(Cookie::getName, Cookie::getValue));
-//        Map<String, String> cookies = new HashMap<>();
-//        String urlWithCity = String.format("%s%s%s", INFO.getUrl(), pathPart, cityDto.getUrl());
-//        Connection.Response response = Jsoup.connect(urlWithCity)
-//                .cookies(cookies)
-//                .method(Connection.Method.GET)
-//                .execute();
-//        cookies.putAll(response.cookies());
-//        return cookies;
     }
 
     /*

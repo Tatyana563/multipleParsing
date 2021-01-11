@@ -103,8 +103,7 @@ public class SingleCategoryProcessor implements Runnable {
     }
 
     private boolean isValidCity(Document page) {
-        return true;
-//        return cityDto.getName().equalsIgnoreCase(page.selectFirst("show-map-link").text());
+        return cityDto.getName().equalsIgnoreCase(page.selectFirst(".show-map-link").text());
     }
 
     private Optional<ProductItemDto> processProductItem(Element itemElement) {
