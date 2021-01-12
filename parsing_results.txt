@@ -8,6 +8,5 @@
 
 4) FORA
    + ready
-
-5) TECHNODOM - 24h just 3 cities;
+5) TECHNODOM
     - test

@@ -14,6 +14,8 @@ import ua.tpetrenko.esp.api.dto.CityDto;
 import ua.tpetrenko.esp.api.dto.MenuItemDto;
 import ua.tpetrenko.esp.api.dto.ProductItemDto;
 import ua.tpetrenko.esp.api.handlers.ProductItemHandler;
+import ua.tpetrenko.esp.impl.mechta.dto.CatalogDto;
+import ua.tpetrenko.esp.impl.mechta.dto.ItemDto;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -99,8 +101,14 @@ public class SingleCategoryProcessor implements Runnable {
         }
         for (int i = 0; i < 18; i++) {
             String input = String.format("https://www.mechta.kz/api/main/catalog_new/index.php?section=holodilniki&catalog=true&page_element_count%d", i);
-            ProductItemDto productItemDto = restTemplate.getForObject(input, ProductItemDto.class);
-            productItemHandler.handle(productItemDto);
+            CatalogDto catalogDto = restTemplate.getForObject(input, CatalogDto.class);
+
+            for (ItemDto item : catalogDto.getItems()) {
+                ProductItemDto productItemDto = new ProductItemDto();
+//                productItemDto.setCode(item.getCode());
+                productItemHandler.handle(map(item));
+            }
+
         }
     }
 

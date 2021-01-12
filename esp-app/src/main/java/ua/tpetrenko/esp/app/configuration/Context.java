@@ -42,9 +42,5 @@ public class Context {
             }
         };
     }
-    @Bean
-    public RestTemplate getRestTemplate() {
-        return new RestTemplate();
 
-    }
 }

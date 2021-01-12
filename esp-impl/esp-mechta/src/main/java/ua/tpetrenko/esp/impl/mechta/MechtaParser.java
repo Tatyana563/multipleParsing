@@ -1,6 +1,7 @@
 package ua.tpetrenko.esp.impl.mechta;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -29,22 +30,17 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-//@Slf4j
+@Slf4j
+@RequiredArgsConstructor
 @Component
 public class MechtaParser implements DifferentItemsPerCityMarketParser {
-    private static Logger log = LoggerFactory.getLogger(MechtaParser.class);
     public static final MarketInfo INFO = new MarketInfo("Mechta.kz", "https://www.mechta.kz/");
+
+    private final MechtaProperties mechtaProperties;
+    private final RestTemplate restTemplate;
+
     private Document rootPage;
     private WebDriver webDriver;
-    private final MechtaProperties mechtaProperties;
-
-    public MechtaParser(MechtaProperties mechtaProperties) {
-        this.mechtaProperties = mechtaProperties;
-    }
-
-    @Autowired
-    private RestTemplate restTemplate;
-
 
     @Override
     public MarketInfo getMarketInfo() {
@@ -99,6 +95,7 @@ public class MechtaParser implements DifferentItemsPerCityMarketParser {
                         String categoryLink = categoryElement.absUrl("href");
                         String categoryText = categoryElement.text();
 
+                        //TODO: correct log messages
                         log.info("Получаем {}...", text);
                         MenuItemDto categoryItem = new MenuItemDto(categoryText, categoryLink);
                         log.info("\tКатегория  {}", categoryText);
