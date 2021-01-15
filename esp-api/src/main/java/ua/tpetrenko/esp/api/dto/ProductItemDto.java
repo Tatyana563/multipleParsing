@@ -23,14 +23,9 @@ public class ProductItemDto extends BaseDto {
         super(name, url);
     }
 
-    @JsonProperty()
     private String code;
-    @JsonProperty()
     private String externalId;
-    @JsonProperty("PHOTO")
     private String imageUrl;
-    @JsonProperty()
     private String description;
-    @JsonProperty("PRICE_WITHOUT_DISCOUNT")
     private Double price;
 }

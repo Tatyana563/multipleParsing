@@ -37,6 +37,7 @@ public class SingleCategoryProcessor implements Runnable {
     private static final Pattern PRICE_PATTERN = Pattern.compile("(\\d*\\s*\\d*\\s*\\d*\\s*\\d*\\s*\\d*\\s*\\d*)");
     private static final Pattern IMAGE_PATTERN = Pattern.compile("(background-image: url\\()(.*)(\\))");
     private static final Pattern CODE_PATTERN = Pattern.compile("(\\d+)");
+    private static final Pattern CATEGORY_PATTERN = Pattern.compile("(https://www.mechta.kz/)(.*)([/\\\\\\\\])");
     private final CityDto cityDto;
     private final MenuItemDto menuItemDto;
     private final ProductItemHandler productItemHandler;
@@ -99,19 +100,28 @@ public class SingleCategoryProcessor implements Runnable {
             log.error("Используется другой город {}", itemsPage.selectFirst("a.current-city").text());
             return;
         }
-        for (int i = 0; i < 18; i++) {
-            String input = String.format("https://www.mechta.kz/api/main/catalog_new/index.php?section=holodilniki&catalog=true&page_element_count%d", i);
-            CatalogDto catalogDto = restTemplate.getForObject(input, CatalogDto.class);
+        //itemsPage.location
+        //https://www.mechta.kz/section/oled-televizory/?PAGEN_2=1&sort=popular&adesc=asc
 
-            for (ItemDto item : catalogDto.getItems()) {
-                ProductItemDto productItemDto = new ProductItemDto();
+        String currentUrl = itemsPage.location();
+        Matcher categoryMatcher = CATEGORY_PATTERN.matcher(currentUrl);
+        if (categoryMatcher.find()) {
+            for (int i = 0; i < 10; i++) {
+                String input = String.format("https://www.mechta.kz/api/main/catalog_new/index.php?section=%s&catalog=true&page_element_count%d", categoryMatcher.group(2), i);
+                CatalogDto catalogDto = restTemplate.getForObject(input, CatalogDto.class);
+
+                for (ItemDto item : catalogDto.getItems()) {
+                    ProductItemDto productItemDto = new ProductItemDto();
 //                productItemDto.setCode(item.getCode());
-                productItemHandler.handle(map(item));
+                    productItemHandler.handle(map(item));
+                }
             }
-
         }
     }
 
+
+    //    https://www.mechta.kz/api/main/catalog_new/index.php?section=remeshki-dlya-smart-chasov&catalog=true&page_element_count
+//    https://www.mechta.kz/section/remeshki-dlya-smart-chasov/
     private boolean isValidCity(Document page) {
         return true;
 //        return cityDto.getName().equalsIgnoreCase(page.selectFirst("show-map-link").text());
