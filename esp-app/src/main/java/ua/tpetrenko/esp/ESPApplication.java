@@ -27,7 +27,7 @@ public class ESPApplication {
 
         //TODO: create custom jacksonMapperHttpConverter to handle response header Content-type: text/html
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-        converter.setSupportedMediaTypes(Arrays.asList(MediaType.TEXT_PLAIN, MediaType.APPLICATION_JSON));
+        converter.setSupportedMediaTypes(Arrays.asList(MediaType.TEXT_HTML, MediaType.APPLICATION_JSON));
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.getMessageConverters().add(0, converter);
         return restTemplate;

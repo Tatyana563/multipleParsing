@@ -15,5 +15,6 @@ public class ItemDto {
     private Photo photo;
     @JsonProperty("PRICE")
     private Price price;
-
+    @JsonProperty("CODE")
+    private String code;
 }

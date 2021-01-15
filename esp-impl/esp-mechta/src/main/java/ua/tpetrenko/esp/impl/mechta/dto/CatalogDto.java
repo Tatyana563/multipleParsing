@@ -9,7 +9,6 @@ import java.util.List;
 @Getter
 @Setter
 public class CatalogDto {
-
     @JsonProperty("ITEMS")
     private List<ItemDto> items;
 }

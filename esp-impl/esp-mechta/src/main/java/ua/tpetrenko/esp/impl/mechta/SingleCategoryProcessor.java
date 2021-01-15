@@ -7,8 +7,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.openqa.selenium.WebDriver;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.web.client.RestTemplate;
 import ua.tpetrenko.esp.api.dto.CityDto;
 import ua.tpetrenko.esp.api.dto.MenuItemDto;
@@ -37,7 +38,7 @@ public class SingleCategoryProcessor implements Runnable {
     private static final Pattern PRICE_PATTERN = Pattern.compile("(\\d*\\s*\\d*\\s*\\d*\\s*\\d*\\s*\\d*\\s*\\d*)");
     private static final Pattern IMAGE_PATTERN = Pattern.compile("(background-image: url\\()(.*)(\\))");
     private static final Pattern CODE_PATTERN = Pattern.compile("(\\d+)");
-    private static final Pattern CATEGORY_PATTERN = Pattern.compile("(https://www.mechta.kz/)(.*)([/\\\\\\\\])");
+    private static final Pattern CATEGORY_PATTERN = Pattern.compile("(https://www.mechta.kz/section/)(.*)([/\\\\\\\\])");
     private final CityDto cityDto;
     private final MenuItemDto menuItemDto;
     private final ProductItemHandler productItemHandler;
@@ -100,28 +101,30 @@ public class SingleCategoryProcessor implements Runnable {
             log.error("Используется другой город {}", itemsPage.selectFirst("a.current-city").text());
             return;
         }
-        //itemsPage.location
-        //https://www.mechta.kz/section/oled-televizory/?PAGEN_2=1&sort=popular&adesc=asc
 
         String currentUrl = itemsPage.location();
         Matcher categoryMatcher = CATEGORY_PATTERN.matcher(currentUrl);
         if (categoryMatcher.find()) {
-            for (int i = 0; i < 10; i++) {
-                String input = String.format("https://www.mechta.kz/api/main/catalog_new/index.php?section=%s&catalog=true&page_element_count%d", categoryMatcher.group(2), i);
-                CatalogDto catalogDto = restTemplate.getForObject(input, CatalogDto.class);
 
-                for (ItemDto item : catalogDto.getItems()) {
-                    ProductItemDto productItemDto = new ProductItemDto();
-//                productItemDto.setCode(item.getCode());
-                    productItemHandler.handle(map(item));
-                }
+            String input = String.format("https://www.mechta.kz/api/main/catalog_new/index.php?section=%s&catalog=true&page_element_count", categoryMatcher.group(2));
+//            HttpHeaders headers = new HttpHeaders();
+//            HttpEntity<String> entity = new HttpEntity<>(headers);
+//            CatalogDto catalogDto = restTemplate.exchange(input, HttpMethod.GET, entity, CatalogDto.class).getBody();
+             CatalogDto catalogDto = restTemplate.getForObject(input, CatalogDto.class);
+            for (ItemDto item : catalogDto.getItems()) {
+                productItemHandler.handle(map(item));
             }
         }
     }
+    private ProductItemDto map(ItemDto item) {
+        ProductItemDto productItemDto = new ProductItemDto(item.getName(), null);
+        productItemDto.setCode((item.getCode()));
+        productItemDto.setPrice(Double.valueOf(item.getPrice().getPrice()));
+        productItemDto.setImageUrl(item.getPhoto().getPhotoUrl().get(0));
+        productItemDto.setDescription(null);
+        return productItemDto;
+    }
 
-
-    //    https://www.mechta.kz/api/main/catalog_new/index.php?section=remeshki-dlya-smart-chasov&catalog=true&page_element_count
-//    https://www.mechta.kz/section/remeshki-dlya-smart-chasov/
     private boolean isValidCity(Document page) {
         return true;
 //        return cityDto.getName().equalsIgnoreCase(page.selectFirst("show-map-link").text());
