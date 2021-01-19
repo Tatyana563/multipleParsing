@@ -6,7 +6,10 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class Price {
-    @JsonProperty("PRICE")
-    private Integer price;
+public class ItemDescriptionDto {
+    @JsonProperty("PROP_NAME")
+    private String name;
+
+    @JsonProperty("PROP_VALUE")
+    private String value;
 }

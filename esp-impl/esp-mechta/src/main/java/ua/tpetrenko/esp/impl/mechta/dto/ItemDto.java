@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class ItemDto {
@@ -12,9 +14,11 @@ public class ItemDto {
     @JsonProperty("NAME")
     private String name;
     @JsonProperty("PHOTO")
-    private Photo photo;
+    private List<String> photos;
     @JsonProperty("PRICE")
     private Price price;
     @JsonProperty("CODE")
     private String code;
+    @JsonProperty("MAIN_PROPERTIES")
+    private List<ItemDescriptionDto> description;
 }

@@ -25,19 +25,12 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 public class SingleCategoryProcessor implements Runnable {
 
-    private static final String PAGE_URL_FORMAT = "?sort=views&page=%d";
-    private static final Integer NUMBER_OF_PRODUCTS_PER_PAGE = 18;
-    private static final Pattern PATTERN = Pattern.compile("Артикул:\\s*(\\S*)");
-    private static final Pattern PRICE_PATTERN = Pattern.compile("(^([0-9]+\\s*)*)");
-    private static final Pattern QUANTITY_PATTERN = Pattern.compile("(\\d+)");
     private static final String PAGE_URL_NUMBER_FORMAT = "?page=%d";
     private final CityDto cityDto;
     private final MenuItemDto menuItemDto;
     private final ProductItemHandler productItemHandler;
     private final Map<String, String> cookies;
 
-    //https://www.sulpak.kz/f/smartfoniy/shieli
-    //https://www.sulpak.kz/f/smartfoniy/kulsary
     @Override
     public void run() {
         try {

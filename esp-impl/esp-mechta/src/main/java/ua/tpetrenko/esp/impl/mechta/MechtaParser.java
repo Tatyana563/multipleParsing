@@ -11,23 +11,20 @@ import org.jsoup.select.Elements;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import ua.tpetrenko.esp.api.dto.CityDto;
-import ua.tpetrenko.esp.api.dto.MenuItemDto;
-import ua.tpetrenko.esp.api.parser.DifferentItemsPerCityMarketParser;
 import ua.tpetrenko.esp.api.dto.MarketInfo;
+import ua.tpetrenko.esp.api.dto.MenuItemDto;
 import ua.tpetrenko.esp.api.handlers.CityHandler;
 import ua.tpetrenko.esp.api.handlers.MenuItemHandler;
 import ua.tpetrenko.esp.api.handlers.ProductItemHandler;
+import ua.tpetrenko.esp.api.parser.DifferentItemsPerCityMarketParser;
 import ua.tpetrenko.esp.impl.mechta.properties.MechtaProperties;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -57,6 +54,21 @@ public class MechtaParser implements DifferentItemsPerCityMarketParser {
         log.info("Получаем главную страницу...");
         rootPage = Jsoup.connect(INFO.getUrl()).get();
         log.info("Готово.");
+
+        log.info("Инициализируем webDriver...");
+        WebDriverManager.chromedriver().setup();
+        ChromeOptions options = new ChromeOptions();
+        //       options.setBinary(mechtaProperties.getChrome().getPath());
+//        options.addArguments("--headless");
+        options.addArguments("window-size=1920x1080");
+        webDriver = new ChromeDriver(options);
+        webDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        log.info("Получаем главную страницу...");
+        webDriver.get(INFO.getUrl());
+        //TODO: wait for select cities popup. Close it
+        //$(".modal-overlay.gray-overlay").click();
+        log.info("Готово.");
+
     }
 
     @Override
@@ -71,8 +83,8 @@ public class MechtaParser implements DifferentItemsPerCityMarketParser {
         for (Element sectionElement : sectionElements) {
             Element sectionElementLink = sectionElement.selectFirst(">a");
             String text = sectionElementLink.text();
-            if(mechtaProperties.getCategoriesWhitelist().contains(text)) {
-                log.info("Получаем {}...", text);
+            if (mechtaProperties.getCategoriesWhitelist().contains(text)) {
+                log.info("Получаем секцию {}...", text);
                 String sectionUrl = sectionElementLink.absUrl("href");
                 MenuItemDto sectionItem = new MenuItemDto(text, sectionUrl);
                 MenuItemHandler groupHandler = sectionHandler.handleSubMenu(sectionItem);
@@ -85,7 +97,7 @@ public class MechtaParser implements DifferentItemsPerCityMarketParser {
                     String groupLink = groupAnchor.absUrl("href");
                     String groupText = groupAnchor.text();
 
-                    log.info("Получаем {}...", text);
+                    log.info("Получаем группу {}...", text);
                     MenuItemDto groupItem = new MenuItemDto(groupText, groupLink);
 
                     MenuItemHandler categoryHandler = groupHandler.handleSubMenu(groupItem);
@@ -95,8 +107,6 @@ public class MechtaParser implements DifferentItemsPerCityMarketParser {
                         String categoryLink = categoryElement.absUrl("href");
                         String categoryText = categoryElement.text();
 
-                        //TODO: correct log messages
-                        log.info("Получаем {}...", text);
                         MenuItemDto categoryItem = new MenuItemDto(categoryText, categoryLink);
                         log.info("\tКатегория  {}", categoryText);
                         categoryHandler.handle(categoryItem);
@@ -120,14 +130,14 @@ public class MechtaParser implements DifferentItemsPerCityMarketParser {
         for (Element cityElement : cityElements) {
             String cityName = cityElement.text();
             log.info("\t-{}", cityName);
-            cityHandler.handle(new CityDto(cityName, cityElement.attr("href")));
+            cityHandler.handle(new CityDto(cityName, cityElement.text()));
 
         }
     }
 
     @Override
     public void parseItems(CityDto cityDto, MenuItemDto menuItemDto, ProductItemHandler productItemHandler) throws IOException {
-        new SingleCategoryProcessor(cityDto, menuItemDto, productItemHandler, prepareCityCookies(cityDto), restTemplate).run();
+        new SingleCategoryProcessor(cityDto, menuItemDto, productItemHandler, webDriver, restTemplate).run();
     }
 
     @Override
@@ -135,15 +145,15 @@ public class MechtaParser implements DifferentItemsPerCityMarketParser {
         // Nothing to do.
     }
 
-    private Map<String, String> prepareCityCookies(CityDto cityDto) throws IOException {
-        log.info("Готовим cookies для города {}", cityDto.getName());
-        Map<String, String> cookies = new HashMap<>();
-        String urlWithCity = INFO.getUrl() + cityDto.getUrl();
-        Connection.Response response = Jsoup.connect(urlWithCity)
-                .cookies(cookies)
-                .method(Connection.Method.GET)
-                .execute();
-        cookies.putAll(response.cookies());
-        return cookies;
-    }
+//    private Map<String, String> prepareCityCookies(CityDto cityDto) throws IOException {
+//        log.info("Готовим cookies для города {}", cityDto.getName());
+//        Map<String, String> cookies = new HashMap<>();
+//        String urlWithCity = INFO.getUrl() + cityDto.getUrl();
+//        Connection.Response response = Jsoup.connect(urlWithCity)
+//                .cookies(cookies)
+//                .method(Connection.Method.GET)
+//                .execute();
+//        cookies.putAll(response.cookies());
+//        return cookies;
+//    }
 }

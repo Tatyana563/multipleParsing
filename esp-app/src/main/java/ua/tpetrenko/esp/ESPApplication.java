@@ -24,8 +24,6 @@ public class ESPApplication {
 
     @Bean
     public RestTemplate getRestTemplate() {
-
-        //TODO: create custom jacksonMapperHttpConverter to handle response header Content-type: text/html
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
         converter.setSupportedMediaTypes(Arrays.asList(MediaType.TEXT_HTML, MediaType.APPLICATION_JSON));
         RestTemplate restTemplate = new RestTemplate();
