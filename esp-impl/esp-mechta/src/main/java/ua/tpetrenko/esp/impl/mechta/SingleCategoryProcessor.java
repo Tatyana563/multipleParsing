@@ -2,11 +2,8 @@ package ua.tpetrenko.esp.impl.mechta;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;
@@ -26,13 +23,13 @@ import ua.tpetrenko.esp.impl.mechta.dto.CatalogDto;
 import ua.tpetrenko.esp.impl.mechta.dto.ItemDescriptionDto;
 import ua.tpetrenko.esp.impl.mechta.dto.ItemDto;
 
-import java.io.IOException;
 import java.time.Duration;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.joining;
 import static ua.tpetrenko.esp.impl.mechta.MechtaParser.INFO;
 
 /**
@@ -70,36 +67,43 @@ public class SingleCategoryProcessor implements Runnable {
                 return;
             }
 
-            try {
-                openCitiesPopup();
-                String cityButton = ".aa_htcity_cities .aa_htc_item";
-                List<WebElement> cityButtons = webDriver.findElements(By.cssSelector(cityButton));
-                for (WebElement button : cityButtons) {
-                    if (button.getText().equals(cityDto.getName())) {
-                        button.click();
-                    }
-                }
-            } catch (Exception e) {
-                log.warn("Не дождались модального окна выбора города", e);
-            }
 
+            openCitiesPopup();
+            String cityButton = ".aa_htcity_cities .aa_htc_item";
+            List<WebElement> cityButtons = webDriver.findElements(By.cssSelector(cityButton));
+            for (WebElement button : cityButtons) {
+                if (button.getText().equals(cityDto.getName())) {
+                    button.click();
+                    break;
+                }
+            }
             String pageUrlFormat = String.format(CATEGORY_URL_FORMAT, categoryMatcher.group(1), PAGE_URL_FORMAT);
             String firstPageUrl = String.format(pageUrlFormat, 1);
 
             Set<Cookie> cookies = webDriver.manage().getCookies();
+            Map<String, String> cookiesMap = webDriver.manage().getCookies().stream().collect(Collectors.toMap(Cookie::getName, Cookie::getValue));
+            String cookieHeader = cookiesMap.entrySet()
+                    .stream()
+                    .map(e -> e.getKey()+"="+e.getValue())
+                    .collect(joining(";"));
             //TODO: convert webDriver's cookies to spring's http headers
             HttpHeaders headers = new HttpHeaders();
+            headers.add("Cookie", cookieHeader);
+//            cookies.stream().collect(Collectors.joining(" "));
+//            headers.add("Cookie",cookies);
             //advice use collectors / joiners
 //            Cookie: __ddg1=iXDysvA8IX9CeiFXZkNH; MECHTA_SM_SET_SITE_IDZ=rd; MECHTA_SM_GUEST_ID=28921167; MECHTA_SM_LAST_VISIT=19.01.2021+21%3A29%3A41; _fbp=fb.1.1601551526293.1941335454; __ddg2=BZf3h6TFCFbU28q0
 //            headers.add("Cookie", cookies.iterator().next().getName() );
 
             //TODO: debug exchange method (find category which differs in items count per city)
             CatalogDto firstPage = restTemplate.exchange(firstPageUrl,
-                                                        HttpMethod.GET,
-                                                        new HttpEntity<>(headers),
-                                                        CatalogDto.class)
-                                               .getBody();
-            //cityDto.getName().equals("city") && menuItemDto.getName().equals("")
+                    HttpMethod.GET,
+                    new HttpEntity<>(headers),
+                    CatalogDto.class)
+                    .getBody();
+            if (cityDto.getName().contains("Нур-Султан") && menuItemDto.getName().equals("Для утюгов")){
+                System.out.println("Doesn't coincide");
+            }
             if (firstPage != null) {
                 int totalPages = getTotalPages(firstPage);
                 parseItems(firstPage);
@@ -110,7 +114,9 @@ public class SingleCategoryProcessor implements Runnable {
                             new HttpEntity<>(headers),
                             CatalogDto.class)
                             .getBody();
-                    parseItems(result);
+                    if (result!=null) {
+                        parseItems(result);
+                    }
                 }
 
             }
@@ -124,29 +130,36 @@ public class SingleCategoryProcessor implements Runnable {
 
 
     private int getTotalPages(CatalogDto catalogDto) {
-        int allItems = catalogDto.getData().getSize();
-        return (int) Math.ceil((float) allItems / DEFAULT_PAGE_SIZE);
+        Integer allItems = catalogDto.getData().getSize();
+        if(allItems!=null){
+            return (int) Math.ceil((float) allItems / DEFAULT_PAGE_SIZE);
+        }
+       else return 0;
     }
 
     private void parseItems(CatalogDto itemsPage) throws InterruptedException {
         List<String> fullDescription = new ArrayList<>();
-        for (ItemDto item : itemsPage.getData().getItems()) {
-            ProductItemDto productItemDto = new ProductItemDto(item.getName(), "null");
-            List<ItemDto> items = itemsPage.getData().getItems();
-            for (ItemDto itemDto : items) {
-                List<ItemDescriptionDto> description = itemDto.getDescription();
-                if (description != null) {
-                    for (ItemDescriptionDto itemDescriptionDto : description) {
-                        fullDescription.add(itemDescriptionDto.getValue());
-                        fullDescription.add(itemDescriptionDto.getName());
+        if (itemsPage.getData().getItems()!=null) {
+            for (ItemDto item : itemsPage.getData().getItems()) {
+                ProductItemDto productItemDto = new ProductItemDto(item.getName(), "null");
+                List<ItemDto> items = itemsPage.getData().getItems();
+
+                for (ItemDto itemDto : items) {
+                        List<ItemDescriptionDto> description = itemDto.getDescription();
+                        if (description != null) {
+                            for (ItemDescriptionDto itemDescriptionDto : description) {
+                                fullDescription.add(itemDescriptionDto.getValue());
+                                fullDescription.add(itemDescriptionDto.getName());
+                            }
+                            String desc = fullDescription.stream().collect(joining(" "));
+                            productItemDto.setDescription(desc);
+                        }
+                        productItemHandler.handle(map(item, productItemDto));
                     }
-                    String desc = fullDescription.stream().collect(Collectors.joining(" "));
-                    productItemDto.setDescription(desc);
                 }
-                productItemHandler.handle(map(item, productItemDto));
             }
         }
-    }
+
 
     private ProductItemDto map(ItemDto item, ProductItemDto productItemDto) {
         productItemDto.setCode((item.getCode()));

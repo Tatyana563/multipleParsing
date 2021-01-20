@@ -4,7 +4,8 @@
 2) SULPAK.KZ (esp4) ;
 
 3) MECHTA (esp5) - fail
-   - test
+   - problem with cities;
+   - problem with description;
 
 4) FORA
    + ready

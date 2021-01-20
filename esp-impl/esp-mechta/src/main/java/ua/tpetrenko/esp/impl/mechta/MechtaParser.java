@@ -3,14 +3,18 @@ package ua.tpetrenko.esp.impl.mechta;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.FluentWait;
+import org.openqa.selenium.support.ui.Wait;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import ua.tpetrenko.esp.api.dto.CityDto;
@@ -23,8 +27,8 @@ import ua.tpetrenko.esp.api.parser.DifferentItemsPerCityMarketParser;
 import ua.tpetrenko.esp.impl.mechta.properties.MechtaProperties;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.time.Duration;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -66,9 +70,27 @@ public class MechtaParser implements DifferentItemsPerCityMarketParser {
         log.info("Получаем главную страницу...");
         webDriver.get(INFO.getUrl());
         //TODO: wait for select cities popup. Close it
-        //$(".modal-overlay.gray-overlay").click();
-        log.info("Готово.");
 
+        Wait<WebDriver> wait = new FluentWait<>(webDriver)
+                .withMessage("City popup not found")
+                .withTimeout(Duration.ofSeconds(120))
+                .pollingEvery(Duration.ofMillis(200));
+
+        try {
+            log.info("Ожидаем доступности модального окна выбора городов");
+            String cityButton = ".aa_htcity_items_first .aa_htc_item";
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(cityButton)));
+            List<WebElement> cityButtons = webDriver.findElements(By.cssSelector(cityButton));
+            for (WebElement button : cityButtons) {
+                if (button.getText().contains("Нур-Султан")) {
+                    button.click();
+                    return;
+                }
+            }
+        } catch (Exception e) {
+            log.warn("Не дождались модального окна выбора города", e);
+        }
+        log.info("Закрываем модальное окноб выбрали Нур-Султан");
     }
 
     @Override
