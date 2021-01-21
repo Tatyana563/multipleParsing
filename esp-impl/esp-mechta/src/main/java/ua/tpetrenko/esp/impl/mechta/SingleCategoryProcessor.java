@@ -50,7 +50,6 @@ public class SingleCategoryProcessor implements Runnable {
     private final CityDto cityDto;
     private final MenuItemDto menuItemDto;
     private final ProductItemHandler productItemHandler;
-    // private final Map<String, String> cookies;
 
     private final WebDriver webDriver;
 
@@ -66,7 +65,6 @@ public class SingleCategoryProcessor implements Runnable {
                 log.error("Не удается получить путь к категории товаров: {}", menuItemDto.getUrl());
                 return;
             }
-
 
             openCitiesPopup();
             String cityButton = ".aa_htcity_cities .aa_htc_item";
@@ -101,9 +99,11 @@ public class SingleCategoryProcessor implements Runnable {
                     new HttpEntity<>(headers),
                     CatalogDto.class)
                     .getBody();
-            if (cityDto.getName().contains("Нур-Султан") && menuItemDto.getName().equals("Для утюгов")){
+            //Айтике
+            if (cityDto.getName().contains("Абай") && menuItemDto.getName().equals("Стационарные телефоны")){
                 System.out.println("Doesn't coincide");
             }
+            //https://www.mechta.kz/api/main/catalog_new/index.php?section=domashnie-telefony&page_num=1&catalog=true&page_element_count=18
             if (firstPage != null) {
                 int totalPages = getTotalPages(firstPage);
                 parseItems(firstPage);
