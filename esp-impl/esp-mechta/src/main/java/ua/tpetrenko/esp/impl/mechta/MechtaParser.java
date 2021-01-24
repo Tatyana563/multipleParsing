@@ -69,7 +69,6 @@ public class MechtaParser implements DifferentItemsPerCityMarketParser {
         webDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         log.info("Получаем главную страницу...");
         webDriver.get(INFO.getUrl());
-        //TODO: wait for select cities popup. Close it
 
         Wait<WebDriver> wait = new FluentWait<>(webDriver)
                 .withMessage("City popup not found")
