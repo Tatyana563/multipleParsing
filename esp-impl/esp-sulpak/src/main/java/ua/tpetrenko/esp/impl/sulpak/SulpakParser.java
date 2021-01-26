@@ -11,6 +11,7 @@ import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.interactions.Actions;
@@ -32,6 +33,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -108,7 +110,7 @@ public class SulpakParser implements DifferentItemsPerCityMarketParser {
         Elements sectionElements = indexPage.select(".catalog-category-item a");
         for (Element sectionElement : sectionElements) {
             String text = sectionElement.text();
-            if(sulpakProperties.getCategoriesWhitelist().contains(text)){
+            if (sulpakProperties.getCategoriesWhitelist().contains(text)) {
                 log.info("Получаем {}...", text);
                 String sectionUrl = sectionElement.absUrl("href");
                 MenuItemDto sectionItem = new MenuItemDto(text, sectionUrl);
@@ -166,9 +168,24 @@ public class SulpakParser implements DifferentItemsPerCityMarketParser {
 //
     @Override
     public void parseItems(CityDto cityDto, MenuItemDto menuItemDto, ProductItemHandler productItemHandler) throws IOException {
-        new SingleCategoryProcessor(cityDto, menuItemDto, productItemHandler, prepareCityCookies(cityDto)).run();
+        openCitiesPopup();
+        List<WebElement> cityLinks = driver.findElements(By.cssSelector(".cities-map-block li"));
+        for (WebElement cityLink : cityLinks) {
+            if (cityDto.getName().equalsIgnoreCase(cityLink.getText())) {
+                cityLink.click();
+                break;
+            }
+        }
+
+        try {
+            new SingleCategoryProcessor(cityDto, menuItemDto, productItemHandler, driver, sulpakProperties).run();
+
+        } catch (Exception e) {
+            log.error("Не удалось распарсить продукт", e);
+        }
     }
-//
+
+
     @Override
     public void destroyParser() {
         if (driver != null) {
@@ -178,5 +195,35 @@ public class SulpakParser implements DifferentItemsPerCityMarketParser {
 
     private Document loadDocument(String url) throws IOException {
         return Jsoup.parse(new URL(url), (int) sulpakProperties.getConnection().getReadTimeoutMs().toMillis());
+    }
+
+    private void openCitiesPopup() {
+        Wait<WebDriver> wait = new FluentWait<>(driver)
+                .withMessage("City popup not found")
+                .withTimeout(Duration.ofSeconds(120))
+                .pollingEvery(Duration.ofMillis(200));
+//fa fa-bars
+        try {
+            log.info("Ожидаем доступности модального окна выбора городов");
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".fa-bars")));
+            driver.findElement(By.cssSelector(".fa-bars")).click();
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".show-map-link")));
+        } catch (Exception e) {
+            log.error("Не найдена кнопка отображения списка городов", e);
+            return;
+        }
+        driver.findElement(By.cssSelector(".show-map-link")).click();
+        log.info("Открываем модальное окно выбора городов...");
+
+        try {
+            log.info("Ожидаем доступности конкретного города");
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".cities-list-title")));
+
+        } catch (Exception e) {
+            log.error("Не найдена кнопка отображения города", e);
+            return;
+        }
+
+
     }
 }

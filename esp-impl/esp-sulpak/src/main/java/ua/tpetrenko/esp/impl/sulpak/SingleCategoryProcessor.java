@@ -7,16 +7,16 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.openqa.selenium.WebDriver;
 import ua.tpetrenko.esp.api.dto.CityDto;
 import ua.tpetrenko.esp.api.dto.MenuItemDto;
 import ua.tpetrenko.esp.api.dto.ProductItemDto;
 import ua.tpetrenko.esp.api.handlers.ProductItemHandler;
+import ua.tpetrenko.esp.impl.sulpak.properties.SulpakProperties;
 
 import java.io.IOException;
 import java.time.Duration;
-import java.util.Map;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 /**
  * @author Roman Zdoronok
@@ -29,34 +29,36 @@ public class SingleCategoryProcessor implements Runnable {
     private final CityDto cityDto;
     private final MenuItemDto menuItemDto;
     private final ProductItemHandler productItemHandler;
-    private final Map<String, String> cookies;
+    // private final Map<String, String> cookies;
+    private final WebDriver webDriver;
+    private final SulpakProperties properties;
 
     @Override
     public void run() {
+        Document result=null;
         try {
             log.warn("Начиначем обработку категории '{}'", menuItemDto.getName());
             String pageUrlFormat = menuItemDto.getUrl() + PAGE_URL_NUMBER_FORMAT;
             String firstPageUrl = String.format(pageUrlFormat, 1);
-            Connection.Response result = null;
-            synchronized (cookies) {
-                result = Jsoup.connect(firstPageUrl)
-                        .cookies(cookies)
-                        .timeout((int) Duration.ofMinutes(1L).toMillis())
-                        .execute();
-                cookies.putAll(result.cookies());
-            }
 
-            Document firstPage = result.parse();
+//            synchronized (cookies) {
+           result = Jsoup.connect(firstPageUrl)
+                    //     .cookies(cookies)
+                    .timeout((int) Duration.ofMinutes(1L).toMillis())
+                    .execute().parse();
+            // cookies.putAll(result.cookies());
+
+        Document firstPage = result;
             if (firstPage != null) {
                 int totalPages = getTotalPages(firstPage);
                 parseItems(firstPage);
                 for (int pageNumber = 2; pageNumber <= totalPages; pageNumber++) {
                     log.info("Получаем список товаров ({}) - страница {}", menuItemDto.getName(), pageNumber);
-                    synchronized (cookies) {
-                        result = Jsoup.connect(String.format(pageUrlFormat, pageNumber)).cookies(cookies).timeout((int) Duration.ofMinutes(1L).toMillis()).execute();
-                        cookies.putAll(result.cookies());
-                    }
-                    parseItems(result.parse());
+                 //   synchronized (cookies) {
+                        result = (Document) Jsoup.connect(String.format(pageUrlFormat, pageNumber)).execute();
+                      //  cookies.putAll(result.cookies());
+                 //   }
+                    parseItems(result);
 
                 }
             }
@@ -80,7 +82,7 @@ public class SingleCategoryProcessor implements Runnable {
 
     private void parseItems(Document itemsPage) {
         if (!isValidCity(itemsPage)) {
-            log.error("Используется другой город {}", itemsPage.selectFirst("a.current-city").text());
+            log.error("Используется другой город {}", itemsPage.selectFirst(".show-map-link").text());
             return;
         }
 
