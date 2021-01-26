@@ -19,7 +19,7 @@ public interface MenuItemRepository extends JpaRepository<MenuItem, Long> {
 
     @Query("select mi from MenuItem mi "
         + "left join MenuItem child on child.parentItem = mi.id "
-        + "where mi.market = :market group by mi having count (child) = 0")
+        + "where mi.market = :market and mi.name='Стационарные телефоны' group by mi having count (child) = 0")
     Page<MenuItem> findAllEndpointMenuItems(Market market, Pageable pageable);
 
 //    menuItemRepository.findAllEndpointMenuItems(market, PageRequest.of(0, 100, Direction.ASC, "id"))

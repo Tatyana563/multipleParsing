@@ -79,12 +79,11 @@ public class SingleCategoryProcessor implements Runnable {
             String firstPageUrl = String.format(pageUrlFormat, 1);
 
             Set<Cookie> cookies = webDriver.manage().getCookies();
-            Map<String, String> cookiesMap = webDriver.manage().getCookies().stream().collect(Collectors.toMap(Cookie::getName, Cookie::getValue));
+            Map<String, String> cookiesMap = cookies.stream().collect(Collectors.toMap(Cookie::getName, Cookie::getValue));
             String cookieHeader = cookiesMap.entrySet()
                     .stream()
                     .map(e -> e.getKey()+"="+e.getValue())
                     .collect(joining(";"));
-            //TODO: convert webDriver's cookies to spring's http headers
             HttpHeaders headers = new HttpHeaders();
             headers.add("Cookie", cookieHeader);
 //            cookies.stream().collect(Collectors.joining(" "));
@@ -93,15 +92,19 @@ public class SingleCategoryProcessor implements Runnable {
 //            Cookie: __ddg1=iXDysvA8IX9CeiFXZkNH; MECHTA_SM_SET_SITE_IDZ=rd; MECHTA_SM_GUEST_ID=28921167; MECHTA_SM_LAST_VISIT=19.01.2021+21%3A29%3A41; _fbp=fb.1.1601551526293.1941335454; __ddg2=BZf3h6TFCFbU28q0
 //            headers.add("Cookie", cookies.iterator().next().getName() );
 
-            //TODO: debug exchange method (find category which differs in items count per city)
             CatalogDto firstPage = restTemplate.exchange(firstPageUrl,
                     HttpMethod.GET,
                     new HttpEntity<>(headers),
                     CatalogDto.class)
                     .getBody();
             //Айтике
-            if (cityDto.getName().contains("Абай") && menuItemDto.getName().equals("Стационарные телефоны")){
-                System.out.println("Doesn't coincide");
+            String сity1 = "Абай";
+            String сity2 = "Айтеке Би";
+            String category = "Стационарные телефоны";
+            if ((cityDto.getName().contains(сity1) || cityDto.getName().contains(сity2))
+                    && menuItemDto.getName().equals(category)) {
+                log.info("Парсим город {}, категория {}, товаров {}", cityDto.getName(), menuItemDto.getName(), firstPage.getData().getSize());
+                log.info("Cookies:{}", cookieHeader);
             }
             //https://www.mechta.kz/api/main/catalog_new/index.php?section=domashnie-telefony&page_num=1&catalog=true&page_element_count=18
             if (firstPage != null) {
