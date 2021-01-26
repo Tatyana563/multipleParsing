@@ -35,30 +35,29 @@ public class SingleCategoryProcessor implements Runnable {
 
     @Override
     public void run() {
-        Document result=null;
         try {
             log.warn("Начиначем обработку категории '{}'", menuItemDto.getName());
             String pageUrlFormat = menuItemDto.getUrl() + PAGE_URL_NUMBER_FORMAT;
             String firstPageUrl = String.format(pageUrlFormat, 1);
 
-//            synchronized (cookies) {
+            Connection.Response result = null;
            result = Jsoup.connect(firstPageUrl)
                     //     .cookies(cookies)
                     .timeout((int) Duration.ofMinutes(1L).toMillis())
-                    .execute().parse();
+                    .execute();
             // cookies.putAll(result.cookies());
 
-        Document firstPage = result;
+        Document firstPage = result.parse();
             if (firstPage != null) {
                 int totalPages = getTotalPages(firstPage);
                 parseItems(firstPage);
                 for (int pageNumber = 2; pageNumber <= totalPages; pageNumber++) {
                     log.info("Получаем список товаров ({}) - страница {}", menuItemDto.getName(), pageNumber);
                  //   synchronized (cookies) {
-                        result = (Document) Jsoup.connect(String.format(pageUrlFormat, pageNumber)).execute();
+                        result =  Jsoup.connect(String.format(pageUrlFormat, pageNumber)).execute();
                       //  cookies.putAll(result.cookies());
                  //   }
-                    parseItems(result);
+                    parseItems(result.parse());
 
                 }
             }

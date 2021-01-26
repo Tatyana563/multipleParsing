@@ -15,7 +15,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ChromeProperties {
     private String path = null;
-    private List<String> arguments = Arrays.asList("--headless", "window-size=1920x1080");
+    private List<String> arguments = Arrays.asList("--headless", "window-size=1920,1080");
 
     public ChromeProperties(ChromeProperties another) {
         this.path = another.getPath();

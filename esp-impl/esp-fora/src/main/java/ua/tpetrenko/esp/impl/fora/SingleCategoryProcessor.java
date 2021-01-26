@@ -46,9 +46,9 @@ public class SingleCategoryProcessor implements Runnable {
             Connection.Response result = null;
             synchronized (cookies) {
                 result = Jsoup.connect(firstPageUrl)
-                              .cookies(cookies)
-                              .timeout((int)Duration.ofMinutes(1L).toMillis())
-                              .execute();
+                        .cookies(cookies)
+                        .timeout((int) Duration.ofMinutes(1L).toMillis())
+                        .execute();
                 cookies.putAll(result.cookies());
             }
 

@@ -67,7 +67,7 @@ public class SulpakParser implements DifferentItemsPerCityMarketParser {
         ChromeOptions options = new ChromeOptions();
         options.setBinary(sulpakProperties.getChrome().getPath());
 //        options.addArguments("--headless");
-        options.addArguments("window-size=1920x1080");
+       options.addArguments("window-size=1920,1080");
         driver = new ChromeDriver(options);
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         log.info("Получаем главную страницу...");
@@ -205,25 +205,18 @@ public class SulpakParser implements DifferentItemsPerCityMarketParser {
 //fa fa-bars
         try {
             log.info("Ожидаем доступности модального окна выбора городов");
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".fa-bars")));
-            driver.findElement(By.cssSelector(".fa-bars")).click();
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".show-map-link")));
+            wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".show-map-link")));
         } catch (Exception e) {
             log.error("Не найдена кнопка отображения списка городов", e);
             return;
         }
-        driver.findElement(By.cssSelector(".show-map-link")).click();
-        log.info("Открываем модальное окно выбора городов...");
-
-        try {
-            log.info("Ожидаем доступности конкретного города");
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".cities-list-title")));
-
-        } catch (Exception e) {
-            log.error("Не найдена кнопка отображения города", e);
+        try{driver.findElement(By.cssSelector(".show-map-link")).click();}
+        catch (Exception e) {
+            log.error("Не найден города после ожидания...", e);
             return;
         }
-
+        log.info("Открываем модальное окно выбора городов...");
 
     }
 }
+//evinent-search-clear
