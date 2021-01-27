@@ -156,6 +156,25 @@ public class SulpakParser implements DifferentItemsPerCityMarketParser {
         log.info("Готовим cookies для города {}", cityDto.getName());
         //TODO: use webdriver to change current city (copy from technodom ?)
         //Next - convert set cookies to map<string, string> - <name, value>
+
+        log.info("Готовим cookies для города {}", cityDto.getName());
+        openCitiesPopup();
+        List<WebElement> cityLinks = driver.findElements(By.cssSelector(".cities-map-block li"));
+        for (WebElement cityLink : cityLinks) {
+            if (cityDto.getName().equalsIgnoreCase(cityLink.getText())) {
+                cityLink.click();
+                break;
+            }
+        }
+        //https://www.sulpak.kz/f/mobilniye_telefoniy/kulsary
+//        String urlWithCity = INFO.getUrl() + cityDto.getUrl();
+//        driver.get(urlWithCity);
+//        Connection.Response response = Jsoup.connect(driver.getPageSource())
+//                .cookies(cookies)
+//                .method(Connection.Method.GET)
+//                .execute();
+//        cookies.putAll(response.cookies());
+//        return cookies;
         return driver.manage().getCookies().stream().collect(Collectors.toMap(Cookie::getName, Cookie::getValue));
     }
 
@@ -168,17 +187,17 @@ public class SulpakParser implements DifferentItemsPerCityMarketParser {
 //
     @Override
     public void parseItems(CityDto cityDto, MenuItemDto menuItemDto, ProductItemHandler productItemHandler) throws IOException {
-        openCitiesPopup();
-        List<WebElement> cityLinks = driver.findElements(By.cssSelector(".cities-map-block li"));
-        for (WebElement cityLink : cityLinks) {
-            if (cityDto.getName().equalsIgnoreCase(cityLink.getText())) {
-                cityLink.click();
-                break;
-            }
-        }
+//        openCitiesPopup();
+//        List<WebElement> cityLinks = driver.findElements(By.cssSelector(".cities-map-block li"));
+//        for (WebElement cityLink : cityLinks) {
+//            if (cityDto.getName().equalsIgnoreCase(cityLink.getText())) {
+//                cityLink.click();
+//                break;
+//            }
+//        }
 
         try {
-            new SingleCategoryProcessor(cityDto, menuItemDto, productItemHandler, driver, sulpakProperties).run();
+            new SingleCategoryProcessor(cityDto, menuItemDto, productItemHandler, prepareCityCookies(cityDto)).run();
 
         } catch (Exception e) {
             log.error("Не удалось распарсить продукт", e);
@@ -219,4 +238,3 @@ public class SulpakParser implements DifferentItemsPerCityMarketParser {
 
     }
 }
-//evinent-search-clear
