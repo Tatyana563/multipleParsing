@@ -154,8 +154,14 @@ public class SulpakParser implements DifferentItemsPerCityMarketParser {
 
     private Map<String, String> prepareCityCookies(CityDto cityDto) throws IOException {
         log.info("Готовим cookies для города {}", cityDto.getName());
-        //TODO: use webdriver to change current city (copy from technodom ?)
-        //Next - convert set cookies to map<string, string> - <name, value>
+        openCitiesPopup();
+        List<WebElement> cityLinks = driver.findElements(By.cssSelector(".cities-map-block li"));
+        for (WebElement cityLink : cityLinks) {
+            if (cityDto.getName().equalsIgnoreCase(cityLink.getText())) {
+                cityLink.click();
+                break;
+            }
+        }
         return driver.manage().getCookies().stream().collect(Collectors.toMap(Cookie::getName, Cookie::getValue));
     }
 
@@ -168,17 +174,10 @@ public class SulpakParser implements DifferentItemsPerCityMarketParser {
 //
     @Override
     public void parseItems(CityDto cityDto, MenuItemDto menuItemDto, ProductItemHandler productItemHandler) throws IOException {
-        openCitiesPopup();
-        List<WebElement> cityLinks = driver.findElements(By.cssSelector(".cities-map-block li"));
-        for (WebElement cityLink : cityLinks) {
-            if (cityDto.getName().equalsIgnoreCase(cityLink.getText())) {
-                cityLink.click();
-                break;
-            }
-        }
+
 
         try {
-            new SingleCategoryProcessor(cityDto, menuItemDto, productItemHandler, driver, sulpakProperties).run();
+            new SingleCategoryProcessor(cityDto, menuItemDto, productItemHandler, prepareCityCookies(cityDto)).run();
 
         } catch (Exception e) {
             log.error("Не удалось распарсить продукт", e);
@@ -204,6 +203,8 @@ public class SulpakParser implements DifferentItemsPerCityMarketParser {
                 .pollingEvery(Duration.ofMillis(200));
 //fa fa-bars
         try {
+            //TODO: chek if cities popup is opened, and open if not.
+            //.cities-map-block .cities-list-close
             log.info("Ожидаем доступности модального окна выбора городов");
             wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".show-map-link")));
         } catch (Exception e) {
