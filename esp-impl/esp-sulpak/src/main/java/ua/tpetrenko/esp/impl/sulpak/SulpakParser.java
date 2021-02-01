@@ -8,13 +8,11 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Cookie;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Wait;
@@ -155,17 +153,14 @@ public class SulpakParser implements DifferentItemsPerCityMarketParser {
     private Map<String, String> prepareCityCookies(CityDto cityDto) throws IOException {
         log.info("Готовим cookies для города {}", cityDto.getName());
         openCitiesPopup();
-        WebElement element = driver.findElement(By.cssSelector(".cities-list-title"));
-        if (element != null) {
-
-            List<WebElement> cityLinks = driver.findElements(By.cssSelector(".cities-map-block li"));
+        List<WebElement> cityLinks = driver.findElements(By.cssSelector(".cities-map-block li"));
             for (WebElement cityLink : cityLinks) {
                 if (cityDto.getName().equalsIgnoreCase(cityLink.getText())) {
                     cityLink.click();
                     break;
                 }
             }
-        }
+
             return driver.manage().getCookies().stream().collect(Collectors.toMap(Cookie::getName, Cookie::getValue));
 
     }
@@ -207,11 +202,13 @@ public class SulpakParser implements DifferentItemsPerCityMarketParser {
                 .withTimeout(Duration.ofSeconds(120))
                 .pollingEvery(Duration.ofMillis(200));
 //cities-list-title
-        WebElement element = driver.findElement(By.cssSelector(".cities-list-title"));
-        if (element == null) {
+        try {
+            WebElement element = driver.findElement(By.cssSelector(".fancybox-close-small cities-list-close"));
+        }
+        catch(NoSuchElementException ex){
 
             try {
-                //TODO: chek if cities popup is opened, and open if not.
+                //TODO: check if cities popup is opened, and open if not.
                 //.cities-map-block .cities-list-close
                 log.info("Ожидаем доступности модального окна выбора городов");
                 wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector(".show-map-link")));
