@@ -7,21 +7,15 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.openqa.selenium.Cookie;
-import org.openqa.selenium.WebDriver;
 import ua.tpetrenko.esp.api.dto.CityDto;
 import ua.tpetrenko.esp.api.dto.MenuItemDto;
 import ua.tpetrenko.esp.api.dto.ProductItemDto;
 import ua.tpetrenko.esp.api.handlers.ProductItemHandler;
-import ua.tpetrenko.esp.impl.sulpak.properties.SulpakProperties;
 
 import java.io.IOException;
 import java.time.Duration;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.joining;
 
 /**
  * @author Roman Zdoronok
@@ -46,25 +40,19 @@ public class SingleCategoryProcessor implements Runnable {
             String firstPageUrl = String.format(pageUrlFormat, 1);
 
             //TODO: extract jsoup connect into separate method (incl cookies update)
-            Connection.Response result = null;
-            result = Jsoup.connect(firstPageUrl)
-                    .cookies(cookies)
-                    .timeout((int) Duration.ofMinutes(1L).toMillis())
-                    .execute();
-            cookies.putAll(result.cookies());
-
+            Connection.Response result = updateCookies(firstPageUrl,0);
             Document firstPage = result.parse();
             if (firstPage != null) {
                 int totalPages = getTotalPages(firstPage);
                 parseItems(firstPage);
                 for (int pageNumber = 2; pageNumber <= totalPages; pageNumber++) {
                     log.info("Получаем список товаров ({}) - страница {}", menuItemDto.getName(), pageNumber);
-                    //   synchronized (cookies) {
+
                     result = Jsoup.connect(String.format(pageUrlFormat, pageNumber))
                             .cookies(cookies)
                             .timeout((int) Duration.ofMinutes(1L).toMillis())
                             .execute();
-                      cookies.putAll(result.cookies());
+                    cookies.putAll(result.cookies());
                     //   }
                     parseItems(result.parse());
 
@@ -78,6 +66,21 @@ public class SingleCategoryProcessor implements Runnable {
         }
     }
 
+    public Connection.Response updateCookies(String pageUrlFormat, int pageNumber) throws IOException {
+        Connection.Response result = (pageNumber == 0) ?
+                Jsoup.connect(pageUrlFormat)
+                        .cookies(cookies)
+                        .timeout((int) Duration.ofMinutes(1L).toMillis())
+                        .execute() :
+
+                Jsoup.connect(String.format(pageUrlFormat, pageNumber))
+                        .cookies(cookies)
+                        .timeout((int) Duration.ofMinutes(1L).toMillis())
+                        .execute();
+
+        cookies.putAll(result.cookies());
+        return result;
+    }
 
     private int getTotalPages(Document firstPage) {
         //  Elements lastPage = firstPage.select(".pagination.pages-list>a :last-of-type");
