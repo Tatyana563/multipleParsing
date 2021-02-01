@@ -154,14 +154,21 @@ public class SulpakParser implements DifferentItemsPerCityMarketParser {
         log.info("Готовим cookies для города {}", cityDto.getName());
         openCitiesPopup();
         List<WebElement> cityLinks = driver.findElements(By.cssSelector(".cities-map-block li"));
-            for (WebElement cityLink : cityLinks) {
-                if (cityDto.getName().equalsIgnoreCase(cityLink.getText())) {
-                    cityLink.click();
-                    break;
-                }
+        for (WebElement cityLink : cityLinks) {
+            if (cityDto.getName().equalsIgnoreCase(cityLink.getText())) {
+                cityLink.click();
+                break;
             }
+        }
 
-            return driver.manage().getCookies().stream().collect(Collectors.toMap(Cookie::getName, Cookie::getValue));
+
+        try {
+            Thread.sleep(5000l);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return driver.manage().getCookies().stream().collect(Collectors.toMap(Cookie::getName, Cookie::getValue));
 
     }
 
@@ -177,7 +184,7 @@ public class SulpakParser implements DifferentItemsPerCityMarketParser {
 
 
         try {
-            new SingleCategoryProcessor(cityDto, menuItemDto, productItemHandler, prepareCityCookies(cityDto)).run();
+            new SingleCategoryProcessor(cityDto, menuItemDto, productItemHandler, /*prepareCityCookies(cityDto)*/ null).run();
 
         } catch (Exception e) {
             log.error("Не удалось распарсить продукт", e);

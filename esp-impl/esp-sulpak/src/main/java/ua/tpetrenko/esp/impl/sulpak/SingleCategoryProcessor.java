@@ -28,7 +28,7 @@ public class SingleCategoryProcessor implements Runnable {
     private final CityDto cityDto;
     private final MenuItemDto menuItemDto;
     private final ProductItemHandler productItemHandler;
-    private final Map<String, String> cookies;
+//    private final Map<String, String> cookies;
 //    private final WebDriver webDriver;
 //    private final SulpakProperties properties;
 
@@ -37,22 +37,16 @@ public class SingleCategoryProcessor implements Runnable {
         try {
             log.warn("Начиначем обработку категории '{}'", menuItemDto.getName());
             String pageUrlFormat = menuItemDto.getUrl() + PAGE_URL_NUMBER_FORMAT;
-            String firstPageUrl = String.format(pageUrlFormat, 1);
 
-            //TODO: extract jsoup connect into separate method (incl cookies update)
-            Connection.Response result = updateCookies(firstPageUrl,0);
+            Connection.Response result = getPageDocument(pageUrlFormat,1);
+            //TODO: move .parse method in getPageDocument
             Document firstPage = result.parse();
             if (firstPage != null) {
                 int totalPages = getTotalPages(firstPage);
                 parseItems(firstPage);
                 for (int pageNumber = 2; pageNumber <= totalPages; pageNumber++) {
                     log.info("Получаем список товаров ({}) - страница {}", menuItemDto.getName(), pageNumber);
-
-                    result = Jsoup.connect(String.format(pageUrlFormat, pageNumber))
-                            .cookies(cookies)
-                            .timeout((int) Duration.ofMinutes(1L).toMillis())
-                            .execute();
-                    cookies.putAll(result.cookies());
+                    result = getPageDocument(pageUrlFormat,pageNumber);
                     //   }
                     parseItems(result.parse());
 
@@ -66,18 +60,26 @@ public class SingleCategoryProcessor implements Runnable {
         }
     }
 
-    public Connection.Response updateCookies(String pageUrlFormat, int pageNumber) throws IOException {
-        Connection.Response result = (pageNumber == 0) ?
-                Jsoup.connect(pageUrlFormat)
-                        .cookies(cookies)
-                        .timeout((int) Duration.ofMinutes(1L).toMillis())
-                        .execute() :
+    public Connection.Response getPageDocument(String pageUrlFormat, int pageNumber) throws IOException {
+        Connection.Response result = Jsoup.connect(String.format(pageUrlFormat, pageNumber))
+//                .cookies(cookies)
+                .cookie("selected_city_id", cityDto.getUrl())
+                .cookie("city_id", cityDto.getUrl())
+                .timeout((int) Duration.ofMinutes(1L).toMillis())
+                .execute();
+//        cookies.putAll(result.cookies());
+        return result;
+    }
 
-                Jsoup.connect(String.format(pageUrlFormat, pageNumber))
+    public Connection.Response updateCookies2(String pageUrlFormat, int pageNumber) throws IOException {
+        String pageUrl = (pageNumber == 0)
+                ? pageUrlFormat
+                : String.format(pageUrlFormat, pageNumber);
+
+        Connection.Response result = Jsoup.connect(pageUrl)
                         .cookies(cookies)
                         .timeout((int) Duration.ofMinutes(1L).toMillis())
                         .execute();
-
         cookies.putAll(result.cookies());
         return result;
     }
@@ -110,6 +112,7 @@ public class SingleCategoryProcessor implements Runnable {
     }
 
     private boolean isValidCity(Document page) {
+        log.info("Проверяем город {}", cityDto.getName());
         return cityDto.getName().equalsIgnoreCase(page.selectFirst(".city-header .show-map-link").text());
     }
 
