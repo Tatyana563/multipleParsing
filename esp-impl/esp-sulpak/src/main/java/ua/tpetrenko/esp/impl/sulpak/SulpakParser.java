@@ -150,7 +150,7 @@ public class SulpakParser implements DifferentItemsPerCityMarketParser {
     }
 
 
-    private Map<String, String> prepareCityCookies(CityDto cityDto) throws IOException {
+    private Map<String, String> prepareCityCookies(CityDto cityDto)  {
         log.info("Готовим cookies для города {}", cityDto.getName());
         openCitiesPopup();
         List<WebElement> cityLinks = driver.findElements(By.cssSelector(".cities-map-block li"));
